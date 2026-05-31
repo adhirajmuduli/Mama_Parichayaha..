@@ -1,44 +1,43 @@
 "use client"
 
-import useScrollProgress from "@/hooks/useScrollProgress"
+import { useRef } from "react"
 
 import { useFrame } from "@react-three/fiber"
-
-import { useRef } from "react"
 
 import * as THREE from "three"
 
 import InteractiveModel from "@/components/models/InteractiveModel"
 
+import { worldLayout } from "@/lib/worldLayout"
+
 export default function ProteinShowcase() {
+
   const groupRef =
     useRef<THREE.Group>(null)
 
-  const progress =
-    useScrollProgress()
+  useFrame((state) => {
 
-  useFrame(() => {
-    if (!groupRef.current) return
+    if (!groupRef.current)
+      return
 
-    const visible =
-      progress > 0.45
-
-    const targetZ =
-      visible ? 0 : -10
-
-    groupRef.current.position.z =
-      THREE.MathUtils.lerp(
-        groupRef.current.position.z,
-        targetZ,
-        0.05
-      )
+    groupRef.current.rotation.y =
+      Math.sin(
+        state.clock.elapsedTime * 0.3
+      ) * 0.15
   })
 
   return (
-    <group ref={groupRef}>
+    <group
+      ref={groupRef}
+      position={[
+        worldLayout.research.center[0],
+        0,
+        0
+      ]}
+    >
       <InteractiveModel
         modelPath="/models/Proteins/apoptosome.glb"
-        position={[3.5, -0.8, -2]}
+        position={[0, -0.8, -2]}
         scale={0.03}
         rotation={[0.2, 0.5, 0.5]}
       />

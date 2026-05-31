@@ -14,6 +14,8 @@ import * as THREE from "three"
 
 import { dnaMaterial } from "@/lib/materials"
 
+import { worldLayout } from "@/lib/worldLayout"
+
 import SceneController from "@/components/motion/SceneController"
 
 export default function DNA() {
@@ -55,11 +57,15 @@ export default function DNA() {
 
   return (
     <>
-      <SceneController target={containerRef} />
+      {/* <SceneController target={containerRef} /> */}
 
       <group
         ref={containerRef}
-        position={[-2.8, -0.5, 0]}
+        position={[
+          worldLayout.origins.center[0],
+          -0.5,
+          0
+        ]}
         rotation={[0.35, -0.45, 0.15]}
         scale={0.24}
       >

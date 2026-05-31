@@ -13,6 +13,10 @@ import Lighting from "@/components/scene/Lighting"
 
 import DNA from "@/components/models/DNA"
 
+import useChapter from "@/hooks/useChapter"
+
+import ChapterCameraRig from "@/components/motion/ChapterCameraRig"
+
 import PhageSystem from "@/components/models/PhageSystem"
 
 import ProteinShowcase from "@/components/models/ProteinShowcase"
@@ -22,6 +26,9 @@ import PostProcessing from "@/components/effects/PostProcessing"
 import Particles from "@/components/effects/Particles"
 
 export default function Experience() {
+
+  const { chapter } = useChapter()
+
   return (
     <Canvas
       camera={{
@@ -66,17 +73,17 @@ export default function Experience() {
 
       <Environment preset="city" />
 
+      <ChapterCameraRig 
+        chapter={chapter}
+      />
+
+      <Lighting />
+
       <Particles />
 
       <Suspense fallback={null}>
-        
-        <Float
-          speed={1.5}
-          rotationIntensity={0.2}
-          floatIntensity={0.35}
-        >
-          <DNA />
-        </Float>
+
+        <DNA />
 
         <PhageSystem />
 
@@ -85,6 +92,7 @@ export default function Experience() {
       </Suspense>
 
       <PostProcessing />
+      
     </Canvas>
   )
 }

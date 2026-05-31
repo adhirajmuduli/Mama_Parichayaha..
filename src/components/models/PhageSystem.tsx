@@ -4,9 +4,11 @@ import { useRef } from "react"
 
 import { useFrame } from "@react-three/fiber"
 
+import usePresence from "@/hooks/usePresence"
+
 import * as THREE from "three"
 
-import useScrollProgress from "@/hooks/useScrollProgress"
+import { worldLayout } from "@/lib/worldLayout"
 
 import Phage from "@/components/models/Phage"
 
@@ -14,38 +16,36 @@ export default function PhageSystem() {
   const groupRef =
     useRef<THREE.Group>(null)
 
-  const scrollProgress =
-    useScrollProgress()
+  const presence =
+    usePresence()
 
   useFrame(() => {
     if (!groupRef.current) return
 
-    /*
-      PHAGES APPEAR
-      DURING INTERESTS SECTION
-    */
+    const targetScale =
+      presence.phages.scale
 
-    const visible =
-      scrollProgress > 0.18 &&
-      scrollProgress < 0.55
+    groupRef.current.scale.lerp(
+      new THREE.Vector3(
+        targetScale,
+        targetScale,
+        targetScale
+      ),
+      0.05
+    )
 
-    const targetY =
-      visible ? 0 : 5
-
-    groupRef.current.position.y =
-      THREE.MathUtils.lerp(
-        groupRef.current.position.y,
-        targetY,
-        0.03
-      )
-
-    groupRef.current.rotation.y += 0.0015
+    groupRef.current.rotation.y +=
+      0.0015
   })
 
   return (
     <group
       ref={groupRef}
-      position={[0, 5, 0]}
+      position={[
+        worldLayout.interests.center[0],
+        0,
+        0
+      ]}
     >
       <Phage
         position={[-4, 1.5, -2]}

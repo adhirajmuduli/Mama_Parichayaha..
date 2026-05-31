@@ -6,86 +6,60 @@ import { useRef } from "react"
 
 import * as THREE from "three"
 
-import useScrollProgress from "@/hooks/useScrollProgress"
+import useChapter from "@/hooks/useChapter"
+
+import { chapterPoses }
+from "@/lib/chapterPoses"
 
 interface SceneControllerProps {
-  target: React.RefObject<THREE.Group | null>
+  target: React.RefObject<
+    THREE.Group | null
+  >
 }
 
 export default function SceneController({
-  target
+  target,
 }: SceneControllerProps) {
-  const scrollProgress =
-    useScrollProgress()
 
-  const current =
-    useRef(0)
+  const { chapter } =
+    useChapter()
+
+  const smooth =
+    useRef(0.05)
 
   useFrame(() => {
-    if (!target.current) return
 
-    current.current = THREE.MathUtils.lerp(
-      current.current,
-      scrollProgress,
-      0.05
+    if (!target.current)
+      return
+
+    const pose =
+      chapterPoses[chapter]
+
+    target.current.position.lerp(
+      pose.position,
+      smooth.current
     )
 
-    const p = current.current
+    target.current.rotation.x =
+      THREE.MathUtils.lerp(
+        target.current.rotation.x,
+        pose.rotation.x,
+        smooth.current
+      )
 
-    /*
-      SECTION CHOREOGRAPHY
-    */
+    target.current.rotation.y =
+      THREE.MathUtils.lerp(
+        target.current.rotation.y,
+        pose.rotation.y,
+        smooth.current
+      )
 
-    // HERO
-    if (p < 0.25) {
-      target.current.position.x =
-        THREE.MathUtils.lerp(
-          target.current.position.x,
-          -2.8,
-          0.05
-        )
-
-      target.current.rotation.y =
-        THREE.MathUtils.lerp(
-          target.current.rotation.y,
-          -0.45,
-          0.05
-        )
-    }
-
-    // INTERESTS
-    else if (p < 0.5) {
-      target.current.position.x =
-        THREE.MathUtils.lerp(
-          target.current.position.x,
-          -4.5,
-          0.05
-        )
-
-      target.current.rotation.y =
-        THREE.MathUtils.lerp(
-          target.current.rotation.y,
-          0.25,
-          0.05
-        )
-    }
-
-    // PROJECTS
-    else {
-      target.current.position.x =
-        THREE.MathUtils.lerp(
-          target.current.position.x,
-          -1.5,
-          0.05
-        )
-
-      target.current.rotation.y =
-        THREE.MathUtils.lerp(
-          target.current.rotation.y,
-          0.8,
-          0.05
-        )
-    }
+    target.current.rotation.z =
+      THREE.MathUtils.lerp(
+        target.current.rotation.z,
+        pose.rotation.z,
+        smooth.current
+      )
   })
 
   return null
