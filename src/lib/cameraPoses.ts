@@ -1,73 +1,42 @@
 import * as THREE from "three"
 
-export const cameraPoses = {
-  origins: {
-    position: new THREE.Vector3(
-      -8,
-      0,
-      8
-    ),
+import { worldLayout }
+from "@/lib/worldLayout"
 
-    target: new THREE.Vector3(
-      -12,
-      0,
-      0
-    ),
-  },
+export const cameraPoses =
+  Object.fromEntries(
 
-  interests: {
-    position: new THREE.Vector3(
-      2,
-      0,
-      8
-    ),
+    Object.entries(
+      worldLayout
+    ).map(
+      ([chapter, data]) => {
 
-    target: new THREE.Vector3(
-      0,
-      0,
-      0
-    ),
-  },
+        const center =
+          data.center
 
-  research: {
-    position: new THREE.Vector3(
-      16,
-      0,
-      8
-    ),
+        return [
 
-    target: new THREE.Vector3(
-      12,
-      0,
-      0
-    ),
-  },
+          chapter,
 
-  computation: {
-    position: new THREE.Vector3(
-      28,
-      0,
-      8
-    ),
+          {
 
-    target: new THREE.Vector3(
-      24,
-      0,
-      0
-    ),
-  },
+            target:
+              center,
 
-  future: {
-    position: new THREE.Vector3(
-      40,
-      0,
-      10
-    ),
+            position:
+              center
+                .clone()
+                .add(
+                  new THREE.Vector3(
+                    0,
+                    2,
+                    8
+                  )
+                )
 
-    target: new THREE.Vector3(
-      36,
-      0,
-      0
-    ),
-  },
-}
+          }
+
+        ]
+      }
+    )
+  )

@@ -8,6 +8,8 @@ import usePresence from "@/hooks/usePresence"
 
 import * as THREE from "three"
 
+import useChapterPresence from "@/hooks/useChapterPresence"
+
 import { worldLayout } from "@/lib/worldLayout"
 
 import Phage from "@/components/models/Phage"
@@ -17,22 +19,30 @@ export default function PhageSystem() {
     useRef<THREE.Group>(null)
 
   const presence =
-    usePresence()
+    useChapterPresence(
+      "interests"
+    )
 
   useFrame(() => {
     if (!groupRef.current) return
 
-    const targetScale =
-      presence.phages.scale
-
     groupRef.current.scale.lerp(
       new THREE.Vector3(
-        targetScale,
-        targetScale,
-        targetScale
+        presence.nearby
+          ? 1
+          : 0.1,
+        presence.nearby
+          ? 1
+          : 0.1,
+        presence.nearby
+          ? 1
+          : 0.1
       ),
       0.05
     )
+
+    groupRef.current.visible =
+      presence.distance <= 2
 
     groupRef.current.rotation.y +=
       0.0015
@@ -42,9 +52,9 @@ export default function PhageSystem() {
     <group
       ref={groupRef}
       position={[
-        worldLayout.interests.center[0],
-        0,
-        0
+        worldLayout.interests.center.x,
+        worldLayout.interests.center.y - 0.5,
+        worldLayout.interests.center.z
       ]}
     >
       <Phage

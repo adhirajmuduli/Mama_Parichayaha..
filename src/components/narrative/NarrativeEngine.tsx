@@ -2,8 +2,7 @@
 
 import {
   NarrativeProvider
-}
-from "@/context/NarrativeContext"
+} from "@/context/NarrativeContext"
 
 import ScrollChapterController
 from "@/components/narrative/ScrollChapterController"

@@ -1,23 +1,39 @@
 import * as THREE from "three"
 
-export const worldLayout = {
-  origins: {
-    center: [-12,0,0]
-  },
+import type { Chapter }
+from "@/lib/chapters"
 
-  interests: {
-    center: [0,0,0]
-  },
+const chapterOrder: Chapter[] = [
+  "origins",
+  "interests",
+  "research",
+  "computation",
+  "future",
+]
 
-  research: {
-    center: [12,0,0]
-  },
+const STEP = 18
 
-  computation: {
-    center: [24,0,0]
-  },
+export const worldLayout =
+  chapterOrder.reduce(
+    (acc, chapter, index) => {
 
-  future: {
-    center: [36,0,0]
-  }
-}
+      acc[chapter] = {
+        center: new THREE.Vector3(
+          index * STEP,
+
+          Math.sin(index * 0.8) * 3,
+
+          Math.cos(index * 0.6) * 4
+        )
+      }
+
+      return acc
+
+    },
+    {} as Record<
+      Chapter,
+      {
+        center: THREE.Vector3
+      }
+    >
+  )
