@@ -1,0 +1,6 @@
+public/models/DNA/dna.glb: filter: lfs
+public/models/DNA/dna.glb: diff: lfs
+public/models/DNA/dna.glb: merge: lfs
+public/models/Bacteriophage/Phage.glb: filter: lfs
+public/models/Bacteriophage/Phage.glb: diff: lfs
+public/models/Bacteriophage/Phage.glb: merge: lfs

@@ -1,0 +1,32 @@
+[
+    {
+        "uri":  "http://127.0.0.1:3001/",
+        "statusCode":  200,
+        "contentType":  "text/html; charset=utf-8",
+        "contentLength":  "10063"
+    },
+    {
+        "uri":  "http://127.0.0.1:3001/models/DNA/dna.glb",
+        "statusCode":  200,
+        "contentType":  "model/gltf-binary",
+        "contentLength":  "2639156"
+    },
+    {
+        "uri":  "http://127.0.0.1:3001/models/Proteins/GFP.glb",
+        "statusCode":  200,
+        "contentType":  "model/gltf-binary",
+        "contentLength":  "5229704"
+    },
+    {
+        "uri":  "http://127.0.0.1:3001/models/Tardigrade/water_bear_site.glb",
+        "statusCode":  200,
+        "contentType":  "model/gltf-binary",
+        "contentLength":  "21943424"
+    },
+    {
+        "uri":  "http://127.0.0.1:3001/icon.svg",
+        "statusCode":  200,
+        "contentType":  "image/svg+xml",
+        "contentLength":  null
+    }
+]

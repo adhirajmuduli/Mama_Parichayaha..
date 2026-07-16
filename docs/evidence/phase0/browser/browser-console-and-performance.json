@@ -1,0 +1,511 @@
+{
+  "capturedAt": "2026-07-16T10:57:03.562Z",
+  "targetUrl": "http://127.0.0.1:3001/",
+  "desktop": {
+    "metrics": [
+      {
+        "name": "Timestamp",
+        "value": 525253.611519
+      },
+      {
+        "name": "AudioHandlers",
+        "value": 0
+      },
+      {
+        "name": "AudioWorkletProcessors",
+        "value": 0
+      },
+      {
+        "name": "Documents",
+        "value": 1
+      },
+      {
+        "name": "Frames",
+        "value": 1
+      },
+      {
+        "name": "JSEventListeners",
+        "value": 305
+      },
+      {
+        "name": "LayoutObjects",
+        "value": 23
+      },
+      {
+        "name": "MediaKeySessions",
+        "value": 0
+      },
+      {
+        "name": "MediaKeys",
+        "value": 0
+      },
+      {
+        "name": "Nodes",
+        "value": 63
+      },
+      {
+        "name": "Resources",
+        "value": 18
+      },
+      {
+        "name": "ContextLifecycleStateObservers",
+        "value": 8
+      },
+      {
+        "name": "V8PerContextDatas",
+        "value": 1
+      },
+      {
+        "name": "WorkerGlobalScopes",
+        "value": 0
+      },
+      {
+        "name": "UACSSResources",
+        "value": 0
+      },
+      {
+        "name": "RTCPeerConnections",
+        "value": 0
+      },
+      {
+        "name": "ResourceFetchers",
+        "value": 1
+      },
+      {
+        "name": "AdSubframes",
+        "value": 0
+      },
+      {
+        "name": "DetachedScriptStates",
+        "value": 1
+      },
+      {
+        "name": "ArrayBufferContents",
+        "value": 97
+      },
+      {
+        "name": "LayoutCount",
+        "value": 4
+      },
+      {
+        "name": "RecalcStyleCount",
+        "value": 21
+      },
+      {
+        "name": "LayoutDuration",
+        "value": 0.011309
+      },
+      {
+        "name": "RecalcStyleDuration",
+        "value": 0.00918
+      },
+      {
+        "name": "DevToolsCommandDuration",
+        "value": 0.000471
+      },
+      {
+        "name": "ScriptDuration",
+        "value": 0.659275
+      },
+      {
+        "name": "V8CompileDuration",
+        "value": 0.000471
+      },
+      {
+        "name": "TaskDuration",
+        "value": 1.115204
+      },
+      {
+        "name": "TaskOtherDuration",
+        "value": 0.434498
+      },
+      {
+        "name": "ThreadTime",
+        "value": 0.553971
+      },
+      {
+        "name": "ProcessTime",
+        "value": 0.935337
+      },
+      {
+        "name": "JSHeapUsedSize",
+        "value": 9011928
+      },
+      {
+        "name": "JSHeapTotalSize",
+        "value": 14680064
+      },
+      {
+        "name": "FirstMeaningfulPaint",
+        "value": 525247.914495
+      },
+      {
+        "name": "DomContentLoaded",
+        "value": 525247.700613
+      },
+      {
+        "name": "NavigationStart",
+        "value": 525247.641114
+      }
+    ],
+    "page": {
+      "title": "Adhiraj Muduli | Biological Sciences",
+      "readyState": "complete",
+      "canvasCount": 1,
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "resources": [
+        {
+          "name": "http://127.0.0.1:3001/_next/static/css/cd89cda2e59a9821.css",
+          "duration": 16.400000035762787,
+          "transferSize": 4780,
+          "encodedBodySize": 4480
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/webpack-3249181ec8018119.js",
+          "duration": 15.199999988079071,
+          "transferSize": 2039,
+          "encodedBodySize": 1739
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/4bd1b696-c023c6e3521b1417.js",
+          "duration": 26.599999964237213,
+          "transferSize": 54658,
+          "encodedBodySize": 54358
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/main-app-0232cf3ed10bd388.js",
+          "duration": 13.400000035762787,
+          "transferSize": 857,
+          "encodedBodySize": 557
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/app/layout-52a29e86e894d555.js",
+          "duration": 17.30000001192093,
+          "transferSize": 1978,
+          "encodedBodySize": 1678
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/255-4f84124391a7dac4.js",
+          "duration": 25,
+          "transferSize": 46635,
+          "encodedBodySize": 46335
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/b536a0f1-d0d75c9b814b4a7e.js",
+          "duration": 34.19999998807907,
+          "transferSize": 78946,
+          "encodedBodySize": 78646
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/f6211eb1-63bf9bd3892ca52b.js",
+          "duration": 30.19999998807907,
+          "transferSize": 66549,
+          "encodedBodySize": 66249
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/a3cd4a83-d66818d223ba85f6.js",
+          "duration": 29.599999964237213,
+          "transferSize": 19960,
+          "encodedBodySize": 19660
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/app/page-58fdedf41f88c6bb.js",
+          "duration": 38.89999997615814,
+          "transferSize": 4636,
+          "encodedBodySize": 4336
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/b79b7286-05b4bab2b6035c41.js",
+          "duration": 40.30000001192093,
+          "transferSize": 46336,
+          "encodedBodySize": 46036
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/bd904a5c-9f8841b71d8f52f0.js",
+          "duration": 40.5,
+          "transferSize": 99067,
+          "encodedBodySize": 98767
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/704-2dd427a53c6ebae7.js",
+          "duration": 40.80000001192093,
+          "transferSize": 70570,
+          "encodedBodySize": 70270
+        },
+        {
+          "name": "http://127.0.0.1:3001/models/DNA/dna.glb",
+          "duration": 55.80000001192093,
+          "transferSize": 920096,
+          "encodedBodySize": 919796
+        },
+        {
+          "name": "http://127.0.0.1:3001/icon.svg?0f95546db78ffa17",
+          "duration": 9.5,
+          "transferSize": 847,
+          "encodedBodySize": 547
+        },
+        {
+          "name": "http://127.0.0.1:3001/models/Proteins/GFP.glb",
+          "duration": 231.69999998807907,
+          "transferSize": 2063501,
+          "encodedBodySize": 2063201
+        }
+      ]
+    }
+  },
+  "mobile": {
+    "metrics": [
+      {
+        "name": "Timestamp",
+        "value": 525259.289389
+      },
+      {
+        "name": "AudioHandlers",
+        "value": 0
+      },
+      {
+        "name": "AudioWorkletProcessors",
+        "value": 0
+      },
+      {
+        "name": "Documents",
+        "value": 1
+      },
+      {
+        "name": "Frames",
+        "value": 1
+      },
+      {
+        "name": "JSEventListeners",
+        "value": 306
+      },
+      {
+        "name": "LayoutObjects",
+        "value": 23
+      },
+      {
+        "name": "MediaKeySessions",
+        "value": 0
+      },
+      {
+        "name": "MediaKeys",
+        "value": 0
+      },
+      {
+        "name": "Nodes",
+        "value": 70
+      },
+      {
+        "name": "Resources",
+        "value": 18
+      },
+      {
+        "name": "ContextLifecycleStateObservers",
+        "value": 15
+      },
+      {
+        "name": "V8PerContextDatas",
+        "value": 1
+      },
+      {
+        "name": "WorkerGlobalScopes",
+        "value": 0
+      },
+      {
+        "name": "UACSSResources",
+        "value": 0
+      },
+      {
+        "name": "RTCPeerConnections",
+        "value": 0
+      },
+      {
+        "name": "ResourceFetchers",
+        "value": 1
+      },
+      {
+        "name": "AdSubframes",
+        "value": 0
+      },
+      {
+        "name": "DetachedScriptStates",
+        "value": 1
+      },
+      {
+        "name": "ArrayBufferContents",
+        "value": 97
+      },
+      {
+        "name": "LayoutCount",
+        "value": 5
+      },
+      {
+        "name": "RecalcStyleCount",
+        "value": 68
+      },
+      {
+        "name": "LayoutDuration",
+        "value": 0.000819
+      },
+      {
+        "name": "RecalcStyleDuration",
+        "value": 0.020903
+      },
+      {
+        "name": "DevToolsCommandDuration",
+        "value": 0.000219
+      },
+      {
+        "name": "ScriptDuration",
+        "value": 0.564879
+      },
+      {
+        "name": "V8CompileDuration",
+        "value": 0.000604
+      },
+      {
+        "name": "TaskDuration",
+        "value": 0.994223
+      },
+      {
+        "name": "TaskOtherDuration",
+        "value": 0.406799
+      },
+      {
+        "name": "ThreadTime",
+        "value": 0.780807
+      },
+      {
+        "name": "ProcessTime",
+        "value": 2.401214
+      },
+      {
+        "name": "JSHeapUsedSize",
+        "value": 8504384
+      },
+      {
+        "name": "JSHeapTotalSize",
+        "value": 19660800
+      },
+      {
+        "name": "FirstMeaningfulPaint",
+        "value": 525253.930169
+      },
+      {
+        "name": "DomContentLoaded",
+        "value": 525253.676831
+      },
+      {
+        "name": "NavigationStart",
+        "value": 525253.6292
+      }
+    ],
+    "page": {
+      "title": "Adhiraj Muduli | Biological Sciences",
+      "readyState": "complete",
+      "canvasCount": 1,
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "resources": [
+        {
+          "name": "http://127.0.0.1:3001/_next/static/css/cd89cda2e59a9821.css",
+          "duration": 0,
+          "transferSize": 0,
+          "encodedBodySize": 4480
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/webpack-3249181ec8018119.js",
+          "duration": 0,
+          "transferSize": 0,
+          "encodedBodySize": 1739
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/4bd1b696-c023c6e3521b1417.js",
+          "duration": 0,
+          "transferSize": 0,
+          "encodedBodySize": 54358
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/255-4f84124391a7dac4.js",
+          "duration": 0,
+          "transferSize": 0,
+          "encodedBodySize": 46335
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/main-app-0232cf3ed10bd388.js",
+          "duration": 0,
+          "transferSize": 0,
+          "encodedBodySize": 557
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/app/layout-52a29e86e894d555.js",
+          "duration": 0,
+          "transferSize": 0,
+          "encodedBodySize": 1678
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/b536a0f1-d0d75c9b814b4a7e.js",
+          "duration": 0,
+          "transferSize": 0,
+          "encodedBodySize": 78646
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/bd904a5c-9f8841b71d8f52f0.js",
+          "duration": 0,
+          "transferSize": 0,
+          "encodedBodySize": 98767
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/a3cd4a83-d66818d223ba85f6.js",
+          "duration": 0,
+          "transferSize": 0,
+          "encodedBodySize": 19660
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/f6211eb1-63bf9bd3892ca52b.js",
+          "duration": 0,
+          "transferSize": 0,
+          "encodedBodySize": 66249
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/b79b7286-05b4bab2b6035c41.js",
+          "duration": 0,
+          "transferSize": 0,
+          "encodedBodySize": 46036
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/704-2dd427a53c6ebae7.js",
+          "duration": 0,
+          "transferSize": 0,
+          "encodedBodySize": 70270
+        },
+        {
+          "name": "http://127.0.0.1:3001/_next/static/chunks/app/page-58fdedf41f88c6bb.js",
+          "duration": 0,
+          "transferSize": 0,
+          "encodedBodySize": 4336
+        },
+        {
+          "name": "http://127.0.0.1:3001/models/DNA/dna.glb",
+          "duration": 18.80000001192093,
+          "transferSize": 300,
+          "encodedBodySize": 919796
+        },
+        {
+          "name": "http://127.0.0.1:3001/models/Proteins/GFP.glb",
+          "duration": 63.10000002384186,
+          "transferSize": 300,
+          "encodedBodySize": 2063201
+        }
+      ]
+    }
+  },
+  "consoleEvents": []
+}

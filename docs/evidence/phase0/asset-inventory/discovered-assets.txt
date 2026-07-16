@@ -1,0 +1,8 @@
+public/models/Bacteriophage/Phage.glb
+public/models/DNA/dna.glb
+public/models/Earth/earth_animated_site.glb
+public/models/Proteins/AChBp.glb
+public/models/Proteins/apoptosome.glb
+public/models/Proteins/GFP.glb
+public/models/Proteins/Proheadt7.glb
+public/models/Tardigrade/water_bear_site.glb

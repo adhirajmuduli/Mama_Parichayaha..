@@ -1,0 +1,28 @@
+src\components\scene\Experience.tsx:8:  Environment,
+src\components\scene\Experience.tsx:14:import DNA from "@/components/models/DNA"
+src\components\scene\Experience.tsx:26:import PhageSystem from "@/components/models/PhageSystem"
+src\components\scene\Experience.tsx:32:import ProteinShowcase from "@/components/models/ProteinShowcase"
+src\components\scene\Experience.tsx:84:      <Environment preset="city" />
+src\components\scene\SceneContent.tsx:3:import DNA from "@/components/models/DNA"
+src\components\scene\SceneContent.tsx:4:import PhageSystem from "@/components/models/PhageSystem"
+src\components\scene\SceneContent.tsx:5:import ProteinShowcase from "@/components/models/ProteinShowcase"
+src\components\scene\SceneContent.tsx:6:import Tardigrade from "@/components/models/Tradigrade"
+src\components\models\ChapterGLTFModel.tsx:3:import { Center, useAnimations, useGLTF } from "@react-three/drei"
+src\components\models\ChapterGLTFModel.tsx:14:  modelPath: string
+src\components\models\ChapterGLTFModel.tsx:29:  modelPath,
+src\components\models\ChapterGLTFModel.tsx:36:  const { animations, scene } = useGLTF(modelPath)
+src\components\models\DNA.tsx:6:  useGLTF,
+src\components\models\DNA.tsx:27:  const { scene, animations } = useGLTF(
+src\components\models\DNA.tsx:28:    "/models/DNA/dna.glb"
+src\components\models\DNA.tsx:106:useGLTF.preload("/models/DNA/dna.glb")
+src\components\models\Earth.tsx:3:import ChapterGLTFModel from "@/components/models/ChapterGLTFModel"
+src\components\models\Earth.tsx:11:      modelPath="/models/Earth/earth_animated_site.glb"
+src\components\models\InteractiveModel.tsx:3:import { Center, useGLTF } from "@react-three/drei"
+src\components\models\InteractiveModel.tsx:9:  modelPath: string
+src\components\models\InteractiveModel.tsx:19:  modelPath,
+src\components\models\InteractiveModel.tsx:32:  const { scene } = useGLTF(modelPath)
+src\components\models\PhageSystem.tsx:15:import Phage from "@/components/models/Phage"
+src\components\models\Tradigrade.tsx:3:import ChapterGLTFModel from "@/components/models/ChapterGLTFModel"
+src\components\models\Tradigrade.tsx:11:      modelPath="/models/Tardigrade/water_bear_site.glb"
+src\components\models\ProteinShowcase.tsx:8:import InteractiveModel from "@/components/models/InteractiveModel"
+src\components\models\ProteinShowcase.tsx:40:        modelPath="/models/Proteins/GFP.glb"
