@@ -11,7 +11,9 @@
     "format:check": "prettier . --check",
     "typecheck": "tsc --noEmit",
     "unit": "vitest run",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "e2e": "npm run build && playwright test",
+    "accessibility": "npm run e2e -- tests/e2e/accessibility.spec.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.0.4",
@@ -28,8 +30,10 @@
     "three": "^0.176.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.12.1",
     "@eslint/eslintrc": "^3",
     "@gltf-transform/cli": "^4.4.1",
+    "@playwright/test": "1.61.1",
     "@tailwindcss/postcss": "^4.1.5",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.2",

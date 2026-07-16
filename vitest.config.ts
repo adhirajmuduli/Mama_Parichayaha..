@@ -20,6 +20,7 @@ export default defineConfig({
       },
     },
     include: ['tests/**/*.{test,spec}.{ts,tsx}'],
+    exclude: ['tests/e2e/**'],
     restoreMocks: true,
     setupFiles: ['./src/test/setup.ts'],
     coverage: {
