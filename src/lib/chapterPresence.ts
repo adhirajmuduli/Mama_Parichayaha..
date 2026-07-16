@@ -1,4 +1,4 @@
-import type { Chapter } from "./chapters"
+import type { Chapter } from './chapters'
 
 export interface PresenceState {
   scale: number

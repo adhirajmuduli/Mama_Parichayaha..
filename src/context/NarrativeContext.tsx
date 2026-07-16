@@ -1,48 +1,31 @@
-"use client"
+'use client'
 
-import {
-  createContext,
-  useContext,
-  useState,
-} from "react"
+import { createContext, useContext, useState } from 'react'
 
-import type { Chapter } from "@/lib/chapters"
+import type { Chapter } from '@/lib/chapters'
 
 interface NarrativeState {
   chapter: Chapter
 
-  setChapter: (
-    chapter: Chapter
-  ) => void
+  setChapter: (chapter: Chapter) => void
 }
 
-const NarrativeContext =
-  createContext<NarrativeState>({
-    chapter: "origins",
+const NarrativeContext = createContext<NarrativeState>({
+  chapter: 'origins',
 
-    setChapter: () => {},
-  })
+  setChapter: () => {},
+})
 
 export function useNarrative() {
-  return useContext(
-    NarrativeContext
-  )
+  return useContext(NarrativeContext)
 }
 
 interface Props {
   children: React.ReactNode
 }
 
-export function NarrativeProvider({
-  children,
-}: Props) {
-
-  const [
-    chapter,
-    setChapter,
-  ] = useState<Chapter>(
-    "origins"
-  )
+export function NarrativeProvider({ children }: Props) {
+  const [chapter, setChapter] = useState<Chapter>('origins')
 
   return (
     <NarrativeContext.Provider

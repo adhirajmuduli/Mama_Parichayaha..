@@ -8,12 +8,12 @@ Phase 0 is complete. No Phase 0 gate remains open. Phase 1 has not started.
 
 ## Immutable baseline identifiers
 
-| Record | Identifier |
-| --- | --- |
-| Historical source snapshot | `phase0-baseline-2026-07-15` → `51018ff11f4cdc1da3fb10c8d79526f1dd8ff325` |
+| Record                            | Identifier                                                                      |
+| --------------------------------- | ------------------------------------------------------------------------------- |
+| Historical source snapshot        | `phase0-baseline-2026-07-15` → `51018ff11f4cdc1da3fb10c8d79526f1dd8ff325`       |
 | Clean tree-shaken source baseline | `phase0-clean-baseline-2026-07-16` → `0f304a9653985a3985b998236f653ac42743ed11` |
-| Baseline evidence commit | `c0d1da5bffc026fe74d87cc12d1703ad7cd3d40b` |
-| Verified remote branch | `origin/main` → `c0d1da5bffc026fe74d87cc12d1703ad7cd3d40b` |
+| Baseline evidence commit          | `c0d1da5bffc026fe74d87cc12d1703ad7cd3d40b`                                      |
+| Verified remote branch            | `origin/main` → `c0d1da5bffc026fe74d87cc12d1703ad7cd3d40b`                      |
 
 ## Implemented cleanup
 
@@ -26,15 +26,15 @@ Phase 0 is complete. No Phase 0 gate remains open. Phase 1 has not started.
 
 ## Validation evidence
 
-| Gate | Result | Evidence |
-| --- | --- | --- |
-| Import closure | Every remaining TS/TSX source file reachable; no retired-model reference | Captured during cleanup; source state at clean baseline tag |
-| TypeScript | `npx tsc --noEmit` passed | Fresh clone log |
-| Production build | `npm run build` passed; `/` 383 kB and first load 486 kB | `docs/evidence/phase0/reproducibility/clean-clone-validation.log` |
-| Git LFS | Three retained objects listed and `git lfs fsck` passed | `docs/evidence/phase0/git-lfs/ls-files.txt`, `fsck.txt` |
-| Fresh clone | `git clone`, `npm ci`, typecheck, and build passed from `origin/main` | `docs/evidence/phase0/reproducibility/clean-clone-validation.log` |
-| Production HTTP | Route, three GLBs, and icon all returned HTTP 200 | `docs/evidence/phase0/reproducibility/clean-clone-http-checks.json` |
-| Browser baseline | Desktop 1440x1000 and mobile viewport 390x844 screenshots; one Canvas each; zero console events | `docs/evidence/phase0/browser/` |
+| Gate             | Result                                                                                          | Evidence                                                            |
+| ---------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Import closure   | Every remaining TS/TSX source file reachable; no retired-model reference                        | Captured during cleanup; source state at clean baseline tag         |
+| TypeScript       | `npx tsc --noEmit` passed                                                                       | Fresh clone log                                                     |
+| Production build | `npm run build` passed; `/` 383 kB and first load 486 kB                                        | `docs/evidence/phase0/reproducibility/clean-clone-validation.log`   |
+| Git LFS          | Three retained objects listed and `git lfs fsck` passed                                         | `docs/evidence/phase0/git-lfs/ls-files.txt`, `fsck.txt`             |
+| Fresh clone      | `git clone`, `npm ci`, typecheck, and build passed from `origin/main`                           | `docs/evidence/phase0/reproducibility/clean-clone-validation.log`   |
+| Production HTTP  | Route, three GLBs, and icon all returned HTTP 200                                               | `docs/evidence/phase0/reproducibility/clean-clone-http-checks.json` |
+| Browser baseline | Desktop 1440x1000 and mobile viewport 390x844 screenshots; one Canvas each; zero console events | `docs/evidence/phase0/browser/`                                     |
 
 ## Commands executed
 

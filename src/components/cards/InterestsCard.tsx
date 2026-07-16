@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import FadeReveal from "@/components/motion/FadeReveal"
+import FadeReveal from '@/components/motion/FadeReveal'
 
 export default function InterestsCard() {
   return (
@@ -14,7 +14,6 @@ export default function InterestsCard() {
       "
     >
       <FadeReveal>
-
         <div
           className="
             rounded-[32px]
@@ -49,8 +48,7 @@ export default function InterestsCard() {
               font-semibold
             "
           >
-            Molecular Systems &
-            Biological Computation
+            Molecular Systems & Biological Computation
           </h2>
 
           <p
@@ -59,15 +57,10 @@ export default function InterestsCard() {
               text-zinc-300
             "
           >
-            Protein systems,
-            bioinformatics,
-            molecular simulation,
-            AI-assisted discovery,
-            scientific visualization.
+            Protein systems, bioinformatics, molecular simulation, AI-assisted discovery, scientific
+            visualization.
           </p>
-
         </div>
-
       </FadeReveal>
     </div>
   )

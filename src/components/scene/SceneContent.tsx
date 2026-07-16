@@ -1,11 +1,11 @@
-"use client"
+'use client'
 
-import DNA from "@/components/models/DNA"
-import PhageSystem from "@/components/models/PhageSystem"
-import ProteinShowcase from "@/components/models/ProteinShowcase"
-import Tardigrade from "@/components/models/Tradigrade"
+import DNA from '@/components/models/DNA'
+import PhageSystem from '@/components/models/PhageSystem'
+import ProteinShowcase from '@/components/models/ProteinShowcase'
+import Tardigrade from '@/components/models/Tradigrade'
 
-import SceneErrorBoundary from "./SceneErrorBoundary"
+import SceneErrorBoundary from './SceneErrorBoundary'
 
 export default function SceneContent() {
   return (

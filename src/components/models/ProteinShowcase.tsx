@@ -1,17 +1,17 @@
-"use client"
+'use client'
 
-import { Sparkles } from "@react-three/drei"
-import { useFrame } from "@react-three/fiber"
-import { useRef } from "react"
-import * as THREE from "three"
+import { Sparkles } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
+import { useRef } from 'react'
+import * as THREE from 'three'
 
-import InteractiveModel from "@/components/models/InteractiveModel"
-import useChapterPresence from "@/hooks/useChapterPresence"
-import { worldLayout } from "@/lib/worldLayout"
+import InteractiveModel from '@/components/models/InteractiveModel'
+import useChapterPresence from '@/hooks/useChapterPresence'
+import { worldLayout } from '@/lib/worldLayout'
 
 export default function ProteinShowcase() {
   const groupRef = useRef<THREE.Group>(null)
-  const presence = useChapterPresence("research")
+  const presence = useChapterPresence('research')
 
   useFrame((state) => {
     if (!groupRef.current) return
@@ -34,7 +34,14 @@ export default function ProteinShowcase() {
       <pointLight color="#22d3ee" intensity={20} distance={10} position={[2, 2, 3]} />
       <pointLight color="#a855f7" intensity={12} distance={8} position={[-2, -1, 2]} />
 
-      <Sparkles count={72} scale={[5, 4, 5]} size={2.2} speed={0.25} opacity={0.65} color="#67e8f9" />
+      <Sparkles
+        count={72}
+        scale={[5, 4, 5]}
+        size={2.2}
+        speed={0.25}
+        opacity={0.65}
+        color="#67e8f9"
+      />
 
       <InteractiveModel
         modelPath="/models/Proteins/GFP.glb"

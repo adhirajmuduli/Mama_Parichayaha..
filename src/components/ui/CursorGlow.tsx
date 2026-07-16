@@ -1,36 +1,27 @@
-"use client"
+'use client'
 
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react'
 
-import { motion } from "framer-motion"
+import { motion } from 'framer-motion'
 
 export default function CursorGlow() {
-  const [position, setPosition] =
-    useState({
-      x: 0,
-      y: 0
-    })
+  const [position, setPosition] = useState({
+    x: 0,
+    y: 0,
+  })
 
   useEffect(() => {
-    const handleMove = (
-      e: MouseEvent
-    ) => {
+    const handleMove = (e: MouseEvent) => {
       setPosition({
         x: e.clientX,
-        y: e.clientY
+        y: e.clientY,
       })
     }
 
-    window.addEventListener(
-      "mousemove",
-      handleMove
-    )
+    window.addEventListener('mousemove', handleMove)
 
     return () => {
-      window.removeEventListener(
-        "mousemove",
-        handleMove
-      )
+      window.removeEventListener('mousemove', handleMove)
     }
   }, [])
 
@@ -38,14 +29,14 @@ export default function CursorGlow() {
     <motion.div
       animate={{
         x: position.x - 160,
-        y: position.y - 160
+        y: position.y - 160,
       }}
 
       transition={{
-        type: "spring",
+        type: 'spring',
         stiffness: 750,
         damping: 42,
-        mass: 0.3
+        mass: 0.3,
       }}
 
       className="

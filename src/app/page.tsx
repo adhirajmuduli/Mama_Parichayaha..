@@ -1,8 +1,8 @@
-import Experience from "@/components/scene/Experience"
-import NarrativeScroll from "@/components/narrative/NarrativeScroll"
-import NarrativeOverlay from "@/components/narrative/NarrativeOverlay"
-import NarrativeEngine from "@/components/narrative/NarrativeEngine"
-import CursorGlow from "@/components/ui/CursorGlow"
+import Experience from '@/components/scene/Experience'
+import NarrativeScroll from '@/components/narrative/NarrativeScroll'
+import NarrativeOverlay from '@/components/narrative/NarrativeOverlay'
+import NarrativeEngine from '@/components/narrative/NarrativeEngine'
+import CursorGlow from '@/components/ui/CursorGlow'
 
 export default function HomePage() {
   return (

@@ -1,8 +1,8 @@
-"use client"
+'use client'
 
-import { useMemo, useRef } from "react"
-import { useFrame } from "@react-three/fiber"
-import * as THREE from "three"
+import { useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import * as THREE from 'three'
 
 const PARTICLE_COUNT = 1200
 
@@ -42,10 +42,7 @@ export default function Particles() {
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
 
       <pointsMaterial

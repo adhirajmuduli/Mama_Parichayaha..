@@ -1,7 +1,6 @@
-"use client"
+'use client'
 
 export default function NarrativeScroll() {
-
   return (
     <div
       className="

@@ -1,42 +1,19 @@
-import * as THREE from "three"
+import * as THREE from 'three'
 
-import { worldLayout }
-from "@/lib/worldLayout"
+import { worldLayout } from '@/lib/worldLayout'
 
-export const cameraPoses =
-  Object.fromEntries(
+export const cameraPoses = Object.fromEntries(
+  Object.entries(worldLayout).map(([chapter, data]) => {
+    const center = data.center
 
-    Object.entries(
-      worldLayout
-    ).map(
-      ([chapter, data]) => {
+    return [
+      chapter,
 
-        const center =
-          data.center
+      {
+        target: center,
 
-        return [
-
-          chapter,
-
-          {
-
-            target:
-              center,
-
-            position:
-              center
-                .clone()
-                .add(
-                  new THREE.Vector3(
-                    0,
-                    2,
-                    8
-                  )
-                )
-
-          }
-
-        ]
-      }
-    )
-  )
+        position: center.clone().add(new THREE.Vector3(0, 2, 8)),
+      },
+    ]
+  }),
+)

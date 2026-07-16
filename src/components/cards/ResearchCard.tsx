@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import FadeReveal from "@/components/motion/FadeReveal"
+import FadeReveal from '@/components/motion/FadeReveal'
 
 export default function ResearchCard() {
   return (
@@ -14,7 +14,6 @@ export default function ResearchCard() {
       "
     >
       <FadeReveal>
-
         <div
           className="
             rounded-[32px]
@@ -49,8 +48,7 @@ export default function ResearchCard() {
               font-semibold
             "
           >
-            Protein Structure &
-            Computational Biology
+            Protein Structure & Computational Biology
           </h2>
 
           <p
@@ -59,14 +57,10 @@ export default function ResearchCard() {
               text-zinc-300
             "
           >
-            Research projects,
-            scientific software,
-            computational workflows,
-            and biological modeling.
+            Research projects, scientific software, computational workflows, and biological
+            modeling.
           </p>
-
         </div>
-
       </FadeReveal>
     </div>
   )

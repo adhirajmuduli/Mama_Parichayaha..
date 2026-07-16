@@ -1,18 +1,12 @@
-"use client"
+'use client'
 
-import {
-  EffectComposer,
-  Bloom,
-  Vignette,
-  ChromaticAberration
-} from "@react-three/postprocessing"
+import { EffectComposer, Bloom, Vignette, ChromaticAberration } from '@react-three/postprocessing'
 
-import { BlendFunction } from "postprocessing"
+import { BlendFunction } from 'postprocessing'
 
 export default function PostProcessing() {
   return (
     <EffectComposer>
-      
       <Bloom
         intensity={0.2}
 

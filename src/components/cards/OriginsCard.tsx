@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import FadeReveal from "@/components/motion/FadeReveal"
+import FadeReveal from '@/components/motion/FadeReveal'
 
 export default function OriginsCard() {
   return (
@@ -14,7 +14,6 @@ export default function OriginsCard() {
       "
     >
       <FadeReveal>
-
         <div
           className="
             rounded-[32px]
@@ -58,15 +57,10 @@ export default function OriginsCard() {
               text-zinc-300
             "
           >
-            Biological sciences undergraduate
-            exploring molecular systems,
-            computational biology,
-            scientific visualization,
-            and AI-assisted discovery.
+            Biological sciences undergraduate exploring molecular systems, computational biology,
+            scientific visualization, and AI-assisted discovery.
           </p>
-
         </div>
-
       </FadeReveal>
     </div>
   )

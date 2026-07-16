@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import { Center, useGLTF } from "@react-three/drei"
-import { useFrame } from "@react-three/fiber"
-import { useEffect, useRef, useState } from "react"
-import * as THREE from "three"
+import { Center, useGLTF } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
+import { useEffect, useRef, useState } from 'react'
+import * as THREE from 'three'
 
 interface InteractiveModelProps {
   modelPath: string
@@ -20,8 +20,8 @@ export default function InteractiveModel({
   position = [0, 0, 0],
   scale = 1,
   rotation = [0, 0, 0],
-  color = "#ffffff",
-  emissive = "#000000",
+  color = '#ffffff',
+  emissive = '#000000',
   emissiveIntensity = 0.7,
 }: InteractiveModelProps) {
   const groupRef = useRef<THREE.Group>(null)

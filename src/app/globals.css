@@ -1,9 +1,8 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-
   --card: oklch(1 0 0);
   --border: oklch(0.922 0 0);
 
@@ -54,19 +53,11 @@ body {
 
   overflow-x: hidden;
 
-  background:
-    radial-gradient(
-      circle at top,
-      rgba(124, 58, 237, 0.25),
-      rgba(7, 2, 15, 1)
-    );
+  background: radial-gradient(circle at top, rgba(124, 58, 237, 0.25), rgba(7, 2, 15, 1));
 
   color: var(--foreground);
 
-  font-family:
-    Inter,
-    system-ui,
-    sans-serif;
+  font-family: Inter, system-ui, sans-serif;
 
   scroll-behavior: smooth;
 }
@@ -95,7 +86,6 @@ button {
 }
 
 @theme inline {
-
   --font-heading: var(--font-sans);
 
   --font-sans: var(--font-sans);
@@ -178,7 +168,6 @@ button {
 }
 
 .dark {
-
   --background: oklch(0.145 0 0);
 
   --foreground: oklch(0.985 0 0);

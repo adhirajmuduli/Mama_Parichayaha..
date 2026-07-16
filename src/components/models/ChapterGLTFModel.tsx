@@ -1,12 +1,12 @@
-"use client"
+'use client'
 
-import { Center, useAnimations, useGLTF } from "@react-three/drei"
-import { useFrame } from "@react-three/fiber"
-import { useEffect, useMemo, useRef } from "react"
-import * as THREE from "three"
+import { Center, useAnimations, useGLTF } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
+import { useEffect, useMemo, useRef } from 'react'
+import * as THREE from 'three'
 
-import useChapterPresence from "@/hooks/useChapterPresence"
-import type { Chapter } from "@/lib/chapters"
+import useChapterPresence from '@/hooks/useChapterPresence'
+import type { Chapter } from '@/lib/chapters'
 
 interface Props {
   chapter: Chapter
@@ -30,7 +30,7 @@ function LoadedModel({
   position,
   rotation = [0, 0, 0],
   rotationSpeed = 0.08,
-}: Omit<Props, "chapter"> & { active: boolean }) {
+}: Omit<Props, 'chapter'> & { active: boolean }) {
   const groupRef = useRef<THREE.Group>(null)
   const targetScale = useRef(new THREE.Vector3())
   const { animations, scene } = useGLTF(modelPath)

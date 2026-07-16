@@ -4,12 +4,12 @@ A cinematic scientific portfolio built using modern web graphics and immersive U
 
 This project combines:
 
-* React Three Fiber (R3F)
-* Next.js
-* Three.js
-* Framer Motion
-* GLSL-inspired visual systems
-* Scroll-driven cinematic choreography
+- React Three Fiber (R3F)
+- Next.js
+- Three.js
+- Framer Motion
+- GLSL-inspired visual systems
+- Scroll-driven cinematic choreography
 
 to create an interactive biological-sciences-themed web experience.
 
@@ -19,18 +19,18 @@ to create an interactive biological-sciences-themed web experience.
 
 The goal of this project is not merely to create a personal portfolio, but to build an atmospheric computational-biology interface where:
 
-* molecular structures exist within a persistent 3D world,
-* scientific models evolve through narrative scrolling,
-* interaction design feels cinematic and spatial,
-* biological aesthetics merge with modern web graphics.
+- molecular structures exist within a persistent 3D world,
+- scientific models evolve through narrative scrolling,
+- interaction design feels cinematic and spatial,
+- biological aesthetics merge with modern web graphics.
 
 The site is designed around:
 
-* dark biotech visual language,
-* volumetric depth,
-* molecular motion systems,
-* holographic interaction cues,
-* continuous environmental storytelling.
+- dark biotech visual language,
+- volumetric depth,
+- molecular motion systems,
+- holographic interaction cues,
+- continuous environmental storytelling.
 
 ---
 
@@ -50,9 +50,9 @@ Objects reposition and reframe according to page sections.
 
 Examples:
 
-* DNA dominates the hero section,
-* bacteriophages emerge during interests,
-* proteins become emphasized during projects.
+- DNA dominates the hero section,
+- bacteriophages emerge during interests,
+- proteins become emphasized during projects.
 
 ---
 
@@ -60,10 +60,10 @@ Examples:
 
 Supports:
 
-* animated `.glb` / `.gltf` assets,
-* static scientific meshes,
-* hoverable and rotatable molecular objects,
-* future shader-driven scientific rendering.
+- animated `.glb` / `.gltf` assets,
+- static scientific meshes,
+- hoverable and rotatable molecular objects,
+- future shader-driven scientific rendering.
 
 ---
 
@@ -71,12 +71,12 @@ Supports:
 
 Includes:
 
-* bloom,
-* atmospheric fog,
-* floating particle systems,
-* dynamic lighting,
-* camera drift,
-* layered composition.
+- bloom,
+- atmospheric fog,
+- floating particle systems,
+- dynamic lighting,
+- camera drift,
+- layered composition.
 
 ---
 
@@ -84,11 +84,11 @@ Includes:
 
 Microinteraction systems include:
 
-* magnetic buttons,
-* cursor glow field,
-* motion-based reveals,
-* cinematic easing,
-* inertial motion systems.
+- magnetic buttons,
+- cursor glow field,
+- motion-based reveals,
+- cinematic easing,
+- inertial motion systems.
 
 ---
 
@@ -96,30 +96,30 @@ Microinteraction systems include:
 
 ## Framework
 
-* Next.js 15
-* React 19
-* TypeScript
+- Next.js 15
+- React 19
+- TypeScript
 
 ---
 
 ## 3D / Rendering
 
-* Three.js
-* React Three Fiber
-* @react-three/drei
-* @react-three/postprocessing
+- Three.js
+- React Three Fiber
+- @react-three/drei
+- @react-three/postprocessing
 
 ---
 
 ## Motion
 
-* Framer Motion
+- Framer Motion
 
 ---
 
 ## Styling
 
-* Tailwind CSS v4
+- Tailwind CSS v4
 
 ---
 
@@ -215,16 +215,16 @@ http://localhost:3000
 
 Use:
 
-* `.glb`
-* `.gltf`
+- `.glb`
+- `.gltf`
 
 from:
 
-* Spline
-* Blender
-* Cinema4D
-* Maya
-* scientific visualization tools
+- Spline
+- Blender
+- Cinema4D
+- Maya
+- scientific visualization tools
 
 ---
 
@@ -232,10 +232,10 @@ from:
 
 Before production deployment:
 
-* compress meshes,
-* reduce unnecessary geometry,
-* optimize texture sizes,
-* use Draco compression where applicable.
+- compress meshes,
+- reduce unnecessary geometry,
+- optimize texture sizes,
+- use Draco compression where applicable.
 
 ---
 
@@ -243,19 +243,19 @@ Before production deployment:
 
 The visual direction prioritizes:
 
-* restrained cinematic lighting,
-* atmospheric depth,
-* spatial continuity,
-* biological ambience,
-* minimal UI clutter,
-* scientific elegance.
+- restrained cinematic lighting,
+- atmospheric depth,
+- spatial continuity,
+- biological ambience,
+- minimal UI clutter,
+- scientific elegance.
 
 The rendering approach intentionally avoids:
 
-* oversaturated neon cyberpunk,
-* excessive bloom,
-* hyper-aggressive particle density,
-* game-like visual noise.
+- oversaturated neon cyberpunk,
+- excessive bloom,
+- hyper-aggressive particle density,
+- game-like visual noise.
 
 ---
 
@@ -265,11 +265,11 @@ The rendering approach intentionally avoids:
 
 Future work includes:
 
-* fresnel shaders,
-* iridescent protein materials,
-* holographic biological surfaces,
-* transmission materials,
-* scientific edge-lighting systems.
+- fresnel shaders,
+- iridescent protein materials,
+- holographic biological surfaces,
+- transmission materials,
+- scientific edge-lighting systems.
 
 ---
 
@@ -277,11 +277,11 @@ Future work includes:
 
 Planned interaction systems:
 
-* reactive particles,
-* molecular hover states,
-* focus transitions,
-* interactive protein inspection,
-* semantic camera events.
+- reactive particles,
+- molecular hover states,
+- focus transitions,
+- interactive protein inspection,
+- semantic camera events.
 
 ---
 
@@ -289,11 +289,11 @@ Planned interaction systems:
 
 Potential future integrations:
 
-* AlphaFold structure rendering,
-* PDB ingestion,
-* molecular trajectory playback,
-* protein interaction visualization,
-* graph-based biological systems.
+- AlphaFold structure rendering,
+- PDB ingestion,
+- molecular trajectory playback,
+- protein interaction visualization,
+- graph-based biological systems.
 
 ---
 
@@ -301,16 +301,16 @@ Potential future integrations:
 
 The project architecture is designed around:
 
-* persistent GPU rendering,
-* reusable scene systems,
-* semantic state choreography,
-* batched particles,
-* modular scene composition.
+- persistent GPU rendering,
+- reusable scene systems,
+- semantic state choreography,
+- batched particles,
+- modular scene composition.
 
 Target:
 
-* desktop-first cinematic rendering,
-* graceful degradation for mobile.
+- desktop-first cinematic rendering,
+- graceful degradation for mobile.
 
 ---
 
@@ -321,11 +321,11 @@ Undergraduate — Biological Sciences
 
 Interests include:
 
-* computational biology,
-* molecular systems,
-* scientific visualization,
-* AI-assisted biological research,
-* interactive scientific interfaces.
+- computational biology,
+- molecular systems,
+- scientific visualization,
+- AI-assisted biological research,
+- interactive scientific interfaces.
 
 ---
 

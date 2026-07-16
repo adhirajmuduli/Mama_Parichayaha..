@@ -1,16 +1,11 @@
-"use client"
+'use client'
 
-import useChapter from "@/hooks/useChapter"
+import useChapter from '@/hooks/useChapter'
 
-import { presenceMap }
-from "@/lib/chapterPresence"
+import { presenceMap } from '@/lib/chapterPresence'
 
 export default function usePresence() {
+  const { chapter } = useChapter()
 
-  const { chapter } =
-    useChapter()
-
-  return presenceMap[
-    chapter
-  ]
+  return presenceMap[chapter]
 }
