@@ -8,6 +8,10 @@
     "skipLibCheck": true,
 
     "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "forceConsistentCasingInFileNames": true,
 
     "noEmit": true,
 

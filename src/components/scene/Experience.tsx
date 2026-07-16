@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 
 import Lighting from '@/components/scene/Lighting'
@@ -9,7 +9,31 @@ import ChapterCameraRig from '@/components/motion/ChapterCameraRig'
 import PostProcessing from '@/components/effects/PostProcessing'
 import Particles from '@/components/effects/Particles'
 
+function supportsWebGL() {
+  try {
+    const canvas = document.createElement('canvas')
+
+    return Boolean(canvas.getContext('webgl2') || canvas.getContext('webgl'))
+  } catch {
+    return false
+  }
+}
+
+function SceneFallback() {
+  return <div aria-hidden="true" className="h-full w-full bg-[#07020f]" />
+}
+
 export default function Experience() {
+  const [hasWebGL, setHasWebGL] = useState(false)
+
+  useEffect(() => {
+    setHasWebGL(supportsWebGL())
+  }, [])
+
+  if (!hasWebGL) {
+    return <SceneFallback />
+  }
+
   return (
     <Canvas
       camera={{ position: [0, 0, 8], fov: 45 }}

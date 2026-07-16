@@ -6,6 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "prepare:standalone": "node scripts/prepare-standalone.mjs",
+    "start:standalone": "npm run prepare:standalone && node scripts/start-standalone.mjs",
     "lint": "eslint . --max-warnings=0",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
