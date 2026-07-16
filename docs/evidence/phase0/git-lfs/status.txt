@@ -6,20 +6,3 @@ Objects to be committed:
 
 
 Objects not staged for commit:
-
-	.gitignore (Git: 1fe1c79 -> File: e4e3d1d)
-	package-lock.json (Git: cf94f60 -> File: 80d421a)
-	package.json (Git: 593e686 -> File: 7d42516)
-	src/components/effects/Particles.tsx (Git: ba96e13 -> File: fde51b7)
-	src/components/models/DNA.tsx (Git: 8c91155 -> File: cec8967)
-	src/components/models/Earth.tsx (LFS: e3b0c44 -> File: e1e6f35)
-	src/components/models/InteractiveModel.tsx (Git: 6413a4f -> File: 598ec03)
-	src/components/models/PhageSystem.tsx (Git: 07e5b5a -> File: ddb6e7e)
-	src/components/models/ProteinShowcase.tsx (Git: d999d3a -> File: 502fdfe)
-	src/components/models/Tradigrade.tsx (LFS: e3b0c44 -> File: ce5280c)
-	src/components/motion/ChapterCameraRig.tsx (Git: b5754a4 -> File: 94506df)
-	src/components/narrative/NarrativeEngine.tsx (Git: 12c0813 -> File: 6e1ddb7)
-	src/components/narrative/NarrativeScroll.tsx (Git: 6920aff -> File: 9aad7fa)
-	src/components/scene/Experience.tsx (Git: ccd757b -> File: f57e2bd)
-	src/lib/cameraPoses.ts (Git: 26ded62 -> File: 2d8f0a2)
-	src/lib/worldLayout.ts (Git: 684936c -> File: e9cc294)
