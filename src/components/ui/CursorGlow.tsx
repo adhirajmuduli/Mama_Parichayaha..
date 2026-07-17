@@ -1,44 +1,31 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
-import { motion } from 'motion/react'
+import { motion, useMotionValue, useSpring } from 'motion/react'
 
 export default function CursorGlow() {
-  const [position, setPosition] = useState({
-    x: 0,
-    y: 0,
-  })
+  const pointerX = useMotionValue(-160)
+  const pointerY = useMotionValue(-160)
+  const x = useSpring(pointerX, { damping: 42, mass: 0.3, stiffness: 750 })
+  const y = useSpring(pointerY, { damping: 42, mass: 0.3, stiffness: 750 })
 
   useEffect(() => {
-    const handleMove = (e: MouseEvent) => {
-      setPosition({
-        x: e.clientX,
-        y: e.clientY,
-      })
+    const handlePointerMove = (event: PointerEvent) => {
+      pointerX.set(event.clientX - 160)
+      pointerY.set(event.clientY - 160)
     }
 
-    window.addEventListener('mousemove', handleMove)
+    window.addEventListener('pointermove', handlePointerMove, { passive: true })
 
     return () => {
-      window.removeEventListener('mousemove', handleMove)
+      window.removeEventListener('pointermove', handlePointerMove)
     }
-  }, [])
+  }, [pointerX, pointerY])
 
   return (
     <motion.div
-      animate={{
-        x: position.x - 160,
-        y: position.y - 160,
-      }}
-
-      transition={{
-        type: 'spring',
-        stiffness: 750,
-        damping: 42,
-        mass: 0.3,
-      }}
-
+      style={{ x, y }}
       className="
         pointer-events-none
         fixed
