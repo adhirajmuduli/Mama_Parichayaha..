@@ -17,7 +17,7 @@
     "e2e": "npm run build && playwright test tests/e2e/portfolio.spec.ts tests/e2e/accessibility.spec.ts --workers=1",
     "accessibility": "npm run e2e -- tests/e2e/accessibility.spec.ts",
     "bundle": "node scripts/build-bundle.mjs",
-    "knip": "knip --reporter compact",
+    "knip": "node scripts/run-knip.mjs",
     "security": "npm audit --omit=dev --audit-level=high",
     "asset:inspect": "npm run asset:verify && gltf-transform inspect public/models/DNA/dna.glb",
     "test:visual": "npm run build && playwright test tests/e2e/visual.spec.ts --workers=1",
@@ -39,7 +39,9 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.6.0",
-    "three": "^0.176.0"
+    "three": "^0.176.0",
+    "zod": "4.4.3",
+    "zustand": "5.0.14"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.12.1",

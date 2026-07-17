@@ -8,13 +8,13 @@ Phase 1 is complete. No Phase 1 gate remains open. Phase 2 may begin.
 
 ## Published revision
 
-| Record | Identifier |
-| --- | --- |
-| Phase 0 clean baseline | `phase0-clean-baseline-2026-07-16` -> `0f304a9653985a3985b998236f653ac42743ed11` |
-| Phase 1 workflow foundation | `4ac6b9e` |
-| Lighthouse and visual stabilization | `81e9e62` |
-| Initial-paint and local browser-run stability repair | `e7eb65e` |
-| Verified remote branch | `origin/main` -> `e7eb65e` |
+| Record                                               | Identifier                                                                       |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Phase 0 clean baseline                               | `phase0-clean-baseline-2026-07-16` -> `0f304a9653985a3985b998236f653ac42743ed11` |
+| Phase 1 workflow foundation                          | `4ac6b9e`                                                                        |
+| Lighthouse and visual stabilization                  | `81e9e62`                                                                        |
+| Initial-paint and local browser-run stability repair | `e7eb65e`                                                                        |
+| Verified remote branch                               | `origin/main` -> `e7eb65e`                                                       |
 
 ## Implemented foundation
 
@@ -29,14 +29,14 @@ Phase 1 is complete. No Phase 1 gate remains open. Phase 2 may begin.
 
 ## Verification evidence
 
-| Gate | Result | Evidence |
-| --- | --- | --- |
-| Quality workflow | Passed | GitHub Actions run for `e7eb65e`; local `npm run format:check`, `npm run typecheck`, and `npm run build` passed. |
-| Browser workflow | Passed | GitHub Actions run for `e7eb65e`; local `npm run e2e` passed 8/8 with desktop, mobile, reduced-motion, and no-WebGL projects. |
-| Visual workflow | Passed | GitHub Actions run for `e7eb65e`; local four-mode visual suite passed 4/4. Baselines: `tests/e2e/visual.spec.ts-snapshots/`. |
+| Gate                | Result | Evidence                                                                                                                                                                                             |
+| ------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Quality workflow    | Passed | GitHub Actions run for `e7eb65e`; local `npm run format:check`, `npm run typecheck`, and `npm run build` passed.                                                                                     |
+| Browser workflow    | Passed | GitHub Actions run for `e7eb65e`; local `npm run e2e` passed 8/8 with desktop, mobile, reduced-motion, and no-WebGL projects.                                                                        |
+| Visual workflow     | Passed | GitHub Actions run for `e7eb65e`; local four-mode visual suite passed 4/4. Baselines: `tests/e2e/visual.spec.ts-snapshots/`.                                                                         |
 | Lighthouse workflow | Passed | GitHub Actions run for `e7eb65e`; the prior `NO_FCP` collector error is prevented by visible server HTML. Local forced no-GPU/no-WebGL production probe recorded `first-contentful-paint` at 400 ms. |
-| Security workflow | Passed | GitHub Actions dependency review, CodeQL, Gitleaks, audit, and license-inventory jobs for `e7eb65e`. |
-| Git LFS | Passed | Checkout with `lfs: true` and `git lfs fsck` precede all GLB-reading CI paths. Retained-object evidence: `docs/evidence/phase0/git-lfs/`. |
+| Security workflow   | Passed | GitHub Actions dependency review, CodeQL, Gitleaks, audit, and license-inventory jobs for `e7eb65e`.                                                                                                 |
+| Git LFS             | Passed | Checkout with `lfs: true` and `git lfs fsck` precede all GLB-reading CI paths. Retained-object evidence: `docs/evidence/phase0/git-lfs/`.                                                            |
 
 ## Commands exercised
 

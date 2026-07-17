@@ -1,7 +1,5 @@
 'use client'
 
-import { NarrativeProvider } from '@/context/NarrativeContext'
-
 import ScrollChapterController from '@/components/narrative/ScrollChapterController'
 
 interface Props {
@@ -19,9 +17,5 @@ function NarrativeCore({ children }: Props) {
 }
 
 export default function NarrativeEngine({ children }: Props) {
-  return (
-    <NarrativeProvider>
-      <NarrativeCore>{children}</NarrativeCore>
-    </NarrativeProvider>
-  )
+  return <NarrativeCore>{children}</NarrativeCore>
 }

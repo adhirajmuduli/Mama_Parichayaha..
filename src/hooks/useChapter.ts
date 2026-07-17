@@ -1,7 +1,10 @@
 'use client'
 
-import { useNarrative } from '@/context/NarrativeContext'
+import { useNarrativeStore } from '@/stores/narrativeStore'
 
 export default function useChapter() {
-  return useNarrative()
+  const chapter = useNarrativeStore((state) => state.activeChapter)
+  const setChapter = useNarrativeStore((state) => state.setActiveChapter)
+
+  return { chapter, setChapter }
 }

@@ -2,18 +2,11 @@
 
 import useChapter from '@/hooks/useChapter'
 
-import { chapterIndexMap, Chapter } from '@/lib/chapters'
+import type { Chapter } from '@/lib/chapters'
+import { getChapterPresence } from '@/lib/chapterSelectors'
 
 export default function useChapterPresence(chapter: Chapter) {
   const { chapter: current } = useChapter()
 
-  const distance = Math.abs(chapterIndexMap[current] - chapterIndexMap[chapter])
-
-  return {
-    active: distance === 0,
-
-    nearby: distance <= 1,
-
-    distance,
-  }
+  return getChapterPresence(current, chapter)
 }

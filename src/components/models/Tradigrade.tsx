@@ -1,7 +1,9 @@
 'use client'
 
 import ChapterGLTFModel from '@/components/models/ChapterGLTFModel'
-import { worldLayout } from '@/lib/worldLayout'
+import { getChapterEntry } from '@/lib/chapterRegistry'
+
+const tardigradeCenter = getChapterEntry('computation').scene.center
 
 export default function Tardigrade() {
   return (
@@ -9,11 +11,7 @@ export default function Tardigrade() {
       chapter="computation"
       displaySize={3.2}
       modelPath="/models/Tardigrade/water_bear_site.glb"
-      position={[
-        worldLayout.computation.center.x,
-        worldLayout.computation.center.y,
-        worldLayout.computation.center.z,
-      ]}
+      position={[tardigradeCenter[0], tardigradeCenter[1], tardigradeCenter[2]]}
       rotation={[0.16, 0.48, 0]}
       rotationSpeed={0.06}
     />

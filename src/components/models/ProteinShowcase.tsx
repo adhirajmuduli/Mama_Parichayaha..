@@ -7,7 +7,9 @@ import * as THREE from 'three'
 
 import InteractiveModel from '@/components/models/InteractiveModel'
 import useChapterPresence from '@/hooks/useChapterPresence'
-import { worldLayout } from '@/lib/worldLayout'
+import { getChapterEntry } from '@/lib/chapterRegistry'
+
+const [centerX, centerY, centerZ] = getChapterEntry('research').scene.center
 
 export default function ProteinShowcase() {
   const groupRef = useRef<THREE.Group>(null)
@@ -17,20 +19,12 @@ export default function ProteinShowcase() {
     if (!groupRef.current) return
 
     const targetScale = presence.nearby ? 1 : 0.1
-
     groupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.05)
     groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.15
   })
 
   return (
-    <group
-      ref={groupRef}
-      position={[
-        worldLayout.research.center.x,
-        worldLayout.research.center.y,
-        worldLayout.research.center.z,
-      ]}
-    >
+    <group ref={groupRef} position={[centerX, centerY, centerZ]}>
       <pointLight color="#22d3ee" intensity={20} distance={10} position={[2, 2, 3]} />
       <pointLight color="#a855f7" intensity={12} distance={8} position={[-2, -1, 2]} />
 

@@ -2,10 +2,11 @@
 
 import { useEffect } from 'react'
 
-import { useNarrative } from '@/context/NarrativeContext'
+import { getChapterAtProgress } from '@/lib/chapterSelectors'
+import { useNarrativeStore } from '@/stores/narrativeStore'
 
 export default function ScrollChapterController() {
-  const { setChapter } = useNarrative()
+  const setChapter = useNarrativeStore((state) => state.setActiveChapter)
 
   useEffect(() => {
     const updateChapter = () => {
@@ -13,28 +14,13 @@ export default function ScrollChapterController() {
 
       if (maxScroll <= 0) return
 
-      const progress = window.scrollY / maxScroll
-
-      if (progress < 0.2) {
-        setChapter('origins')
-      } else if (progress < 0.4) {
-        setChapter('interests')
-      } else if (progress < 0.6) {
-        setChapter('research')
-      } else if (progress < 0.8) {
-        setChapter('computation')
-      } else {
-        setChapter('future')
-      }
+      setChapter(getChapterAtProgress(window.scrollY / maxScroll))
     }
 
     updateChapter()
-
     window.addEventListener('scroll', updateChapter)
 
-    return () => {
-      window.removeEventListener('scroll', updateChapter)
-    }
+    return () => window.removeEventListener('scroll', updateChapter)
   }, [setChapter])
 
   return null

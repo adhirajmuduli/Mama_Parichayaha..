@@ -1,31 +1,26 @@
 'use client'
 
-import { useFrame } from '@react-three/fiber'
-
-import { useThree } from '@react-three/fiber'
-
+import { useFrame, useThree } from '@react-three/fiber'
 import { useRef } from 'react'
-
 import * as THREE from 'three'
 
 import useChapter from '@/hooks/useChapter'
-
-import { cameraPoses } from '@/lib/cameraPoses'
+import { getCameraPose } from '@/lib/chapterRegistry'
 
 export default function ChapterCameraRig() {
-  const { camera } = useThree()
-
+  const { camera, size } = useThree()
   const { chapter } = useChapter()
-
+  const desiredPositionRef = useRef(new THREE.Vector3())
+  const desiredTargetRef = useRef(new THREE.Vector3())
   const targetRef = useRef(new THREE.Vector3())
 
   useFrame(() => {
-    const pose = cameraPoses[chapter]
+    const pose = getCameraPose(chapter, size.width)
 
-    camera.position.lerp(pose.position, 0.04)
-
-    targetRef.current.lerp(pose.target, 0.04)
-
+    desiredPositionRef.current.fromArray(pose.position)
+    desiredTargetRef.current.fromArray(pose.target)
+    camera.position.lerp(desiredPositionRef.current, 0.04)
+    targetRef.current.lerp(desiredTargetRef.current, 0.04)
     camera.lookAt(targetRef.current)
   })
 

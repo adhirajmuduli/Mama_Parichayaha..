@@ -1,28 +1,34 @@
 'use client'
 
-import DNA from '@/components/models/DNA'
-import PhageSystem from '@/components/models/PhageSystem'
-import ProteinShowcase from '@/components/models/ProteinShowcase'
-import Tardigrade from '@/components/models/Tradigrade'
+import { lazy } from 'react'
+import type { ComponentType, LazyExoticComponent } from 'react'
 
+import type { ExhibitId } from '@/lib/chapterRegistry'
+import { chapterRegistry, exhibitIds } from '@/lib/chapterRegistry'
+
+import { exhibitLoaders } from './exhibitLoaders'
 import SceneErrorBoundary from './SceneErrorBoundary'
 
+const exhibitComponents = Object.fromEntries(
+  exhibitIds.map((exhibitId) => [exhibitId, lazy(exhibitLoaders[exhibitId])]),
+) as Record<ExhibitId, LazyExoticComponent<ComponentType>>
+
 export default function SceneContent() {
+  const exhibitIdsInScene = chapterRegistry.flatMap((chapter) =>
+    chapter.scene.exhibits.map((exhibit) => exhibit.id),
+  )
+
   return (
     <>
-      <SceneErrorBoundary name="DNA">
-        <DNA />
-      </SceneErrorBoundary>
+      {exhibitIdsInScene.map((exhibitId) => {
+        const Exhibit = exhibitComponents[exhibitId]
 
-      <PhageSystem />
-
-      <SceneErrorBoundary name="protein">
-        <ProteinShowcase />
-      </SceneErrorBoundary>
-
-      <SceneErrorBoundary name="tardigrade">
-        <Tardigrade />
-      </SceneErrorBoundary>
+        return (
+          <SceneErrorBoundary key={exhibitId} name={exhibitId}>
+            <Exhibit />
+          </SceneErrorBoundary>
+        )
+      })}
     </>
   )
 }

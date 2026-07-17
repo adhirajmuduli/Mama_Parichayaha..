@@ -1,11 +1,7 @@
 'use client'
 
+import { chapterCount } from '@/lib/chapterRegistry'
+
 export default function NarrativeScroll() {
-  return (
-    <div
-      className="
-        h-[500vh]
-      "
-    />
-  )
+  return <div aria-hidden="true" style={{ height: `${chapterCount * 100}vh` }} />
 }

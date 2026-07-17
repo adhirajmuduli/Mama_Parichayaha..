@@ -1,13 +1,3 @@
-export const chapters = ['origins', 'interests', 'research', 'computation', 'future'] as const
+export type { ChapterId as Chapter } from '@/content/portfolio'
 
-export type Chapter = (typeof chapters)[number]
-
-export const chapterIndexMap = {
-  origins: 0,
-  interests: 1,
-  research: 2,
-  computation: 3,
-  future: 4,
-} as const
-
-export const chapterCount = chapters.length
+export { chapterCount, chapterIds as chapters, chapterIndexMap } from '@/lib/chapterRegistry'
