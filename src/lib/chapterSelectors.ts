@@ -1,6 +1,11 @@
 import type { ChapterId } from '@/content/portfolio'
 
-import { chapterIndexMap, chapterRegistry } from '@/lib/chapterRegistry'
+import {
+  chapterIndexMap,
+  chapterRegistry,
+  getChapterEntry,
+  type ExhibitId,
+} from '@/lib/chapterRegistry'
 
 export function getChapterAtProgress(progress: number): ChapterId {
   const normalizedProgress = Math.min(Math.max(progress, 0), 1)
@@ -37,4 +42,8 @@ export function getChapterPresence(activeChapter: ChapterId, chapter: ChapterId)
     nearby: distance <= 1,
     distance,
   }
+}
+
+export function chapterHasExhibit(chapter: ChapterId, exhibit: ExhibitId) {
+  return getChapterEntry(chapter).scene.exhibits.some((candidate) => candidate.id === exhibit)
 }

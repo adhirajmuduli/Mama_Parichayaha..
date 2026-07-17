@@ -20,14 +20,17 @@ import {
   getChapterAtProgress,
   getChapterPresence,
 } from '@/lib/chapterSelectors'
+import { assertExhibitLoaders, exhibitLoaders } from '@/components/scene/exhibitLoaders'
 
 describe('chapter registry', () => {
   it('maps each canonical chapter to verified content and serializable scene data', () => {
     assertChapterRegistry()
+    assertExhibitLoaders()
 
     expect(chapterRegistry.map((chapter) => chapter.id)).toEqual(chapterIds)
     expect(chapterRegistry.map((chapter) => getChapterContent(chapter.id).id)).toEqual(chapterIds)
     expect(JSON.parse(JSON.stringify(chapterRegistry))).toEqual(chapterRegistry)
+    expect(Object.keys(exhibitLoaders).sort()).toEqual(['dna', 'phages', 'protein', 'tardigrade'])
   })
 
   it('selects responsive camera poses and adjacent chapters from one order', () => {
@@ -52,5 +55,12 @@ describe('chapter registry', () => {
     ]
 
     expect(ChapterContentListSchema.safeParse(duplicateContent).success).toBe(false)
+  })
+
+  it('validates the serializable content contract at each schema boundary', () => {
+    const parsedContent: PortfolioContent = PortfolioContentSchema.parse(portfolioContent)
+
+    expect(ChapterIdSchema.parse('origins')).toBe('origins')
+    expect(ChapterContentSchema.parse(parsedContent.chapters[0])).toEqual(parsedContent.chapters[0])
   })
 })

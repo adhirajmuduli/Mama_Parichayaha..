@@ -4,6 +4,7 @@ import { create } from 'zustand'
 
 import type { ChapterId } from '@/content/portfolio'
 import { chapterIndexMap, type ExhibitId } from '@/lib/chapterRegistry'
+import { chapterHasExhibit } from '@/lib/chapterSelectors'
 
 type NavigationDirection = -1 | 0 | 1
 
@@ -20,7 +21,7 @@ export const useNarrativeStore = create<NarrativeStore>((set, get) => ({
   direction: 0,
   selectedExhibit: null,
   setActiveChapter: (chapter) => {
-    const previousChapter = get().activeChapter
+    const { activeChapter: previousChapter, selectedExhibit } = get()
 
     if (previousChapter === chapter) {
       return
@@ -29,7 +30,15 @@ export const useNarrativeStore = create<NarrativeStore>((set, get) => ({
     set({
       activeChapter: chapter,
       direction: chapterIndexMap[chapter] > chapterIndexMap[previousChapter] ? 1 : -1,
+      selectedExhibit:
+        selectedExhibit && chapterHasExhibit(chapter, selectedExhibit) ? selectedExhibit : null,
     })
   },
-  selectExhibit: (selectedExhibit) => set({ selectedExhibit }),
+  selectExhibit: (selectedExhibit) => {
+    if (selectedExhibit && !chapterHasExhibit(get().activeChapter, selectedExhibit)) {
+      return
+    }
+
+    set({ selectedExhibit })
+  },
 }))

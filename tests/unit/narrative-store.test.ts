@@ -11,7 +11,7 @@ describe('narrative store', () => {
     })
   })
 
-  it('updates only discrete chapter and exhibit state', () => {
+  it('updates only discrete chapter and active exhibit state', () => {
     useNarrativeStore.getState().setActiveChapter('research')
     useNarrativeStore.getState().selectExhibit('protein')
 
@@ -19,6 +19,23 @@ describe('narrative store', () => {
       activeChapter: 'research',
       direction: 1,
       selectedExhibit: 'protein',
+    })
+  })
+
+  it('rejects exhibits that are absent from the active chapter', () => {
+    useNarrativeStore.getState().selectExhibit('protein')
+
+    expect(useNarrativeStore.getState().selectedExhibit).toBeNull()
+  })
+
+  it('clears a selected exhibit when chapter navigation makes it unavailable', () => {
+    useNarrativeStore.getState().setActiveChapter('research')
+    useNarrativeStore.getState().selectExhibit('protein')
+    useNarrativeStore.getState().setActiveChapter('computation')
+
+    expect(useNarrativeStore.getState()).toMatchObject({
+      activeChapter: 'computation',
+      selectedExhibit: null,
     })
   })
 

@@ -6,8 +6,10 @@ import type { ComponentType, LazyExoticComponent } from 'react'
 import type { ExhibitId } from '@/lib/chapterRegistry'
 import { chapterRegistry, exhibitIds } from '@/lib/chapterRegistry'
 
-import { exhibitLoaders } from './exhibitLoaders'
+import { assertExhibitLoaders, exhibitLoaders } from './exhibitLoaders'
 import SceneErrorBoundary from './SceneErrorBoundary'
+
+assertExhibitLoaders()
 
 const exhibitComponents = Object.fromEntries(
   exhibitIds.map((exhibitId) => [exhibitId, lazy(exhibitLoaders[exhibitId])]),
