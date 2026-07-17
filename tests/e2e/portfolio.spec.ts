@@ -71,6 +71,16 @@ test('serves the portfolio and its local application icon without failed asset r
     }
   }
 
+  if (testInfo.project.name !== 'mobile') {
+    const progress = page.getByRole('navigation', { name: 'Chapter progress' })
+
+    for (const [label, href] of chapters) {
+      await expect(
+        progress.getByRole('link', { name: new RegExp(`^${label} \\(`) }),
+      ).toHaveAttribute('href', href)
+    }
+  }
+
   if (testInfo.project.name === 'no-webgl') {
     await expect(page.locator('canvas')).toHaveCount(0)
   }
@@ -80,4 +90,40 @@ test('serves the portfolio and its local application icon without failed asset r
   expect(icon.headers()['content-type']).toContain('image/png')
   expect(failedResponses).toEqual([])
   expect(browserErrors).toEqual([])
+})
+
+test('serves complete chapter content and navigation without JavaScript', async ({
+  browser,
+}, testInfo) => {
+  test.skip(
+    !['desktop', 'mobile'].includes(testInfo.project.name),
+    'Covered once per viewport class.',
+  )
+
+  const isMobile = testInfo.project.name === 'mobile'
+  const context = await browser.newContext({
+    isMobile,
+    javaScriptEnabled: false,
+    viewport: isMobile ? { height: 844, width: 390 } : { height: 720, width: 1280 },
+  })
+  const page = await context.newPage()
+
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+
+  await expect(page.getByRole('heading', { level: 1, name: 'Adhiraj Muduli' })).toBeVisible()
+  await expect(page.locator('canvas')).toHaveCount(0)
+
+  const navigation = page.getByRole('navigation', { name: 'Chapter navigation' })
+
+  for (const [label, href] of [
+    ['Origins', '#origins'],
+    ['Interests', '#interests'],
+    ['Research', '#research'],
+    ['Computation', '#computation'],
+    ['Future', '#future'],
+  ] as const) {
+    await expect(navigation.getByRole('link', { name: label })).toHaveAttribute('href', href)
+  }
+
+  await context.close()
 })

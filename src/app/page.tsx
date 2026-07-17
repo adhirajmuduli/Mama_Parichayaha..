@@ -1,3 +1,4 @@
+import ChapterProgressIndicator from '@/components/layout/ChapterProgressIndicator'
 import SiteHeader from '@/components/layout/SiteHeader'
 import ChapterSection from '@/components/narrative/ChapterSection'
 import SceneClient from '@/components/scene/SceneClient'
@@ -26,6 +27,7 @@ export default function HomePage() {
       <main id="portfolio-content" className="relative min-h-screen overflow-x-hidden">
         <div className="relative z-10">
           <CursorGlow />
+          `n <ChapterProgressIndicator chapters={chapterNavigation} />
           {chapterRegistry.map((chapter) => (
             <ChapterSection key={chapter.id} chapter={chapter} />
           ))}
