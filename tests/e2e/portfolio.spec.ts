@@ -64,7 +64,7 @@ test('serves the portfolio and its local application icon without failed asset r
     await expect(menu).not.toBeVisible()
     await expect(menuTrigger).toBeFocused()
   } else {
-    const navigation = page.getByRole('navigation', { name: 'Chapter navigation' })
+    const navigation = page.getByRole('navigation', { exact: true, name: 'Chapter navigation' })
 
     for (const [label, href] of chapters) {
       await expect(navigation.getByRole('link', { name: label })).toHaveAttribute('href', href)
@@ -72,13 +72,22 @@ test('serves the portfolio and its local application icon without failed asset r
   }
 
   if (testInfo.project.name !== 'mobile') {
-    const progress = page.getByRole('navigation', { name: 'Chapter progress' })
+    const progress = page.getByRole('navigation', { exact: true, name: 'Chapter progress' })
 
     for (const [label, href] of chapters) {
       await expect(
         progress.getByRole('link', { name: new RegExp(`^${label} \\(`) }),
       ).toHaveAttribute('href', href)
     }
+  }
+
+  const footerNavigation = page.getByRole('navigation', {
+    exact: true,
+    name: 'Footer chapter navigation',
+  })
+
+  for (const [label, href] of chapters) {
+    await expect(footerNavigation.getByRole('link', { name: label })).toHaveAttribute('href', href)
   }
 
   if (testInfo.project.name === 'no-webgl') {
@@ -113,7 +122,7 @@ test('serves complete chapter content and navigation without JavaScript', async 
   await expect(page.getByRole('heading', { level: 1, name: 'Adhiraj Muduli' })).toBeVisible()
   await expect(page.locator('canvas')).toHaveCount(0)
 
-  const navigation = page.getByRole('navigation', { name: 'Chapter navigation' })
+  const navigation = page.getByRole('navigation', { exact: true, name: 'Chapter navigation' })
 
   for (const [label, href] of [
     ['Origins', '#origins'],
@@ -126,4 +135,19 @@ test('serves complete chapter content and navigation without JavaScript', async 
   }
 
   await context.close()
+})
+
+test('renders a recovery route for unknown paths', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'Route recovery is viewport independent.')
+
+  const response = await page.goto('/missing-portfolio-route', { waitUntil: 'networkidle' })
+
+  expect(response?.status()).toBe(404)
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'This page is not part of the portfolio.' }),
+  ).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Return to origins' })).toHaveAttribute(
+    'href',
+    '/#origins',
+  )
 })

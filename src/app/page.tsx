@@ -1,4 +1,5 @@
 import ChapterProgressIndicator from '@/components/layout/ChapterProgressIndicator'
+import SiteFooter from '@/components/layout/SiteFooter'
 import SiteHeader from '@/components/layout/SiteHeader'
 import ChapterSection from '@/components/narrative/ChapterSection'
 import SceneClient from '@/components/scene/SceneClient'
@@ -31,6 +32,7 @@ export default function HomePage() {
           {chapterRegistry.map((chapter) => (
             <ChapterSection key={chapter.id} chapter={chapter} />
           ))}
+          <SiteFooter chapters={chapterNavigation} />
         </div>
       </main>
     </>
