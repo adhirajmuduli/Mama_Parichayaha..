@@ -1,3 +1,4 @@
+import LiquidGlassPointerTracker from '@/components/liquid-glass/LiquidGlassPointerTracker'
 import ChapterProgressIndicator from '@/components/layout/ChapterProgressIndicator'
 import SiteFooter from '@/components/layout/SiteFooter'
 import SiteHeader from '@/components/layout/SiteHeader'
@@ -21,6 +22,7 @@ export default function PortfolioDocument({
 }: PortfolioDocumentProps) {
   return (
     <>
+      <LiquidGlassPointerTracker />
       <a
         className="sr-only fixed left-4 top-4 z-[60] rounded-md bg-white px-4 py-2 text-slate-950 focus:not-sr-only"
         href="#origins"

@@ -1,7 +1,8 @@
 'use client'
 
-import type { ChapterNavigationItem } from './ChapterNavigation'
+import LiquidGlass from '@/components/liquid-glass/LiquidGlass'
 
+import type { ChapterNavigationItem } from './ChapterNavigation'
 import { useNarrativeStore } from '@/stores/narrativeStore'
 
 interface ChapterProgressIndicatorProps {
@@ -13,11 +14,13 @@ export default function ChapterProgressIndicator({ chapters }: ChapterProgressIn
   const setActiveChapter = useNarrativeStore((state) => state.setActiveChapter)
 
   return (
-    <nav
+    <LiquidGlass
+      as="nav"
       aria-label="Chapter progress"
-      className="fixed right-3 top-1/2 z-30 hidden -translate-y-1/2 sm:block"
+      interactive={false}
+      className="fixed right-3 top-1/2 z-30 hidden -translate-y-1/2 [--glass-radius:999px] sm:block"
     >
-      <ol className="flex flex-col gap-2 rounded-full border border-white/10 bg-[#0b0715]/90 p-2">
+      <ol className="flex flex-col gap-2 p-2">
         {chapters.map((chapter, index) => {
           const isActive = chapter.id === activeChapter
 
@@ -27,7 +30,7 @@ export default function ChapterProgressIndicator({ chapters }: ChapterProgressIn
                 href={`#${chapter.sectionId}`}
                 aria-current={isActive ? 'step' : undefined}
                 aria-label={`${chapter.navigationLabel} (${index + 1} of ${chapters.length})`}
-                className={`block h-2.5 w-2.5 rounded-full outline-offset-4 focus-visible:outline-2 focus-visible:outline-violet-300 ${
+                className={`block h-2.5 w-2.5 rounded-full outline-offset-4 focus-visible:outline-2 focus-visible:outline-[var(--site-focus)] ${
                   isActive ? 'bg-violet-200' : 'bg-white/35 hover:bg-white/75'
                 }`}
                 onClick={() => setActiveChapter(chapter.id)}
@@ -38,6 +41,6 @@ export default function ChapterProgressIndicator({ chapters }: ChapterProgressIn
           )
         })}
       </ol>
-    </nav>
+    </LiquidGlass>
   )
 }

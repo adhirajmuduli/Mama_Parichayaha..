@@ -1,0 +1,23 @@
+:root {
+  color-scheme: dark;
+  --site-background: oklch(0.1 0.025 285);
+  --site-foreground: oklch(0.96 0.012 285);
+  --site-muted: oklch(0.79 0.025 285);
+  --site-border: oklch(0.96 0.02 285 / 18%);
+  --site-focus: oklch(0.81 0.16 295);
+  --site-panel: oklch(0.16 0.03 285 / 78%);
+  --site-panel-strong: oklch(0.14 0.025 285 / 92%);
+  --site-panel-opaque: oklch(0.17 0.03 285);
+  --site-accent: oklch(0.76 0.16 295);
+}
+
+@theme inline {
+  --color-background: var(--site-background);
+  --color-foreground: var(--site-foreground);
+  --color-muted-foreground: var(--site-muted);
+  --color-border: var(--site-border);
+  --color-ring: var(--site-focus);
+  --color-card: var(--site-panel);
+  --color-card-foreground: var(--site-foreground);
+  --font-sans: var(--font-site);
+}

@@ -1,3 +1,4 @@
+import LiquidGlassPanel from '@/components/liquid-glass/LiquidGlassPanel'
 import type { ChapterRegistryEntry } from '@/lib/chapterRegistry'
 import { getChapterContent } from '@/lib/chapterRegistry'
 
@@ -22,7 +23,7 @@ export default function ChapterSection({ chapter }: ChapterSectionProps) {
       <ChapterSectionObserver chapter={chapter.id} sectionId={chapter.sectionId} />
 
       <article className={`w-full ${alignment}`}>
-        <div className="w-full max-w-xl rounded-[32px] border border-white/10 bg-[#0b0715]/80 p-8 shadow-2xl shadow-black/30 sm:p-10">
+        <LiquidGlassPanel accent={chapter.scene.atmosphere.keyLight} className="max-w-xl">
           <p
             className="mb-3 text-sm uppercase tracking-[0.3em]"
             style={{ color: chapter.scene.atmosphere.keyLight }}
@@ -34,8 +35,8 @@ export default function ChapterSection({ chapter }: ChapterSectionProps) {
             {content.title}
           </Heading>
 
-          <p className="leading-relaxed text-zinc-200">{content.description}</p>
-        </div>
+          <p className="leading-relaxed text-[var(--site-muted)]">{content.description}</p>
+        </LiquidGlassPanel>
       </article>
     </section>
   )

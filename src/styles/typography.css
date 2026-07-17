@@ -1,0 +1,23 @@
+:root {
+  --font-site: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --type-display: clamp(2.5rem, 6vw, 5rem);
+  --type-heading: clamp(2rem, 4vw, 3.5rem);
+  --type-body: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);
+  --reading-measure: 68ch;
+}
+
+body {
+  font-family: var(--font-site);
+  font-size: var(--type-body);
+  line-height: 1.6;
+}
+
+:where(h1, h2, h3) {
+  font-family: var(--font-site);
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+:where(p, li) {
+  max-width: var(--reading-measure);
+}

@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+import LiquidGlass from '@/components/liquid-glass/LiquidGlass'
+import LiquidGlassControl from '@/components/liquid-glass/LiquidGlassControl'
 import type { ChapterId } from '@/content/portfolio'
 import { useNarrativeStore } from '@/stores/narrativeStore'
 
@@ -27,7 +29,7 @@ function ChapterLinks({
       key={chapter.id}
       href={`#${chapter.sectionId}`}
       aria-current={chapter.id === activeChapter ? 'page' : undefined}
-      className="rounded-md px-3 py-2 text-sm text-zinc-200 transition-colors hover:bg-white/10 hover:text-white focus-visible:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
+      className="rounded-md px-3 py-2 text-sm text-[var(--site-muted)] transition-colors hover:bg-white/10 hover:text-white focus-visible:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--site-focus)]"
       onClick={() => {
         setActiveChapter(chapter.id)
         onNavigate?.()
@@ -69,22 +71,21 @@ export default function ChapterNavigation({ chapters }: ChapterNavigationProps) 
         <ChapterLinks chapters={chapters} />
       </nav>
 
-      <button
+      <LiquidGlassControl
         ref={triggerRef}
-        type="button"
-        className="rounded-md px-3 py-2 text-sm text-zinc-100 outline-offset-2 focus-visible:outline-2 focus-visible:outline-violet-300 md:hidden"
+        className="md:hidden"
         aria-controls="chapter-navigation-menu"
         aria-expanded={isMenuOpen}
         onClick={() => setIsMenuOpen(true)}
       >
         Menu
-      </button>
+      </LiquidGlassControl>
 
       <dialog
         ref={dialogRef}
         id="chapter-navigation-menu"
         aria-label="Chapter navigation"
-        className="m-auto w-[min(24rem,calc(100vw-2rem))] rounded-2xl border border-white/15 bg-[#100a1d] p-0 text-white shadow-2xl backdrop:bg-black/65"
+        className="m-auto w-[min(24rem,calc(100vw-2rem))] border-0 bg-transparent p-0 text-white backdrop:bg-black/70"
         onCancel={(event) => {
           event.preventDefault()
           closeMenu()
@@ -94,19 +95,17 @@ export default function ChapterNavigation({ chapters }: ChapterNavigationProps) 
           triggerRef.current?.focus()
         }}
       >
-        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
-          <p className="text-sm font-medium">Navigate chapters</p>
-          <button
-            type="button"
-            className="rounded-md px-2 py-1 text-sm text-zinc-200 hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
-            onClick={closeMenu}
-          >
-            Close
-          </button>
-        </div>
-        <nav aria-label="Mobile chapter navigation" className="flex flex-col p-3">
-          <ChapterLinks chapters={chapters} onNavigate={closeMenu} />
-        </nav>
+        <LiquidGlass interactive={false} className="[--glass-radius:1rem] shadow-2xl">
+          <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+            <p className="text-sm font-medium">Navigate chapters</p>
+            <LiquidGlassControl className="px-2 py-1" onClick={closeMenu}>
+              Close
+            </LiquidGlassControl>
+          </div>
+          <nav aria-label="Mobile chapter navigation" className="flex flex-col p-3">
+            <ChapterLinks chapters={chapters} onNavigate={closeMenu} />
+          </nav>
+        </LiquidGlass>
       </dialog>
     </>
   )
