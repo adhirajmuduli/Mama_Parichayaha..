@@ -15,14 +15,18 @@
     "unit": "vitest run",
     "coverage": "vitest run --coverage",
     "e2e": "npm run build && playwright test",
-    "accessibility": "npm run e2e -- tests/e2e/accessibility.spec.ts"
+    "accessibility": "npm run e2e -- tests/e2e/accessibility.spec.ts",
+    "asset:inspect": "gltf-transform inspect public/models/DNA/dna.glb",
+    "bundle": "node scripts/build-bundle.mjs",
+    "knip": "knip --reporter compact",
+    "security": "npm audit --omit=dev --audit-level=high",
+    "quality": "npm run format:check && npm run lint && npm run typecheck && npm run unit && npm run coverage && npm run knip && npm run asset:inspect && npm run build"
   },
   "dependencies": {
     "@react-three/drei": "^10.0.4",
     "@react-three/fiber": "^9.1.2",
     "@react-three/postprocessing": "^3.0.4",
     "clsx": "^2.1.1",
-    "framer-motion": "^12.40.0",
     "motion": "12.42.0",
     "next": "^15.3.2",
     "next-themes": "^0.4.6",
@@ -41,7 +45,6 @@
     "@tailwindcss/postcss": "^4.1.5",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.2",
-    "@testing-library/user-event": "14.6.1",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
