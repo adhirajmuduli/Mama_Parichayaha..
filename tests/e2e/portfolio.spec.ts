@@ -91,6 +91,12 @@ test('serves the portfolio and its local application icon without failed asset r
     )
   }
 
+  const contact = page.getByRole('region', { name: 'Current work on GitHub' })
+  await expect(contact.getByRole('link', { name: /GitHub profile/ })).toHaveAttribute(
+    'href',
+    'https://github.com/adhirajmuduli',
+  )
+
   const footerNavigation = page.getByRole('navigation', {
     exact: true,
     name: 'Footer chapter navigation',
@@ -127,7 +133,7 @@ test('serves complete chapter content and navigation without JavaScript', async 
   })
   const page = await context.newPage()
 
-  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await page.goto('/', { waitUntil: 'networkidle' })
 
   await expect(page.getByRole('heading', { level: 1, name: 'Adhiraj Muduli' })).toBeVisible()
   await expect(page.locator('canvas')).toHaveCount(0)

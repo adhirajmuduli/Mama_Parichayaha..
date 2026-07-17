@@ -12,7 +12,7 @@ export default function SiteFooter({ chapters }: SiteFooterProps) {
       <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="font-medium text-white">Adhiraj Muduli</p>
-          <p className="mt-1">© {year} Adhiraj Muduli. Released under the MIT License.</p>
+          <p className="mt-1">&copy; {year} Adhiraj Muduli. Released under the MIT License.</p>
         </div>
         <nav aria-label="Footer chapter navigation" className="flex flex-wrap gap-x-4 gap-y-2">
           {chapters.map((chapter) => (
