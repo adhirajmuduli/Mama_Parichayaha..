@@ -1,8 +1,7 @@
+import ChapterSection from '@/components/narrative/ChapterSection'
 import Experience from '@/components/scene/Experience'
-import NarrativeScroll from '@/components/narrative/NarrativeScroll'
-import NarrativeOverlay from '@/components/narrative/NarrativeOverlay'
-import NarrativeEngine from '@/components/narrative/NarrativeEngine'
 import CursorGlow from '@/components/ui/CursorGlow'
+import { chapterRegistry } from '@/lib/chapterRegistry'
 
 export default function HomePage() {
   return (
@@ -13,23 +12,22 @@ export default function HomePage() {
       >
         Skip to portfolio content
       </a>
-      <NarrativeEngine>
-        <main
-          id="portfolio-content"
-          tabIndex={-1}
-          className="relative min-h-screen overflow-x-hidden bg-[#05010a]"
-        >
-          <div className="fixed inset-0 z-0">
-            <Experience />
-          </div>
+      <main
+        id="portfolio-content"
+        tabIndex={-1}
+        className="relative min-h-screen overflow-x-hidden bg-[#05010a]"
+      >
+        <div className="fixed inset-0 z-0">
+          <Experience />
+        </div>
 
-          <div className="relative z-10">
-            <CursorGlow />
-            <NarrativeOverlay />
-            <NarrativeScroll />
-          </div>
-        </main>
-      </NarrativeEngine>
+        <div className="relative z-10">
+          <CursorGlow />
+          {chapterRegistry.map((chapter) => (
+            <ChapterSection key={chapter.id} chapter={chapter} />
+          ))}
+        </div>
+      </main>
     </>
   )
 }
