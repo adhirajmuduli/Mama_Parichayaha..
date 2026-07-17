@@ -14,6 +14,8 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
+        with:
+          lfs: true
       - uses: actions/setup-node@v5
         with:
           node-version-file: .node-version
@@ -22,6 +24,7 @@ jobs:
       - run: corepack prepare npm@11.4.2 --activate
       - run: corepack npm --version
       - run: corepack npm ci
+      - run: git lfs fsck
       - run: npx playwright install --with-deps chromium
       - run: corepack npm run e2e
         env:
