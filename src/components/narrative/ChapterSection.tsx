@@ -17,7 +17,7 @@ export default function ChapterSection({ chapter }: ChapterSectionProps) {
     <section
       id={chapter.sectionId}
       aria-labelledby={headingId}
-      className="relative z-10 flex min-h-[100svh] scroll-mt-8 items-center px-6 py-20 sm:px-12"
+      className="relative z-10 flex min-h-[100svh] scroll-mt-24 items-center px-6 py-20 sm:px-12"
     >
       <ChapterSectionObserver chapter={chapter.id} sectionId={chapter.sectionId} />
 

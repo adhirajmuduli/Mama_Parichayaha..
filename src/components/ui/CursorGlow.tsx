@@ -31,7 +31,7 @@ export default function CursorGlow() {
         fixed
         left-0
         top-0
-        z-[999]
+        z-20
 
         h-[320px]
         w-[320px]

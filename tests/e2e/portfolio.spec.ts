@@ -36,9 +36,40 @@ test('serves the portfolio and its local application icon without failed asset r
   await expect(page.locator('main')).toBeVisible()
   await expect(page.getByRole('link', { name: 'Skip to portfolio content' })).toHaveAttribute(
     'href',
-    '#portfolio-content',
+    '#origins',
   )
   await expect(page.getByRole('heading', { level: 1, name: 'Adhiraj Muduli' })).toBeVisible()
+
+  const chapters = [
+    ['Origins', '#origins'],
+    ['Interests', '#interests'],
+    ['Research', '#research'],
+    ['Computation', '#computation'],
+    ['Future', '#future'],
+  ] as const
+
+  if (testInfo.project.name === 'mobile') {
+    const menuTrigger = page.getByRole('button', { name: 'Menu' })
+    await expect(menuTrigger).toBeVisible()
+    await menuTrigger.click()
+
+    const menu = page.getByRole('dialog', { name: 'Chapter navigation' })
+    await expect(menu).toBeVisible()
+
+    for (const [label, href] of chapters) {
+      await expect(menu.getByRole('link', { name: label })).toHaveAttribute('href', href)
+    }
+
+    await page.keyboard.press('Escape')
+    await expect(menu).not.toBeVisible()
+    await expect(menuTrigger).toBeFocused()
+  } else {
+    const navigation = page.getByRole('navigation', { name: 'Chapter navigation' })
+
+    for (const [label, href] of chapters) {
+      await expect(navigation.getByRole('link', { name: label })).toHaveAttribute('href', href)
+    }
+  }
 
   if (testInfo.project.name === 'no-webgl') {
     await expect(page.locator('canvas')).toHaveCount(0)
