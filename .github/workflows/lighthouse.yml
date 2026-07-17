@@ -1,4 +1,4 @@
-name: Browser checks
+name: Lighthouse
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  browser:
+  lighthouse:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -29,18 +29,27 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('package-lock.json') }}-
       - run: corepack enable
       - run: corepack prepare npm@11.4.2 --activate
-      - run: corepack npm --version
       - run: corepack npm ci
       - run: git lfs fsck
-      - run: npx playwright install --with-deps chromium
-      - run: corepack npm run e2e
+      - run: corepack npm run build
+      - run: corepack npm run prepare:standalone
+      - name: Start the production server
+        run: node .next/standalone/server.js > lighthouse-server.log 2>&1 &
         env:
-          CI: 'true'
+          HOSTNAME: 127.0.0.1
+          PORT: '3101'
+      - name: Wait for the production server
+        run: curl --fail --retry 20 --retry-all-errors --retry-delay 1 http://127.0.0.1:3101/
+      - name: Audit Lighthouse budgets
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: http://127.0.0.1:3101/
+          configPath: ./lighthouserc.json
       - uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: playwright-artifacts
+          name: lighthouse-reports
           path: |
-            playwright-report
-            test-results
-          if-no-files-found: ignore
+            .lighthouseci
+            lighthouse-server.log
+          if-no-files-found: warn

@@ -10,6 +10,15 @@ permissions:
   security-events: write
 
 jobs:
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/dependency-review-action@v5
+        with:
+          fail-on-severity: high
+
   dependency-audit:
     runs-on: ubuntu-latest
     steps:
@@ -22,7 +31,24 @@ jobs:
       - run: corepack prepare npm@11.4.2 --activate
       - run: corepack npm --version
       - run: corepack npm ci
+      - run: corepack npm run licenses:inventory
       - run: corepack npm run security
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: package-license-inventory
+          path: artifacts/licenses/package-licenses.json
+          if-no-files-found: error
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   codeql:
     runs-on: ubuntu-latest

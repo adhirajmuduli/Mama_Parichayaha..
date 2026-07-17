@@ -14,13 +14,18 @@
     "typecheck": "tsc --noEmit",
     "unit": "vitest run",
     "coverage": "vitest run --coverage",
-    "e2e": "npm run build && playwright test",
+    "e2e": "npm run build && playwright test tests/e2e/portfolio.spec.ts tests/e2e/accessibility.spec.ts",
     "accessibility": "npm run e2e -- tests/e2e/accessibility.spec.ts",
-    "asset:inspect": "gltf-transform inspect public/models/DNA/dna.glb",
     "bundle": "node scripts/build-bundle.mjs",
     "knip": "knip --reporter compact",
     "security": "npm audit --omit=dev --audit-level=high",
-    "quality": "npm run format:check && npm run lint && npm run typecheck && npm run unit && npm run coverage && npm run knip && npm run asset:inspect && npm run build"
+    "asset:inspect": "npm run asset:verify && gltf-transform inspect public/models/DNA/dna.glb",
+    "test:visual": "npm run build && playwright test tests/e2e/visual.spec.ts --workers=1",
+    "quality": "npm run format:check && npm run lint && npm run typecheck && npm run unit && npm run coverage && npm run knip && npm run asset:inspect && npm run build",
+    "lighthouse:ci": "npx --yes @lhci/cli@0.15.1 autorun",
+    "test:visual:update": "npm run build && playwright test tests/e2e/visual.spec.ts --workers=1 --update-snapshots",
+    "licenses:inventory": "node scripts/license-inventory.mjs",
+    "asset:verify": "node scripts/verify-model-assets.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.0.4",

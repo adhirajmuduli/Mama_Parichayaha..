@@ -1,4 +1,4 @@
-name: Browser checks
+name: Visual regression
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  browser:
+  visual:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -29,17 +29,16 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('package-lock.json') }}-
       - run: corepack enable
       - run: corepack prepare npm@11.4.2 --activate
-      - run: corepack npm --version
       - run: corepack npm ci
       - run: git lfs fsck
       - run: npx playwright install --with-deps chromium
-      - run: corepack npm run e2e
+      - run: corepack npm run test:visual
         env:
           CI: 'true'
       - uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: playwright-artifacts
+          name: visual-regression-artifacts
           path: |
             playwright-report
             test-results
