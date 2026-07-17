@@ -13,10 +13,7 @@ interface FadeRevealProps {
 export default function FadeReveal({ children, delay = 0 }: FadeRevealProps) {
   return (
     <motion.div
-      initial={{
-        opacity: 0,
-        y: 50,
-      }}
+      initial={false}
 
       whileInView={{
         opacity: 1,
