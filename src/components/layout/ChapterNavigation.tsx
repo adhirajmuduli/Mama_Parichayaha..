@@ -19,12 +19,14 @@ function ChapterLinks({
   chapters,
   onNavigate,
 }: ChapterNavigationProps & { onNavigate?: () => void }) {
+  const activeChapter = useNarrativeStore((state) => state.activeChapter)
   const setActiveChapter = useNarrativeStore((state) => state.setActiveChapter)
 
   return chapters.map((chapter) => (
     <a
       key={chapter.id}
       href={`#${chapter.sectionId}`}
+      aria-current={chapter.id === activeChapter ? 'page' : undefined}
       className="rounded-md px-3 py-2 text-sm text-zinc-200 transition-colors hover:bg-white/10 hover:text-white focus-visible:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
       onClick={() => {
         setActiveChapter(chapter.id)

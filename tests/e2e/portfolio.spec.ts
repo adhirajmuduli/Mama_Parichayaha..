@@ -73,12 +73,22 @@ test('serves the portfolio and its local application icon without failed asset r
 
   if (testInfo.project.name !== 'mobile') {
     const progress = page.getByRole('navigation', { exact: true, name: 'Chapter progress' })
+    const navigation = page.getByRole('navigation', { exact: true, name: 'Chapter navigation' })
 
     for (const [label, href] of chapters) {
       await expect(
         progress.getByRole('link', { name: new RegExp(`^${label} \\(`) }),
       ).toHaveAttribute('href', href)
     }
+
+    await expect(navigation.getByRole('link', { name: 'Origins' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    )
+    await expect(progress.getByRole('link', { name: /^Origins \(1 of 5\)$/ })).toHaveAttribute(
+      'aria-current',
+      'step',
+    )
   }
 
   const footerNavigation = page.getByRole('navigation', {
