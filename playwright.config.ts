@@ -12,7 +12,7 @@ export default defineConfig({
   use: {
     baseURL,
     browserName: 'chromium',
-    channel: 'chrome',
+    ...(process.env.CI ? {} : { channel: 'chrome' }),
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'off',
