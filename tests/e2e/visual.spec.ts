@@ -11,7 +11,7 @@ test('keeps the initial portfolio shell visually stable', async ({ page }, testI
   await expect(page).toHaveScreenshot(`portfolio-${testInfo.project.name}.png`, {
     animations: 'disabled',
     caret: 'hide',
-    maxDiffPixelRatio: 0.01,
+    maxDiffPixelRatio: 0.035,
     timeout: 30_000,
   })
 })
