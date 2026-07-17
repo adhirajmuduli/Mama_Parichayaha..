@@ -70,8 +70,8 @@ export const portfolioContent = PortfolioContentSchema.parse({
       description:
         'Biological sciences undergraduate exploring molecular systems, computational biology, scientific visualization, and AI-assisted discovery.',
       source: {
-        file: 'src/components/cards/OriginsCard.tsx',
-        location: 'existing portfolio copy',
+        file: 'docs/content/phase2-content-provenance.md',
+        location: 'Phase 2 content provenance',
       },
     },
     {
@@ -81,8 +81,8 @@ export const portfolioContent = PortfolioContentSchema.parse({
       description:
         'Protein systems, bioinformatics, molecular simulation, AI-assisted discovery, scientific visualization.',
       source: {
-        file: 'src/components/cards/InterestsCard.tsx',
-        location: 'existing portfolio copy',
+        file: 'docs/content/phase2-content-provenance.md',
+        location: 'Phase 2 content provenance',
       },
     },
     {
@@ -92,8 +92,8 @@ export const portfolioContent = PortfolioContentSchema.parse({
       description:
         'Research projects, scientific software, computational workflows, and biological modeling.',
       source: {
-        file: 'src/components/cards/ResearchCard.tsx',
-        location: 'existing portfolio copy',
+        file: 'docs/content/phase2-content-provenance.md',
+        location: 'Phase 2 content provenance',
       },
     },
     {
@@ -114,8 +114,8 @@ export const portfolioContent = PortfolioContentSchema.parse({
       description:
         'Exploring molecular systems, computational biology, scientific visualization, and AI-assisted discovery.',
       source: {
-        file: 'src/components/cards/OriginsCard.tsx',
-        location: 'existing portfolio copy',
+        file: 'docs/content/phase2-content-provenance.md',
+        location: 'Phase 2 content provenance',
       },
     },
   ],
