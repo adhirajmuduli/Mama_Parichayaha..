@@ -1,6 +1,6 @@
 'use client'
 
-import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { Component, type ReactNode } from 'react'
 
 interface Props {
   children: ReactNode
@@ -16,10 +16,6 @@ export default class SceneErrorBoundary extends Component<Props, State> {
 
   static getDerivedStateFromError(): State {
     return { hasError: true }
-  }
-
-  override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error(`Unable to render ${this.props.name} exhibit.`, error, errorInfo)
   }
 
   override render() {

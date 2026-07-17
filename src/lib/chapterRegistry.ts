@@ -30,7 +30,6 @@ interface AtmosphereDefinition {
 
 interface ExhibitDefinition {
   id: ExhibitId
-  preload: 'current' | 'adjacent' | 'none'
 }
 
 export interface ChapterRegistryEntry {
@@ -65,7 +64,7 @@ export const chapterRegistry = [
         keyLight: '#c084fc',
         palette: ['#07020f', '#2e1065', '#f59e0b'],
       },
-      exhibits: [{ id: 'dna', preload: 'current' }],
+      exhibits: [{ id: 'dna' }],
     },
   },
   {
@@ -85,7 +84,7 @@ export const chapterRegistry = [
         keyLight: '#fb923c',
         palette: ['#0b1020', '#115e59', '#fb923c'],
       },
-      exhibits: [{ id: 'phages', preload: 'adjacent' }],
+      exhibits: [{ id: 'phages' }],
     },
   },
   {
@@ -105,7 +104,7 @@ export const chapterRegistry = [
         keyLight: '#22d3ee',
         palette: ['#081827', '#164e63', '#67e8f9'],
       },
-      exhibits: [{ id: 'protein', preload: 'adjacent' }],
+      exhibits: [{ id: 'protein' }],
     },
   },
   {
@@ -125,7 +124,7 @@ export const chapterRegistry = [
         keyLight: '#818cf8',
         palette: ['#11111f', '#312e81', '#c084fc'],
       },
-      exhibits: [{ id: 'tardigrade', preload: 'adjacent' }],
+      exhibits: [{ id: 'tardigrade' }],
     },
   },
   {

@@ -4,7 +4,20 @@ test('serves the portfolio and its local application icon without failed asset r
   page,
 }, testInfo) => {
   const failedResponses: string[] = []
+  const remoteSceneOrFontRequests: string[] = []
   const browserErrors: string[] = []
+
+  page.on('request', (request) => {
+    const resourceType = request.resourceType()
+    const url = new URL(request.url())
+
+    if (
+      ['font', 'image', 'media', 'script', 'xhr', 'fetch'].includes(resourceType) &&
+      url.origin !== 'http://127.0.0.1:3100'
+    ) {
+      remoteSceneOrFontRequests.push(request.url())
+    }
+  })
 
   page.on('console', (message) => {
     if (message.type() === 'error') {
@@ -108,12 +121,14 @@ test('serves the portfolio and its local application icon without failed asset r
 
   if (testInfo.project.name === 'no-webgl') {
     await expect(page.locator('canvas')).toHaveCount(0)
+    await expect(page.locator('[data-scene-enhancement="webgl"]')).toHaveCount(0)
   }
 
   const icon = await page.request.get('/icon.png')
   expect(icon.ok()).toBe(true)
   expect(icon.headers()['content-type']).toContain('image/png')
   expect(failedResponses).toEqual([])
+  expect(remoteSceneOrFontRequests).toEqual([])
   expect(browserErrors).toEqual([])
 })
 

@@ -2,12 +2,7 @@ import type { Metadata } from 'next'
 
 import './globals.css'
 
-import { Geist } from 'next/font/google'
-
 import Providers from './providers'
-import { cn } from '@/lib/utils'
-
-const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
 
 export const metadata: Metadata = {
   title: 'Adhiraj Muduli | Biological Sciences',
@@ -21,7 +16,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn('font-sans', geist.variable)}>
+    <html lang="en" suppressHydrationWarning className="font-sans">
       <body>
         <Providers>{children}</Providers>
       </body>

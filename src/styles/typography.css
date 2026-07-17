@@ -1,5 +1,5 @@
 :root {
-  --font-site: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-site: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --type-display: clamp(2.5rem, 6vw, 5rem);
   --type-heading: clamp(2rem, 4vw, 3.5rem);
   --type-body: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);
