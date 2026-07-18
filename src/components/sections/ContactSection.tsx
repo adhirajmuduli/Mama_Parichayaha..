@@ -21,20 +21,24 @@ export default function ContactSection() {
             {contact.title}
           </h2>
           <p className="leading-relaxed text-[var(--site-muted)]">{contact.description}</p>
-          <ul className="mt-6 flex flex-wrap gap-3" aria-label="Public profiles">
+          <ul className="mt-6 flex flex-wrap gap-3" aria-label="Public contact links">
             {publicProfiles.map((profile) => (
               <li key={profile.href}>
                 <LiquidGlassButton
                   href={profile.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={`${profile.label} (opens in a new tab)`}
+                  aria-label={
+                    profile.external ? `${profile.label} (opens in a new tab)` : profile.label
+                  }
+                  {...(profile.external ? { rel: 'noreferrer', target: '_blank' } : {})}
                 >
                   {profile.label}
                 </LiquidGlassButton>
               </li>
             ))}
           </ul>
+          <p className="mt-6 border-t border-white/15 pt-4 text-sm leading-relaxed text-[var(--site-muted)]">
+            {contact.privacyNotice}
+          </p>
         </LiquidGlassPanel>
       </article>
     </section>

@@ -4,6 +4,8 @@ import SiteFooter from '@/components/layout/SiteFooter'
 import SiteHeader from '@/components/layout/SiteHeader'
 import ChapterSection from '@/components/narrative/ChapterSection'
 import ContactSection from '@/components/sections/ContactSection'
+import CreditsSection from '@/components/sections/CreditsSection'
+import PublicationStatusSection from '@/components/sections/PublicationStatusSection'
 import CursorGlow from '@/components/ui/CursorGlow'
 import { chapterRegistry } from '@/lib/chapterRegistry'
 
@@ -37,7 +39,9 @@ export default function PortfolioDocument({
           {chapterRegistry.map((chapter) => (
             <ChapterSection key={chapter.id} chapter={chapter} />
           ))}
+          <PublicationStatusSection />
           <ContactSection />
+          <CreditsSection />
           <SiteFooter chapters={chapterNavigation} />
         </div>
       </main>

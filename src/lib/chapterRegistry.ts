@@ -22,10 +22,34 @@ interface ResponsiveCamera {
   compact: CameraPose
 }
 
-interface AtmosphereDefinition {
+interface AtmosphereLightDefinition {
+  color: string
+  intensity: number
+  offset: Vector3Tuple
+}
+
+export interface AtmosphereDefinition {
+  bloom: {
+    intensity: number
+    threshold: number
+  }
+  cloudDensity: number
+  exposure: number
+  fog: {
+    far: number
+    near: number
+  }
   fogColor: string
   keyLight: string
+  lighting: {
+    ambientIntensity: number
+    fill: AtmosphereLightDefinition
+    key: AtmosphereLightDefinition
+    rim: AtmosphereLightDefinition
+  }
   palette: readonly [string, string, string]
+  particleColor: string
+  particleOpacity: number
 }
 
 interface ExhibitDefinition {
@@ -60,9 +84,21 @@ export const chapterRegistry = [
         compact: { position: [0, 1.5, 14], target: [0, 0, 4] },
       },
       atmosphere: {
+        bloom: { intensity: 0.24, threshold: 0.66 },
+        cloudDensity: 0.94,
+        exposure: 0.9,
+        fog: { near: 11, far: 39 },
         fogColor: '#07020f',
         keyLight: '#c084fc',
+        lighting: {
+          ambientIntensity: 0.24,
+          key: { color: '#a78bfa', intensity: 3.2, offset: [4, 6, 7] },
+          rim: { color: '#f59e0b', intensity: 10, offset: [-4, 1, 3] },
+          fill: { color: '#4f46e5', intensity: 6, offset: [3, -2, -4] },
+        },
         palette: ['#07020f', '#2e1065', '#f59e0b'],
+        particleColor: '#c4b5fd',
+        particleOpacity: 0.38,
       },
       exhibits: [{ id: 'dna' }],
     },
@@ -80,9 +116,21 @@ export const chapterRegistry = [
         compact: { position: [18, 3.652, 13.301], target: [18, 2.152, 3.301] },
       },
       atmosphere: {
+        bloom: { intensity: 0.18, threshold: 0.72 },
+        cloudDensity: 0.82,
+        exposure: 0.86,
+        fog: { near: 12, far: 42 },
         fogColor: '#0b1020',
         keyLight: '#fb923c',
+        lighting: {
+          ambientIntensity: 0.2,
+          key: { color: '#fb923c', intensity: 2.8, offset: [5, 5, 6] },
+          rim: { color: '#2dd4bf', intensity: 8, offset: [-4, 2, 2] },
+          fill: { color: '#7c3aed', intensity: 5, offset: [2, -2, -5] },
+        },
         palette: ['#0b1020', '#115e59', '#fb923c'],
+        particleColor: '#99f6e4',
+        particleOpacity: 0.3,
       },
       exhibits: [{ id: 'phages' }],
     },
@@ -100,9 +148,21 @@ export const chapterRegistry = [
         compact: { position: [36, 4.499, 11.449], target: [36, 2.999, 1.449] },
       },
       atmosphere: {
+        bloom: { intensity: 0.28, threshold: 0.6 },
+        cloudDensity: 1.02,
+        exposure: 0.98,
+        fog: { near: 10, far: 38 },
         fogColor: '#081827',
         keyLight: '#22d3ee',
+        lighting: {
+          ambientIntensity: 0.2,
+          key: { color: '#22d3ee', intensity: 3.4, offset: [4, 6, 6] },
+          rim: { color: '#34d399', intensity: 9, offset: [-3, 1, 3] },
+          fill: { color: '#0e7490', intensity: 7, offset: [3, -2, -4] },
+        },
         palette: ['#081827', '#164e63', '#67e8f9'],
+        particleColor: '#a5f3fc',
+        particleOpacity: 0.42,
       },
       exhibits: [{ id: 'protein' }],
     },
@@ -120,9 +180,21 @@ export const chapterRegistry = [
         compact: { position: [54, 3.526, 9.091], target: [54, 2.026, -0.909] },
       },
       atmosphere: {
+        bloom: { intensity: 0.2, threshold: 0.7 },
+        cloudDensity: 0.88,
+        exposure: 0.9,
+        fog: { near: 11, far: 40 },
         fogColor: '#11111f',
         keyLight: '#818cf8',
+        lighting: {
+          ambientIntensity: 0.22,
+          key: { color: '#818cf8', intensity: 3, offset: [4, 5, 6] },
+          rim: { color: '#c084fc', intensity: 8, offset: [-4, 2, 2] },
+          fill: { color: '#4338ca', intensity: 5, offset: [3, -2, -4] },
+        },
         palette: ['#11111f', '#312e81', '#c084fc'],
+        particleColor: '#c4b5fd',
+        particleOpacity: 0.32,
       },
       exhibits: [{ id: 'tardigrade' }],
     },
@@ -140,9 +212,21 @@ export const chapterRegistry = [
         compact: { position: [72, 1.325, 7.051], target: [72, -0.175, -2.949] },
       },
       atmosphere: {
+        bloom: { intensity: 0.16, threshold: 0.74 },
+        cloudDensity: 0.76,
+        exposure: 0.84,
+        fog: { near: 12, far: 43 },
         fogColor: '#0b1020',
         keyLight: '#c4b5fd',
+        lighting: {
+          ambientIntensity: 0.24,
+          key: { color: '#c4b5fd', intensity: 2.6, offset: [4, 5, 6] },
+          rim: { color: '#cbd5e1', intensity: 6, offset: [-4, 2, 2] },
+          fill: { color: '#14b8a6', intensity: 4, offset: [3, -2, -4] },
+        },
         palette: ['#0b1020', '#312e81', '#cbd5e1'],
+        particleColor: '#ccfbf1',
+        particleOpacity: 0.24,
       },
       exhibits: [],
     },
@@ -184,6 +268,38 @@ function assertFiniteVector(vector: Vector3Tuple, label: string) {
   }
 }
 
+function assertAtmosphere(atmosphere: AtmosphereDefinition, chapterId: ChapterId) {
+  const scalarValues = [
+    atmosphere.bloom.intensity,
+    atmosphere.bloom.threshold,
+    atmosphere.cloudDensity,
+    atmosphere.exposure,
+    atmosphere.fog.near,
+    atmosphere.fog.far,
+    atmosphere.lighting.ambientIntensity,
+    atmosphere.lighting.fill.intensity,
+    atmosphere.lighting.key.intensity,
+    atmosphere.lighting.rim.intensity,
+    atmosphere.particleOpacity,
+  ]
+
+  if (scalarValues.some((value) => !Number.isFinite(value))) {
+    throw new Error(`Chapter ${chapterId} has a non-finite atmosphere scalar.`)
+  }
+
+  if (atmosphere.fog.near < 0 || atmosphere.fog.far <= atmosphere.fog.near) {
+    throw new Error(`Chapter ${chapterId} has an invalid fog range.`)
+  }
+
+  if (atmosphere.particleOpacity < 0 || atmosphere.particleOpacity > 1) {
+    throw new Error(`Chapter ${chapterId} has an invalid particle opacity.`)
+  }
+
+  assertFiniteVector(atmosphere.lighting.key.offset, `${chapterId} key light offset`)
+  assertFiniteVector(atmosphere.lighting.rim.offset, `${chapterId} rim light offset`)
+  assertFiniteVector(atmosphere.lighting.fill.offset, `${chapterId} fill light offset`)
+}
+
 export function assertChapterRegistry(
   registry: readonly ChapterRegistryEntry[] = chapterRegistry,
   contentById: Readonly<Record<ChapterId, ChapterContent>> = chapterContentById,
@@ -213,6 +329,7 @@ export function assertChapterRegistry(
     assertFiniteVector(chapter.scene.camera.desktop.target, `${chapter.id} desktop target`)
     assertFiniteVector(chapter.scene.camera.compact.position, `${chapter.id} compact position`)
     assertFiniteVector(chapter.scene.camera.compact.target, `${chapter.id} compact target`)
+    assertAtmosphere(chapter.scene.atmosphere, chapter.id)
 
     chapter.scene.exhibits.forEach((exhibit) => {
       if (!exhibitIds.includes(exhibit.id)) {

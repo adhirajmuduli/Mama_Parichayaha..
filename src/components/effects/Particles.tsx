@@ -4,6 +4,8 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
+import { useAtmosphereRuntime } from '@/components/scene/AtmosphereContext'
+
 interface ParticlesProps {
   count: number
 }
@@ -22,6 +24,8 @@ function createSeededRandom(seed: number) {
 
 export default function Particles({ count }: ParticlesProps) {
   const pointsRef = useRef<THREE.Points>(null)
+  const materialRef = useRef<THREE.PointsMaterial>(null)
+  const runtime = useAtmosphereRuntime()
   const positions = useMemo(() => {
     const random = createSeededRandom(0x51ce5eed)
     const array = new Float32Array(count * 3)
@@ -35,13 +39,15 @@ export default function Particles({ count }: ParticlesProps) {
     return array
   }, [count])
 
-  useFrame((state) => {
-    if (!pointsRef.current) {
+  useFrame((_, delta) => {
+    if (!pointsRef.current || !materialRef.current) {
       return
     }
 
-    pointsRef.current.rotation.y = state.clock.elapsedTime * 0.01
-    pointsRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.05) * 0.05
+    pointsRef.current.rotation.y += delta * 0.006 * runtime.motionFactor
+    pointsRef.current.rotation.x = Math.sin(pointsRef.current.rotation.y * 4.5) * 0.035
+    materialRef.current.color.copy(runtime.particleColor)
+    materialRef.current.opacity = runtime.particleOpacity
   })
 
   if (count === 0) {
@@ -49,17 +55,17 @@ export default function Particles({ count }: ParticlesProps) {
   }
 
   return (
-    <points ref={pointsRef}>
+    <points ref={pointsRef} renderOrder={-10}>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.25}
-        color="#c084fc"
-        transparent
-        opacity={1}
-        depthWrite={true}
+        ref={materialRef}
         blending={THREE.AdditiveBlending}
+        depthWrite={false}
+        size={0.18}
+        sizeAttenuation
+        transparent
       />
     </points>
   )

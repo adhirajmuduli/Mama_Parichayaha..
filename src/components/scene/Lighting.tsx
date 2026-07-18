@@ -1,17 +1,45 @@
+'use client'
+
+import { useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import * as THREE from 'three'
+
+import { useAtmosphereRuntime } from './AtmosphereContext'
+
 export default function Lighting() {
+  const ambientRef = useRef<THREE.AmbientLight>(null)
+  const keyRef = useRef<THREE.DirectionalLight>(null)
+  const rimRef = useRef<THREE.PointLight>(null)
+  const fillRef = useRef<THREE.PointLight>(null)
+  const runtime = useAtmosphereRuntime()
+
+  useFrame(() => {
+    if (!ambientRef.current || !keyRef.current || !rimRef.current || !fillRef.current) {
+      return
+    }
+
+    ambientRef.current.intensity = runtime.ambientIntensity
+    keyRef.current.color.copy(runtime.keyColor)
+    keyRef.current.intensity = runtime.keyIntensity
+    keyRef.current.position.copy(runtime.center).add(runtime.keyOffset)
+    keyRef.current.target.position.copy(runtime.center)
+    keyRef.current.target.updateMatrixWorld()
+
+    rimRef.current.color.copy(runtime.rimColor)
+    rimRef.current.intensity = runtime.rimIntensity
+    rimRef.current.position.copy(runtime.center).add(runtime.rimOffset)
+
+    fillRef.current.color.copy(runtime.fillColor)
+    fillRef.current.intensity = runtime.fillIntensity
+    fillRef.current.position.copy(runtime.center).add(runtime.fillOffset)
+  })
+
   return (
     <>
-      {/* GLOBAL SOFT LIGHT */}
-      <ambientLight intensity={0.51} />
-
-      {/* MAIN PURPLE TOP LIGHT */}
-      <directionalLight position={[0, 6, 4]} intensity={4} color="#c084fc" />
-
-      {/* ORANGE SIDE ACCENT */}
-      <pointLight position={[-5, -1, 3]} intensity={18} color="#f97316" />
-
-      {/* PURPLE ATMOSPHERIC RIM */}
-      <pointLight position={[3, 2, -4]} intensity={15} color="#7c3aed" />
+      <ambientLight ref={ambientRef} />
+      <directionalLight ref={keyRef} />
+      <pointLight ref={rimRef} distance={20} />
+      <pointLight ref={fillRef} distance={18} />
     </>
   )
 }

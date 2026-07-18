@@ -20,7 +20,7 @@ export default function SiteFooter({ chapters }: SiteFooterProps) {
           <p className="font-medium text-white">Adhiraj Muduli</p>
           <p className="mt-1">&copy; {year} Adhiraj Muduli. Released under the MIT License.</p>
         </div>
-        <nav aria-label="Footer chapter navigation" className="flex flex-wrap gap-x-4 gap-y-2">
+        <nav aria-label="Footer navigation" className="flex flex-wrap gap-x-4 gap-y-2">
           {chapters.map((chapter) => (
             <a
               key={chapter.id}
@@ -30,6 +30,12 @@ export default function SiteFooter({ chapters }: SiteFooterProps) {
               {chapter.navigationLabel}
             </a>
           ))}
+          <a
+            href="#credits"
+            className="rounded-md underline-offset-4 hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--site-focus)]"
+          >
+            Credits
+          </a>
         </nav>
       </div>
     </LiquidGlass>

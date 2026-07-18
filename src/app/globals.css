@@ -47,3 +47,69 @@ a {
     @apply bg-background text-foreground;
   }
 }
+
+.scene-poster {
+  --scene-fallback-base: #07020f;
+  --scene-fallback-mid: #2e1065;
+  --scene-fallback-accent: #f59e0b;
+  background: var(--scene-fallback-base);
+  isolation: isolate;
+  transition: background-color 700ms ease;
+}
+
+.scene-poster__cloud,
+.scene-poster__grain {
+  inset: -15%;
+  pointer-events: none;
+  position: absolute;
+}
+
+.scene-poster__cloud {
+  filter: blur(42px);
+  opacity: 0.72;
+  transform: translateZ(0);
+}
+
+.scene-poster__cloud--primary {
+  background:
+    radial-gradient(
+      ellipse at 22% 18%,
+      color-mix(in srgb, var(--scene-fallback-mid) 82%, transparent),
+      transparent 47%
+    ),
+    radial-gradient(
+      ellipse at 74% 72%,
+      color-mix(in srgb, var(--scene-fallback-accent) 34%, transparent),
+      transparent 52%
+    );
+}
+
+.scene-poster__cloud--secondary {
+  background:
+    radial-gradient(
+      ellipse at 64% 24%,
+      color-mix(in srgb, var(--scene-fallback-accent) 26%, transparent),
+      transparent 44%
+    ),
+    radial-gradient(
+      ellipse at 36% 78%,
+      color-mix(in srgb, var(--scene-fallback-mid) 46%, transparent),
+      transparent 54%
+    );
+  opacity: 0.48;
+}
+
+.scene-poster__grain {
+  background-image:
+    repeating-radial-gradient(circle at 0 0, rgb(255 255 255 / 3%) 0 1px, transparent 1px 4px),
+    linear-gradient(145deg, transparent 0%, rgb(0 0 0 / 28%) 100%);
+  mix-blend-mode: soft-light;
+  opacity: 0.28;
+}
+
+@media (forced-colors: active), (prefers-reduced-transparency: reduce) {
+  .scene-poster__cloud,
+  .scene-poster__grain {
+    display: none;
+  }
+}

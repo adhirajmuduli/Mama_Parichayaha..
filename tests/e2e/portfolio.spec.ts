@@ -104,20 +104,48 @@ test('serves the portfolio and its local application icon without failed asset r
     )
   }
 
-  const contact = page.getByRole('region', { name: 'Current work on GitHub' })
+  const publications = page.getByRole('region', { name: 'No publications or talks listed' })
+  await expect(publications).toContainText(
+    'No publications, talks, or research articles are currently listed in this portfolio.',
+  )
+
+  const contact = page.getByRole('region', { name: 'Get in touch' })
+  await expect(contact.getByRole('link', { name: 'Email Adhiraj' })).toHaveAttribute(
+    'href',
+    'mailto:adhiraj.muduli@niser.ac.in',
+  )
   await expect(contact.getByRole('link', { name: /GitHub profile/ })).toHaveAttribute(
     'href',
     'https://github.com/adhirajmuduli',
   )
+  await expect(contact.getByRole('link', { name: /ORCID record/ })).toHaveAttribute(
+    'href',
+    'https://orcid.org/0009-0005-5655-8120?lang=en',
+  )
 
   const footerNavigation = page.getByRole('navigation', {
     exact: true,
-    name: 'Footer chapter navigation',
+    name: 'Footer navigation',
   })
 
   for (const [label, href] of chapters) {
     await expect(footerNavigation.getByRole('link', { name: label })).toHaveAttribute('href', href)
   }
+
+  await expect(footerNavigation.getByRole('link', { name: 'Credits' })).toHaveAttribute(
+    'href',
+    '#credits',
+  )
+
+  const credits = page.getByRole('region', { name: 'Model and scientific-source attribution' })
+  await expect(credits.getByRole('link', { name: 'DNA source on Sketchfab' })).toHaveAttribute(
+    'href',
+    'https://sketchfab.com/3d-models/dna-vr-interactive-animation-c9a926f139044470ad3fb053c66ad71e',
+  )
+  await expect(credits.getByRole('link', { name: 'RCSB PDB 1GFL' })).toHaveAttribute(
+    'href',
+    'https://www.rcsb.org/structure/1GFL',
+  )
 
   if (testInfo.project.name === 'no-webgl') {
     await expect(page.locator('canvas')).toHaveCount(0)

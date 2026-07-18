@@ -3,6 +3,7 @@ import ModelInteractionControls from '@/components/models/ModelInteractionContro
 import type { ChapterRegistryEntry } from '@/lib/chapterRegistry'
 import { getChapterContent } from '@/lib/chapterRegistry'
 
+import ChapterDetail from './ChapterDetail'
 import ChapterSectionObserver from './ChapterSectionObserver'
 
 interface ChapterSectionProps {
@@ -37,6 +38,13 @@ export default function ChapterSection({ chapter }: ChapterSectionProps) {
           </Heading>
 
           <p className="leading-relaxed text-[var(--site-muted)]">{content.description}</p>
+          <ChapterDetail chapter={content} />
+          {chapter.id === 'origins' ? (
+            <p className="mt-6 text-sm leading-relaxed text-[var(--site-muted)]">
+              Scroll through the chapters to move between the portfolio&apos;s scientific themes and
+              interactive exhibits.
+            </p>
+          ) : null}
           <ModelInteractionControls chapter={chapter} />
         </LiquidGlassPanel>
       </article>

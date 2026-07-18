@@ -4,11 +4,10 @@ import { Suspense, useCallback, useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
-import Lighting from '@/components/scene/Lighting'
-import SceneContent from './SceneContent'
 import ChapterCameraRig from '@/components/motion/ChapterCameraRig'
-import PostProcessing from '@/components/effects/PostProcessing'
-import Particles from '@/components/effects/Particles'
+import AtmosphereController from '@/components/scene/AtmosphereController'
+
+import SceneContent from './SceneContent'
 import {
   getSceneProfileForTier,
   SceneQualityGovernor,
@@ -51,7 +50,6 @@ export default function Experience({ initialProfile }: ExperienceProps) {
   const configureRenderer = useCallback((state: { gl: THREE.WebGLRenderer }) => {
     state.gl.outputColorSpace = THREE.SRGBColorSpace
     state.gl.toneMapping = THREE.ACESFilmicToneMapping
-    state.gl.toneMappingExposure = 1
   }, [])
 
   return (
@@ -65,25 +63,25 @@ export default function Experience({ initialProfile }: ExperienceProps) {
           preserveDrawingBuffer: false,
         }}
         dpr={[1, profile.dprCap]}
-        resize={{ debounce: { resize: 0, scroll: 50 }, scroll: false }}
-        eventSource={eventSource}
         eventPrefix="client"
+        eventSource={eventSource}
         className="h-full w-full"
         onCreated={configureRenderer}
+        resize={{ debounce: { resize: 0, scroll: 50 }, scroll: false }}
       >
-        <color attach="background" args={['#07020f']} />
         <fog attach="fog" args={['#07020f', 12, 40]} />
 
         <ScenePerformanceMonitor tier={tier} onTierChange={handleTierChange} />
         <ChapterCameraRig />
-        <Lighting />
-        <Particles count={profile.particleCount} />
+        <AtmosphereController
+          particleCount={profile.particleCount}
+          postProcessing={profile.postProcessing}
+          tier={tier}
+        />
 
         <Suspense fallback={null}>
           <SceneContent tier={tier} />
         </Suspense>
-
-        {profile.postProcessing ? <PostProcessing /> : null}
       </Canvas>
     </div>
   )
