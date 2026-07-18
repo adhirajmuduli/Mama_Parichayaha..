@@ -8,6 +8,7 @@ import { getAdjacentChapterIds } from '@/lib/chapterSelectors'
 import { chapterRegistry, exhibitIds, type ExhibitId } from '@/lib/chapterRegistry'
 import type { SceneQualityTier } from '@/lib/sceneRuntime'
 import { useNarrativeStore } from '@/stores/narrativeStore'
+import { useSceneInteractionStore } from '@/stores/sceneInteractionStore'
 
 import { assertExhibitLoaders, exhibitLoaders } from './exhibitLoaders'
 import { preloadModelAsset } from './modelPreload'
@@ -38,6 +39,8 @@ function scheduleIdleWork(callback: () => void) {
 
 export default function SceneContent({ tier }: { tier: Exclude<SceneQualityTier, 'static'> }) {
   const activeChapter = useNarrativeStore((state) => state.activeChapter)
+  const markExhibitUnavailable = useSceneInteractionStore((state) => state.markExhibitUnavailable)
+  const setAvailableExhibits = useSceneInteractionStore((state) => state.setAvailableExhibits)
   const activeAndAdjacentExhibits = useMemo(() => {
     const nearbyChapterIds = new Set([activeChapter, ...getAdjacentChapterIds(activeChapter)])
 
@@ -46,6 +49,14 @@ export default function SceneContent({ tier }: { tier: Exclude<SceneQualityTier,
       .flatMap((chapter) => chapter.scene.exhibits.map((exhibit) => exhibit.id))
       .filter((exhibitId) => isSceneAssetAvailable(exhibitId, tier))
   }, [activeChapter, tier])
+
+  useEffect(() => {
+    setAvailableExhibits(activeAndAdjacentExhibits)
+
+    return () => {
+      setAvailableExhibits([])
+    }
+  }, [activeAndAdjacentExhibits, setAvailableExhibits])
 
   useEffect(() => {
     return scheduleIdleWork(() => {
@@ -65,7 +76,11 @@ export default function SceneContent({ tier }: { tier: Exclude<SceneQualityTier,
         const Exhibit = exhibitComponents[exhibitId]
 
         return (
-          <SceneErrorBoundary key={exhibitId} name={exhibitId}>
+          <SceneErrorBoundary
+            key={exhibitId}
+            name={exhibitId}
+            onError={() => markExhibitUnavailable(exhibitId)}
+          >
             <Exhibit />
           </SceneErrorBoundary>
         )

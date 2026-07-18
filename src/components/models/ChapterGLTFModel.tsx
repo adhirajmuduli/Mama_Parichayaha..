@@ -7,6 +7,7 @@ import * as THREE from 'three'
 
 import { getModelAsset } from '@/content/assets'
 import useChapterPresence from '@/hooks/useChapterPresence'
+import useModelInteraction from '@/hooks/useModelInteraction'
 import { createGLTFInstance, disposeGLTFInstance } from '@/lib/gltfRuntime'
 import type { Chapter } from '@/lib/chapters'
 import type { ExhibitId } from '@/lib/chapterRegistry'
@@ -21,15 +22,18 @@ interface Props {
 export default function ChapterGLTFModel({ chapter, ...props }: Props) {
   const presence = useChapterPresence(chapter)
 
-  return presence.nearby ? <LoadedModel {...props} active={presence.active} /> : null
+  return presence.nearby ? (
+    <LoadedModel {...props} active={presence.active} chapter={chapter} />
+  ) : null
 }
 
 function LoadedModel({
   active,
   assetId,
+  chapter,
   position,
   rotationSpeed = 0.08,
-}: Omit<Props, 'chapter'> & { active: boolean }) {
+}: Props & { active: boolean }) {
   const asset = getModelAsset(assetId)
   const groupRef = useRef<THREE.Group>(null)
   const targetScale = useRef(new THREE.Vector3())
@@ -39,6 +43,13 @@ function LoadedModel({
     [asset.materialOwnership, scene],
   )
   const { actions } = useAnimations(animations, model)
+  const interactionHandlers = useModelInteraction({
+    autoRotateSpeed: rotationSpeed,
+    chapter,
+    exhibitId: assetId,
+    groupRef,
+    initialRotation: asset.normalization.orientation,
+  })
 
   useEffect(() => {
     Object.values(actions).forEach((action) => action?.reset().play())
@@ -56,7 +67,7 @@ function LoadedModel({
     return () => disposeGLTFInstance(model, asset.materialOwnership)
   }, [asset.materialOwnership, model])
 
-  useFrame((_, delta) => {
+  useFrame(() => {
     if (!groupRef.current) {
       return
     }
@@ -65,7 +76,6 @@ function LoadedModel({
       active ? asset.normalization.activeScale : asset.normalization.inactiveScale,
     )
     groupRef.current.scale.lerp(targetScale.current, 0.08)
-    groupRef.current.rotation.y += rotationSpeed * delta
   })
 
   return (
@@ -74,6 +84,7 @@ function LoadedModel({
       position={position}
       rotation={asset.normalization.orientation}
       scale={asset.normalization.inactiveScale}
+      {...interactionHandlers}
     >
       <Center>
         <primitive object={model} scale={asset.normalization.unitScale} />

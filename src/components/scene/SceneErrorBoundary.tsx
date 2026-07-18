@@ -5,6 +5,7 @@ import { Component, type ReactNode } from 'react'
 interface Props {
   children: ReactNode
   name: string
+  onError?: () => void
 }
 
 interface State {
@@ -16,6 +17,10 @@ export default class SceneErrorBoundary extends Component<Props, State> {
 
   static getDerivedStateFromError(): State {
     return { hasError: true }
+  }
+
+  override componentDidCatch() {
+    this.props.onError?.()
   }
 
   override render() {

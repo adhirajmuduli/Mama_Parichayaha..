@@ -4,6 +4,7 @@ import { Component, type ReactNode } from 'react'
 
 interface SceneRendererBoundaryProps {
   children: ReactNode
+  onError?: () => void
 }
 
 interface SceneRendererBoundaryState {
@@ -18,6 +19,10 @@ export default class SceneRendererBoundary extends Component<
 
   static getDerivedStateFromError(): SceneRendererBoundaryState {
     return { hasError: true }
+  }
+
+  override componentDidCatch() {
+    this.props.onError?.()
   }
 
   override render() {

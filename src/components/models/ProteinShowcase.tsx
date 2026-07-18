@@ -17,14 +17,13 @@ export default function ProteinShowcase() {
   const groupRef = useRef<THREE.Group>(null)
   const presence = useChapterPresence('research')
 
-  useFrame((state) => {
+  useFrame(() => {
     if (!groupRef.current) {
       return
     }
 
     const targetScale = presence.nearby ? 1 : 0.1
     groupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.05)
-    groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.15
   })
 
   return (

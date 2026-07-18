@@ -1,13 +1,13 @@
 'use client'
 
 import { Center, useGLTF } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 
 import { getModelAsset } from '@/content/assets'
+import useModelInteraction from '@/hooks/useModelInteraction'
 import { createGLTFInstance, disposeGLTFInstance } from '@/lib/gltfRuntime'
-import type { ExhibitId } from '@/lib/chapterRegistry'
+import { getChapterEntry, type ExhibitId } from '@/lib/chapterRegistry'
 
 interface InteractiveModelProps {
   assetId: ExhibitId
@@ -30,15 +30,19 @@ export default function InteractiveModel({
 }: InteractiveModelProps) {
   const asset = getModelAsset(assetId)
   const groupRef = useRef<THREE.Group>(null)
-  const isDragging = useRef(false)
-  const velocity = useRef(0)
-  const previousX = useRef(0)
   const [hovered, setHovered] = useState(false)
   const { scene } = useGLTF(asset.url, false, true)
   const model = useMemo(
     () => createGLTFInstance(scene, asset.materialOwnership),
     [asset.materialOwnership, scene],
   )
+  const interactionHandlers = useModelInteraction({
+    autoRotateSpeed: 0.09,
+    chapter: getChapterEntry(asset.chapter).id,
+    exhibitId: assetId,
+    groupRef,
+    initialRotation: rotation,
+  })
 
   useEffect(() => {
     model.traverse((child) => {
@@ -64,36 +68,6 @@ export default function InteractiveModel({
     return () => disposeGLTFInstance(model, asset.materialOwnership)
   }, [asset.materialOwnership, color, emissive, emissiveIntensity, hovered, model])
 
-  useFrame(() => {
-    if (!groupRef.current || isDragging.current) {
-      return
-    }
-
-    velocity.current *= 0.94
-    groupRef.current.rotation.y += velocity.current + 0.0015
-  })
-
-  const onPointerDown = (event: { clientX: number; stopPropagation: () => void }) => {
-    event.stopPropagation()
-    isDragging.current = true
-    previousX.current = event.clientX
-  }
-
-  const onPointerUp = () => {
-    isDragging.current = false
-  }
-
-  const onPointerMove = (event: { clientX: number }) => {
-    if (!isDragging.current || !groupRef.current) {
-      return
-    }
-
-    const delta = event.clientX - previousX.current
-    previousX.current = event.clientX
-    velocity.current = delta * 0.0009
-    groupRef.current.rotation.y += velocity.current
-  }
-
   return (
     <group
       ref={groupRef}
@@ -102,9 +76,7 @@ export default function InteractiveModel({
       scale={scale}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
-      onPointerDown={onPointerDown}
-      onPointerUp={onPointerUp}
-      onPointerMove={onPointerMove}
+      {...interactionHandlers}
     >
       <Center>
         <primitive object={model} scale={asset.normalization.unitScale} />

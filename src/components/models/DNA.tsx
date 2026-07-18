@@ -7,6 +7,7 @@ import * as THREE from 'three'
 
 import { getModelAsset } from '@/content/assets'
 import useChapterPresence from '@/hooks/useChapterPresence'
+import useModelInteraction from '@/hooks/useModelInteraction'
 import { getChapterEntry } from '@/lib/chapterRegistry'
 import { createGLTFInstance, disposeGLTFInstance } from '@/lib/gltfRuntime'
 import { applyDnaMaterial } from '@/lib/materials'
@@ -20,6 +21,13 @@ export default function DNA() {
   const model = useMemo(() => createGLTFInstance(scene, asset.materialOwnership), [scene])
   const { actions } = useAnimations(animations, model)
   const presence = useChapterPresence('origins')
+  const interactionHandlers = useModelInteraction({
+    autoRotateSpeed: 0.045,
+    chapter: 'origins',
+    exhibitId: 'dna',
+    groupRef: containerRef,
+    initialRotation: asset.normalization.orientation,
+  })
 
   useEffect(() => {
     Object.values(actions).forEach((action) => action?.reset().play())
@@ -57,6 +65,7 @@ export default function DNA() {
       position={[centerX, centerY - 0.5, centerZ]}
       rotation={asset.normalization.orientation}
       scale={asset.normalization.inactiveScale}
+      {...interactionHandlers}
     >
       <Center>
         <primitive object={model} scale={asset.normalization.unitScale} />

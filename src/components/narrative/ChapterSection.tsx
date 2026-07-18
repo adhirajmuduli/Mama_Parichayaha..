@@ -1,4 +1,5 @@
 import LiquidGlassPanel from '@/components/liquid-glass/LiquidGlassPanel'
+import ModelInteractionControls from '@/components/models/ModelInteractionControls'
 import type { ChapterRegistryEntry } from '@/lib/chapterRegistry'
 import { getChapterContent } from '@/lib/chapterRegistry'
 
@@ -36,6 +37,7 @@ export default function ChapterSection({ chapter }: ChapterSectionProps) {
           </Heading>
 
           <p className="leading-relaxed text-[var(--site-muted)]">{content.description}</p>
+          <ModelInteractionControls chapter={chapter} />
         </LiquidGlassPanel>
       </article>
     </section>
