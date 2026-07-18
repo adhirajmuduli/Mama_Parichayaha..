@@ -2,18 +2,21 @@ import LiquidGlassButton from '@/components/liquid-glass/LiquidGlassButton'
 import LiquidGlassPanel from '@/components/liquid-glass/LiquidGlassPanel'
 import { siteContent } from '@/content/site'
 
+import ContactForm from './ContactForm'
+
 export default function ContactSection() {
   const { contact, publicProfiles } = siteContent
   const headingId = `${contact.id}-heading`
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? null
 
   return (
     <section
       id={contact.id}
       aria-labelledby={headingId}
-      className="relative z-10 flex min-h-[60svh] scroll-mt-24 items-center px-6 py-20 sm:px-12"
+      className="relative z-10 scroll-mt-24 px-6 py-20 sm:px-12"
     >
-      <article className="w-full">
-        <LiquidGlassPanel className="max-w-xl" tone="strong">
+      <article className="mx-auto max-w-3xl">
+        <LiquidGlassPanel tone="strong">
           <p className="mb-3 text-sm uppercase tracking-[0.3em] text-violet-200">
             {contact.eyebrow}
           </p>
@@ -36,6 +39,7 @@ export default function ContactSection() {
               </li>
             ))}
           </ul>
+          <ContactForm turnstileSiteKey={turnstileSiteKey} />
           <p className="mt-6 border-t border-white/15 pt-4 text-sm leading-relaxed text-[var(--site-muted)]">
             {contact.privacyNotice}
           </p>

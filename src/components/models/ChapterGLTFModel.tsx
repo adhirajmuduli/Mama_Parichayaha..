@@ -5,7 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 
-import { getModelAsset } from '@/content/assets'
+import { getModelAsset, getModelDracoDecoderPath } from '@/content/assets'
 import useChapterPresence from '@/hooks/useChapterPresence'
 import useModelInteraction from '@/hooks/useModelInteraction'
 import { createGLTFInstance, disposeGLTFInstance } from '@/lib/gltfRuntime'
@@ -37,7 +37,7 @@ function LoadedModel({
   const asset = getModelAsset(assetId)
   const groupRef = useRef<THREE.Group>(null)
   const targetScale = useRef(new THREE.Vector3())
-  const { animations, scene } = useGLTF(asset.url, false, true)
+  const { animations, scene } = useGLTF(asset.url, getModelDracoDecoderPath(asset), true)
   const model = useMemo(
     () => createGLTFInstance(scene, asset.materialOwnership),
     [asset.materialOwnership, scene],

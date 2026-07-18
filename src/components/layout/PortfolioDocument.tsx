@@ -14,6 +14,7 @@ const chapterNavigation = chapterRegistry.map(({ id, navigationLabel, sectionId 
   sectionId,
   navigationLabel,
 }))
+const showDocumentChrome = false
 
 interface PortfolioDocumentProps {
   interactiveDecorations?: boolean
@@ -31,7 +32,7 @@ export default function PortfolioDocument({
       >
         Skip to portfolio content
       </a>
-      <SiteHeader chapters={chapterNavigation} />
+      {showDocumentChrome ? <SiteHeader chapters={chapterNavigation} /> : null}
       <main id="portfolio-content" className="relative min-h-screen overflow-x-hidden">
         <div className="relative z-10">
           {interactiveDecorations ? <CursorGlow /> : null}
@@ -42,7 +43,7 @@ export default function PortfolioDocument({
           <PublicationStatusSection />
           <ContactSection />
           <CreditsSection />
-          <SiteFooter chapters={chapterNavigation} />
+          {showDocumentChrome ? <SiteFooter chapters={chapterNavigation} /> : null}
         </div>
       </main>
     </>

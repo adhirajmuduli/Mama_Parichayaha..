@@ -11,6 +11,7 @@ import {
 } from '@/stores/sceneInteractionStore'
 
 interface InteractiveExhibitDefinition {
+  description: string
   exhibitId: ExhibitId
   label: string
 }
@@ -18,10 +19,17 @@ interface InteractiveExhibitDefinition {
 const interactiveExhibits: Partial<
   Record<ChapterRegistryEntry['id'], InteractiveExhibitDefinition>
 > = {
-  origins: { exhibitId: 'dna', label: 'DNA model' },
-  interests: { exhibitId: 'phages', label: 'Bacteriophage model' },
-  research: { exhibitId: 'protein', label: 'Protein model' },
-  computation: { exhibitId: 'tardigrade', label: 'Tardigrade model' },
+  origins: {
+    exhibitId: 'dna',
+    label: 'DNA model',
+    description: 'A double-helical DNA exhibit with an available source animation.',
+  },
+  interests: {
+    exhibitId: 'phages',
+    label: 'Bacteriophage model',
+    description:
+      'A procedural bacteriophage study showing a capsid, tail, base plate, and tail-fibre form.',
+  },
 }
 
 export default function ModelInteractionControls({ chapter }: { chapter: ChapterRegistryEntry }) {
@@ -35,7 +43,7 @@ export default function ModelInteractionControls({ chapter }: { chapter: Chapter
     return null
   }
 
-  const { exhibitId, label } = definition
+  const { description, exhibitId, label } = definition
   const isActive =
     rendererAvailable && availableExhibits.includes(exhibitId) && activeChapter === chapter.id
   const instructionId = `${chapter.sectionId}-model-instructions`
@@ -69,7 +77,8 @@ export default function ModelInteractionControls({ chapter }: { chapter: Chapter
       onKeyDown={onKeyDown}
       tabIndex={0}
     >
-      <p id={instructionId} className="text-sm text-[var(--site-muted)]">
+      <p className="text-sm text-[var(--site-muted)]">{description}</p>
+      <p id={instructionId} className="mt-3 text-sm text-[var(--site-muted)]">
         Use the controls or Left and Right Arrow keys to rotate the {label.toLowerCase()}. Home
         resets its pose. Touch scrolling remains vertical by default; drag horizontally on the model
         to rotate it.

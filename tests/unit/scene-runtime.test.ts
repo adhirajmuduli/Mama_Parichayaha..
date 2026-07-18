@@ -5,18 +5,24 @@ import {
   getModelAsset,
   isSceneAssetAvailable,
   modelAssetIds,
+  unassignedModelCandidates,
 } from '@/content/assets'
 import { SceneQualityGovernor } from '@/lib/sceneRuntime'
 
 describe('scene runtime contracts', () => {
-  it('keeps each retained GLB in the verified manifest with a bounded tier policy', () => {
+  it('keeps the assigned GLB compressed and holds unassigned models outside the active scene', () => {
     assertSceneAssetManifest()
 
-    expect(modelAssetIds).toEqual(['dna', 'protein', 'tardigrade'])
-    expect(getModelAsset('dna').url).toBe('/models/DNA/dna.glb')
+    expect(modelAssetIds).toEqual(['dna'])
+    expect(getModelAsset('dna')).toMatchObject({
+      compression: 'draco',
+      url: '/models/dna_for_site.glb',
+    })
     expect(isSceneAssetAvailable('protein', 'low')).toBe(false)
-    expect(isSceneAssetAvailable('tardigrade', 'low')).toBe(false)
-    expect(isSceneAssetAvailable('tardigrade', 'medium')).toBe(true)
+    expect(isSceneAssetAvailable('tardigrade', 'high')).toBe(false)
+    expect(unassignedModelCandidates.some((candidate) => candidate.compression === 'draco')).toBe(
+      true,
+    )
   })
 
   it('changes tier only after sustained frame evidence', () => {

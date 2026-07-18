@@ -3,9 +3,9 @@ import type { ExhibitId } from '@/lib/chapterRegistry'
 import type { SceneQualityTier } from '@/lib/sceneRuntime'
 
 type RenderableSceneQualityTier = Exclude<SceneQualityTier, 'static'>
-
 type AssetLoadPolicy = 'current' | 'adjacent' | 'none'
 type MaterialOwnership = 'clone' | 'shared'
+type GeometryCompression = 'draco' | 'none'
 
 interface AssetCredit {
   author: string
@@ -21,15 +21,15 @@ interface AssetPolicy {
 
 interface BaseSceneAsset {
   chapter: ChapterId
-  credit: AssetCredit
   id: ExhibitId
-  policy: AssetPolicy
 }
 
 export interface ModelSceneAsset extends BaseSceneAsset {
   animationCount: number
   brotliBytes: number
   bytes: number
+  compression: GeometryCompression
+  credit: AssetCredit
   format: 'glb'
   geometry: {
     meshes: number
@@ -44,6 +44,7 @@ export interface ModelSceneAsset extends BaseSceneAsset {
     orientation: readonly [number, number, number]
     unitScale: number
   }
+  policy: AssetPolicy
   sha256: string
   texture: {
     count: number
@@ -53,23 +54,38 @@ export interface ModelSceneAsset extends BaseSceneAsset {
 }
 
 interface ProceduralSceneAsset extends BaseSceneAsset {
+  credit: AssetCredit
   kind: 'procedural'
+  policy: AssetPolicy
 }
 
-export type SceneAsset = ModelSceneAsset | ProceduralSceneAsset
+interface UnassignedSceneAsset extends BaseSceneAsset {
+  kind: 'unassigned'
+  reason: string
+}
+
+export interface UnassignedModelCandidate {
+  bytes: number
+  compression: GeometryCompression
+  id: string
+  url: `/models/${string}.glb`
+}
+
+export type SceneAsset = ModelSceneAsset | ProceduralSceneAsset | UnassignedSceneAsset
 
 const sceneAssetManifest = {
   dna: {
     id: 'dna',
     kind: 'gltf',
     chapter: 'origins',
-    url: '/models/DNA/dna.glb',
+    url: '/models/dna_for_site.glb',
     format: 'glb',
-    bytes: 2_639_156,
-    gzipBytes: 919_728,
-    brotliBytes: 567_257,
-    sha256: 'f2a9d7c99748de8a548605cd066f0768deb5ac323657519598bd2e3508dfdc24',
-    geometry: { meshes: 2, triangles: 103_840 },
+    compression: 'draco',
+    bytes: 2_663_212,
+    gzipBytes: 1_913_583,
+    brotliBytes: 1_899_076,
+    sha256: '72e4e4f4e39e95755bffd7e95864572f3cefb30bad4c65f5c28d8d620362e32c',
+    geometry: { meshes: 8, triangles: 299_520 },
     texture: { count: 0, maximumDimension: 0 },
     animationCount: 1,
     materialOwnership: 'clone',
@@ -102,67 +118,90 @@ const sceneAssetManifest = {
   },
   protein: {
     id: 'protein',
-    kind: 'gltf',
+    kind: 'unassigned',
     chapter: 'research',
-    url: '/models/Proteins/GFP.glb',
-    format: 'glb',
-    bytes: 5_229_704,
-    gzipBytes: 2_063_201,
-    brotliBytes: 1_903_391,
-    sha256: '17041a7a488a0f3b65ec73c82ca1cd75504891f5f3308680e7c0a6200055adb0',
-    geometry: { meshes: 1, triangles: 156_024 },
-    texture: { count: 0, maximumDimension: 0 },
-    animationCount: 0,
-    materialOwnership: 'clone',
-    normalization: {
-      unitScale: 0.0170106,
-      activeScale: 3.459,
-      inactiveScale: 3.459,
-      orientation: [0.2, 0.5, 0.5],
-    },
-    policy: { availableTiers: ['medium', 'high'], preload: 'adjacent' },
-    credit: {
-      title: 'Structure of Green Fluorescent Protein (1GFL)',
-      author: 'RCSB Protein Data Bank',
-      license: 'CC0 1.0',
-      sourceUrl: 'https://www.rcsb.org/structure/1GFL',
-    },
+    reason: 'Awaiting owner-selected replacement model and verified provenance.',
   },
   tardigrade: {
     id: 'tardigrade',
-    kind: 'gltf',
+    kind: 'unassigned',
     chapter: 'computation',
-    url: '/models/Tardigrade/water_bear_site.glb',
-    format: 'glb',
-    bytes: 21_943_424,
-    gzipBytes: 14_317_907,
-    brotliBytes: 10_124_706,
-    sha256: 'ec5be496e12bd34fc5da233a5eff352dd060bf27ffc67e03b22f777972e5b23f',
-    geometry: { meshes: 7, triangles: 683_396 },
-    texture: { count: 1, maximumDimension: 1024 },
-    animationCount: 0,
-    materialOwnership: 'clone',
-    normalization: {
-      unitScale: 0.1760652,
-      activeScale: 3.2,
-      inactiveScale: 1.344,
-      orientation: [0.16, 0.48, 0],
-    },
-    policy: { availableTiers: ['medium', 'high'], preload: 'none' },
-    credit: {
-      title: 'Water Bear',
-      author: 'oneillbeck',
-      license: 'CC BY',
-      sourceUrl: 'https://sketchfab.com/3d-models/water-bear-6e0ecc9d43ad4cf9a17efab2900f72ee',
-    },
+    reason: 'Awaiting owner-selected replacement model and verified provenance.',
   },
 } as const satisfies Record<ExhibitId, SceneAsset>
 
+export const unassignedModelCandidates = [
+  {
+    id: 'hemoglobin-6hhb',
+    url: '/models/6HHB-ribbon-secondary-vis_NIH3D.glb',
+    bytes: 10_890_316,
+    compression: 'none',
+  },
+  {
+    id: 'adenosine-a2a-receptor',
+    url: '/models/adenosine_A2A_receptor_site.glb',
+    bytes: 451_028,
+    compression: 'draco',
+  },
+  {
+    id: 'bacteriophage',
+    url: '/models/bacteriophage_for_site.glb',
+    bytes: 858_352,
+    compression: 'draco',
+  },
+  {
+    id: 'brain-point-cloud',
+    url: '/models/brain_point_cloud_site.glb',
+    bytes: 33_405_696,
+    compression: 'none',
+  },
+  {
+    id: 'diatom-campylodiscus',
+    url: '/models/diatom_-_campylodiscus_hibernicus_for_site.glb',
+    bytes: 16_119_120,
+    compression: 'none',
+  },
+  {
+    id: 'earth-animated',
+    url: '/models/earth_animated_for_site.glb',
+    bytes: 23_342_728,
+    compression: 'none',
+  },
+  { id: 'earth', url: '/models/earth_site.glb', bytes: 8_546_092, compression: 'none' },
+  {
+    id: 'forest-clearing',
+    url: '/models/forest_clearing_1_top_skybox_site.glb',
+    bytes: 12_462_384,
+    compression: 'none',
+  },
+  {
+    id: 'hemoglobin-ribbon',
+    url: '/models/hb_wohemo-ribbon-rainbow-vis-custom.glb',
+    bytes: 7_619_240,
+    compression: 'none',
+  },
+  {
+    id: 'ibuprofen',
+    url: '/models/ibuprofen_model_for_site.glb',
+    bytes: 247_624,
+    compression: 'draco',
+  },
+  {
+    id: 'mitochondrion-cross-section',
+    url: '/models/mitochondrion_cross-section_wip_for_site.glb',
+    bytes: 7_690_392,
+    compression: 'none',
+  },
+  {
+    id: 'tropical-plants',
+    url: '/models/tropical_plants_pack_m02p_site.glb',
+    bytes: 16_137_500,
+    compression: 'none',
+  },
+] as const satisfies readonly UnassignedModelCandidate[]
+
 const sceneAssetIds = Object.keys(sceneAssetManifest) as ExhibitId[]
-export const modelAssetIds = sceneAssetIds.filter(
-  (assetId): assetId is Extract<ExhibitId, 'dna' | 'protein' | 'tardigrade'> =>
-    sceneAssetManifest[assetId].kind === 'gltf',
-)
+export const modelAssetIds = ['dna'] as const
 
 export function getSceneAsset(assetId: ExhibitId): SceneAsset {
   return sceneAssetManifest[assetId]
@@ -172,22 +211,45 @@ export function getModelAsset(assetId: ExhibitId): ModelSceneAsset {
   const asset = getSceneAsset(assetId)
 
   if (asset.kind !== 'gltf') {
-    throw new Error(`Scene asset "${assetId}" is not a GLTF model.`)
+    throw new Error(`Scene asset "${assetId}" is not an assigned GLTF model.`)
   }
 
   return asset
+}
+
+export function getModelDracoDecoderPath(asset: ModelSceneAsset): false | '/draco/' {
+  return asset.compression === 'draco' ? '/draco/' : false
 }
 
 export function isSceneAssetAvailable(
   assetId: ExhibitId,
   tier: RenderableSceneQualityTier,
 ): boolean {
-  return getSceneAsset(assetId).policy.availableTiers.includes(tier)
+  const asset = getSceneAsset(assetId)
+  return asset.kind !== 'unassigned' && asset.policy.availableTiers.includes(tier)
 }
 
 export function assertSceneAssetManifest() {
+  const candidateUrls = new Set<string>()
+
+  for (const candidate of unassignedModelCandidates) {
+    if (
+      !candidate.url.startsWith('/models/') ||
+      candidateUrls.has(candidate.url) ||
+      candidate.bytes <= 0
+    ) {
+      throw new Error(`Invalid unassigned model candidate "${candidate.id}".`)
+    }
+
+    candidateUrls.add(candidate.url)
+  }
+
   for (const assetId of sceneAssetIds) {
     const asset = getSceneAsset(assetId)
+
+    if (asset.kind === 'unassigned') {
+      continue
+    }
 
     if (!asset.policy.availableTiers.length) {
       throw new Error(`Scene asset "${assetId}" has no available quality tier.`)

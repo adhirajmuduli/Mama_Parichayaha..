@@ -4,7 +4,7 @@ import { Center, useGLTF } from '@react-three/drei'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 
-import { getModelAsset } from '@/content/assets'
+import { getModelAsset, getModelDracoDecoderPath } from '@/content/assets'
 import useModelInteraction from '@/hooks/useModelInteraction'
 import { createGLTFInstance, disposeGLTFInstance } from '@/lib/gltfRuntime'
 import { getChapterEntry, type ExhibitId } from '@/lib/chapterRegistry'
@@ -31,7 +31,7 @@ export default function InteractiveModel({
   const asset = getModelAsset(assetId)
   const groupRef = useRef<THREE.Group>(null)
   const [hovered, setHovered] = useState(false)
-  const { scene } = useGLTF(asset.url, false, true)
+  const { scene } = useGLTF(asset.url, getModelDracoDecoderPath(asset), true)
   const model = useMemo(
     () => createGLTFInstance(scene, asset.materialOwnership),
     [asset.materialOwnership, scene],

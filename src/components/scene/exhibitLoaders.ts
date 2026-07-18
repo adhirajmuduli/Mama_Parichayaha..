@@ -2,27 +2,23 @@
 
 import type { ComponentType } from 'react'
 
-import { chapterRegistry, exhibitIds, type ExhibitId } from '@/lib/chapterRegistry'
+import { chapterRegistry, type ExhibitId } from '@/lib/chapterRegistry'
 
 export type ExhibitLoader = () => Promise<{ default: ComponentType }>
 
-export const exhibitLoaders: Record<ExhibitId, ExhibitLoader> = {
+export const exhibitLoaders = {
   dna: () => import('@/components/models/DNA'),
   phages: () => import('@/components/models/PhageSystem'),
-  protein: () => import('@/components/models/ProteinShowcase'),
-  tardigrade: () => import('@/components/models/Tradigrade'),
-}
+} satisfies Partial<Record<ExhibitId, ExhibitLoader>>
 
-export function assertExhibitLoaders(loaders: Record<ExhibitId, ExhibitLoader> = exhibitLoaders) {
+export function assertExhibitLoaders(
+  loaders: Partial<Record<ExhibitId, ExhibitLoader>> = exhibitLoaders,
+) {
   const registeredExhibits = new Set(
     chapterRegistry.flatMap((chapter) => chapter.scene.exhibits.map((exhibit) => exhibit.id)),
   )
 
-  for (const exhibitId of exhibitIds) {
-    if (!registeredExhibits.has(exhibitId)) {
-      throw new Error(`Exhibit loader "${exhibitId}" has no chapter registry entry.`)
-    }
-
+  for (const exhibitId of registeredExhibits) {
     if (typeof loaders[exhibitId] !== 'function') {
       throw new Error(`Exhibit "${exhibitId}" has no dynamic loader.`)
     }

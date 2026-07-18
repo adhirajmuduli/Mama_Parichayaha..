@@ -164,7 +164,7 @@ export const chapterRegistry = [
         particleColor: '#a5f3fc',
         particleOpacity: 0.42,
       },
-      exhibits: [{ id: 'protein' }],
+      exhibits: [],
     },
   },
   {
@@ -196,7 +196,7 @@ export const chapterRegistry = [
         particleColor: '#c4b5fd',
         particleOpacity: 0.32,
       },
-      exhibits: [{ id: 'tardigrade' }],
+      exhibits: [],
     },
   },
   {

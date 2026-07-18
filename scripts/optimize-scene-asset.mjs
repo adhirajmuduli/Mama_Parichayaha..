@@ -7,9 +7,10 @@ import { brotliCompressSync, constants, gzipSync } from 'node:zlib'
 const rootDirectory = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const command = process.platform === 'win32' ? 'npx.cmd' : 'npx'
 const argumentsByName = new Map([
-  ['dna', 'public/models/DNA/dna.glb'],
-  ['protein', 'public/models/Proteins/GFP.glb'],
-  ['tardigrade', 'public/models/Tardigrade/water_bear_site.glb'],
+  ['dna', 'public/models/dna_for_site.glb'],
+  ['bacteriophage', 'public/models/bacteriophage_for_site.glb'],
+  ['adenosine-a2a-receptor', 'public/models/adenosine_A2A_receptor_site.glb'],
+  ['ibuprofen', 'public/models/ibuprofen_model_for_site.glb'],
 ])
 const requestedAsset = process.argv.at(2)
 

@@ -113,3 +113,17 @@ a {
     display: none;
   }
 }
+
+html {
+  scroll-padding-top: calc(4rem + env(safe-area-inset-top));
+}
+
+:target {
+  scroll-margin-top: calc(4rem + env(safe-area-inset-top));
+}
+
+@supports (padding: max(0px)) {
+  body {
+    padding-inline: max(0px, env(safe-area-inset-left)) max(0px, env(safe-area-inset-right));
+  }
+}

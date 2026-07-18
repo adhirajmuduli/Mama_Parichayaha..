@@ -100,7 +100,7 @@ export const siteContent: SiteContent = SiteContentSchema.parse({
     title: 'Get in touch',
     description: 'Email, source code, and the public ORCID record are available below.',
     privacyNotice:
-      'This site does not collect contact-form submissions. Selecting the email link opens your email client or provider.',
+      'Contact submissions are sent by email and retained in the recipient inbox until manually deleted. The site stores no message archive; temporary abuse-control hashes expire automatically.',
   },
   credits: {
     id: 'credits',
@@ -122,37 +122,6 @@ export const siteContent: SiteContent = SiteContentSchema.parse({
           {
             href: 'https://sketchfab.com/nilantunes',
             label: 'nilantunes on Sketchfab',
-          },
-        ],
-        source: modelProvenanceSource,
-      },
-      {
-        assetId: 'protein',
-        title: 'Green Fluorescent Protein, PDB 1GFL',
-        attribution:
-          'PDB 1GFL from RCSB Protein Data Bank; simplified and exported locally with UCSF ChimeraX 1.11.1.',
-        license: 'PDB archive coordinate data are available under CC0 1.0.',
-        links: [
-          {
-            href: 'https://www.rcsb.org/structure/1GFL',
-            label: 'RCSB PDB 1GFL',
-          },
-        ],
-        source: modelProvenanceSource,
-      },
-      {
-        assetId: 'tardigrade',
-        title: 'Water Bear',
-        attribution: 'Water Bear by oneillbeck, via Sketchfab.',
-        license: 'Creative Commons Attribution (CC BY).',
-        links: [
-          {
-            href: 'https://sketchfab.com/3d-models/water-bear-6e0ecc9d43ad4cf9a17efab2900f72ee',
-            label: 'Water Bear source on Sketchfab',
-          },
-          {
-            href: 'https://sketchfab.com/oneillbeck',
-            label: 'oneillbeck on Sketchfab',
           },
         ],
         source: modelProvenanceSource,

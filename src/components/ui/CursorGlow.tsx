@@ -4,11 +4,14 @@ import { useEffect } from 'react'
 
 import { motion, useMotionValue, useSpring } from 'motion/react'
 
+const glowDiameter = 224
+const glowOffset = glowDiameter / 2
+
 export default function CursorGlow() {
-  const pointerX = useMotionValue(-160)
-  const pointerY = useMotionValue(-160)
-  const x = useSpring(pointerX, { damping: 42, mass: 0.3, stiffness: 750 })
-  const y = useSpring(pointerY, { damping: 42, mass: 0.3, stiffness: 750 })
+  const pointerX = useMotionValue(-glowOffset)
+  const pointerY = useMotionValue(-glowOffset)
+  const x = useSpring(pointerX, { damping: 48, mass: 0.35, stiffness: 620 })
+  const y = useSpring(pointerY, { damping: 48, mass: 0.35, stiffness: 620 })
 
   useEffect(() => {
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)')
@@ -16,8 +19,8 @@ export default function CursorGlow() {
     let listening = false
 
     const handlePointerMove = (event: PointerEvent) => {
-      pointerX.set(event.clientX - 160)
-      pointerY.set(event.clientY - 160)
+      pointerX.set(event.clientX - glowOffset)
+      pointerY.set(event.clientY - glowOffset)
     }
 
     const syncTracking = () => {
@@ -33,8 +36,8 @@ export default function CursorGlow() {
         window.addEventListener('pointermove', handlePointerMove, { passive: true })
       } else {
         window.removeEventListener('pointermove', handlePointerMove)
-        pointerX.set(-160)
-        pointerY.set(-160)
+        pointerX.set(-glowOffset)
+        pointerY.set(-glowOffset)
       }
     }
 
@@ -55,7 +58,7 @@ export default function CursorGlow() {
   return (
     <motion.div
       style={{ x, y }}
-      className="cursor-glow pointer-events-none fixed left-0 top-0 z-20 h-[320px] w-[320px] rounded-full bg-violet-500/10 blur-3xl"
+      className="cursor-glow pointer-events-none fixed left-0 top-0 z-20 h-56 w-56 rounded-full bg-violet-400/5 opacity-70 blur-3xl"
     />
   )
 }

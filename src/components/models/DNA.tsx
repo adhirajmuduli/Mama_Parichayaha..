@@ -5,7 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 
-import { getModelAsset } from '@/content/assets'
+import { getModelAsset, getModelDracoDecoderPath } from '@/content/assets'
 import useChapterPresence from '@/hooks/useChapterPresence'
 import useModelInteraction from '@/hooks/useModelInteraction'
 import { getChapterEntry } from '@/lib/chapterRegistry'
@@ -17,7 +17,7 @@ const asset = getModelAsset('dna')
 
 export default function DNA() {
   const containerRef = useRef<THREE.Group>(null)
-  const { scene, animations } = useGLTF(asset.url, false, true)
+  const { scene, animations } = useGLTF(asset.url, getModelDracoDecoderPath(asset), true)
   const model = useMemo(() => createGLTFInstance(scene, asset.materialOwnership), [scene])
   const { actions } = useAnimations(animations, model)
   const presence = useChapterPresence('origins')

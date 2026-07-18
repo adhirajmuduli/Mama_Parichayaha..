@@ -17,8 +17,8 @@ import SceneErrorBoundary from './SceneErrorBoundary'
 assertExhibitLoaders()
 
 const exhibitComponents = Object.fromEntries(
-  exhibitIds.map((exhibitId) => [exhibitId, lazy(exhibitLoaders[exhibitId])]),
-) as Record<ExhibitId, LazyExoticComponent<ComponentType>>
+  Object.entries(exhibitLoaders).map(([exhibitId, loader]) => [exhibitId, lazy(loader)]),
+) as Partial<Record<ExhibitId, LazyExoticComponent<ComponentType>>>
 
 interface IdleWindow {
   cancelIdleCallback?: (handle: number) => void
@@ -74,6 +74,10 @@ export default function SceneContent({ tier }: { tier: Exclude<SceneQualityTier,
     <>
       {activeAndAdjacentExhibits.map((exhibitId) => {
         const Exhibit = exhibitComponents[exhibitId]
+
+        if (!Exhibit) {
+          return null
+        }
 
         return (
           <SceneErrorBoundary

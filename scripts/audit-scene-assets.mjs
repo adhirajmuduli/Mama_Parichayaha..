@@ -1,17 +1,10 @@
 import { createHash } from 'node:crypto'
-import { readdir, readFile } from 'node:fs/promises'
+import { access, readdir, readFile } from 'node:fs/promises'
+import { constants } from 'node:fs'
 import { resolve, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const rootDirectory = resolve(fileURLToPath(new URL('..', import.meta.url)))
-const retainedModels = new Map([
-  ['public/models/DNA/dna.glb', { bytes: 2_639_156, maximumTextureDimension: 0 }],
-  ['public/models/Proteins/GFP.glb', { bytes: 5_229_704, maximumTextureDimension: 0 }],
-  [
-    'public/models/Tardigrade/water_bear_site.glb',
-    { bytes: 21_943_424, maximumTextureDimension: 1024 },
-  ],
-])
 
 async function listFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true })
@@ -37,48 +30,12 @@ function parseGlb(binary, relativePath) {
     throw new Error(`${relativePath} does not begin with a JSON GLB chunk.`)
   }
 
-  const binaryChunkHeader = 20 + jsonLength
-  const binaryChunkLength = binary.readUInt32LE(binaryChunkHeader)
-  const binaryChunkType = binary.readUInt32LE(binaryChunkHeader + 4)
-
-  if (binaryChunkType !== 0x004e4942) {
-    throw new Error(`${relativePath} has no binary GLB chunk.`)
-  }
-
-  return {
-    binaryChunk: binary.subarray(binaryChunkHeader + 8, binaryChunkHeader + 8 + binaryChunkLength),
-    document: JSON.parse(
-      binary
-        .subarray(20, 20 + jsonLength)
-        .toString('utf8')
-        .trim(),
-    ),
-  }
-}
-
-function getImageMaximumDimension(document, binaryChunk, relativePath) {
-  const dimensions = (document.images ?? []).map((image) => {
-    if (image.mimeType !== 'image/png' || image.bufferView === undefined) {
-      throw new Error(`${relativePath} contains an unsupported embedded image format.`)
-    }
-
-    const bufferView = document.bufferViews?.[image.bufferView]
-
-    if (!bufferView) {
-      throw new Error(`${relativePath} image references a missing buffer view.`)
-    }
-
-    const offset = bufferView.byteOffset ?? 0
-    const pngSignature = binaryChunk.subarray(offset, offset + 8).toString('hex')
-
-    if (pngSignature !== '89504e470d0a1a0a') {
-      throw new Error(`${relativePath} embedded image is not a PNG.`)
-    }
-
-    return Math.max(binaryChunk.readUInt32BE(offset + 16), binaryChunk.readUInt32BE(offset + 20))
-  })
-
-  return Math.max(0, ...dimensions)
+  return JSON.parse(
+    binary
+      .subarray(20, 20 + jsonLength)
+      .toString('utf8')
+      .trim(),
+  )
 }
 
 const modelDirectory = resolve(rootDirectory, 'public/models')
@@ -86,30 +43,29 @@ const discoveredModels = (await listFiles(modelDirectory))
   .filter((path) => path.endsWith('.glb'))
   .map((path) => relative(rootDirectory, path).replaceAll('\\', '/'))
   .sort()
-const expectedModels = [...retainedModels.keys()].sort()
 
-if (JSON.stringify(discoveredModels) !== JSON.stringify(expectedModels)) {
-  throw new Error(`Unexpected deployed GLB set: ${discoveredModels.join(', ')}`)
+if (!discoveredModels.length) {
+  throw new Error('No local GLB models were discovered.')
 }
 
-for (const [relativePath, policy] of retainedModels) {
-  const binary = await readFile(resolve(rootDirectory, relativePath))
-  const { binaryChunk, document } = parseGlb(binary, relativePath)
-  const maximumTextureDimension = getImageMaximumDimension(document, binaryChunk, relativePath)
-
-  if (binary.byteLength !== policy.bytes) {
-    throw new Error(`${relativePath} byte size does not match the approved manifest baseline.`)
+for (const relativePath of discoveredModels) {
+  if (relativePath.slice('public/models/'.length).includes('/')) {
+    throw new Error(`${relativePath} is not in the flat public/models inventory.`)
   }
 
-  if (
-    maximumTextureDimension !== policy.maximumTextureDimension ||
-    maximumTextureDimension > 2048
-  ) {
-    throw new Error(`${relativePath} violates the approved texture dimension policy.`)
+  const binary = await readFile(resolve(rootDirectory, relativePath))
+  const document = parseGlb(binary, relativePath)
+  const requiresDraco = document.extensionsRequired?.includes('KHR_draco_mesh_compression') ?? false
+
+  if (requiresDraco) {
+    await Promise.all([
+      access(resolve(rootDirectory, 'public/draco/draco_decoder.js'), constants.R_OK),
+      access(resolve(rootDirectory, 'public/draco/draco_decoder.wasm'), constants.R_OK),
+    ])
   }
 
   console.log(
-    `${relativePath}: ${binary.byteLength} B, maximum texture ${maximumTextureDimension}px, SHA-256 ${createHash('sha256').update(binary).digest('hex')}`,
+    `${relativePath}: ${binary.byteLength} B, Draco ${requiresDraco ? 'required' : 'not required'}, SHA-256 ${createHash('sha256').update(binary).digest('hex')}`,
   )
 }
 

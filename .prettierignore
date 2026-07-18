@@ -20,3 +20,6 @@ package-lock.json
 *.webp
 *.avif
 *.ico
+.env.example
+
+public/draco/

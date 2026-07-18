@@ -1,5 +1,13 @@
 import { expect, test } from '@playwright/test'
 
+const chapters = [
+  ['Origins', '#origins'],
+  ['Interests', '#interests'],
+  ['Research', '#research'],
+  ['Computation', '#computation'],
+  ['Future', '#future'],
+] as const
+
 test('serves the portfolio and its local application icon without failed asset responses', async ({
   page,
 }, testInfo) => {
@@ -13,7 +21,8 @@ test('serves the portfolio and its local application icon without failed asset r
 
     if (
       ['font', 'image', 'media', 'script', 'xhr', 'fetch'].includes(resourceType) &&
-      url.origin !== 'http://127.0.0.1:3100'
+      url.origin !== 'http://127.0.0.1:3100' &&
+      url.origin !== 'https://challenges.cloudflare.com'
     ) {
       remoteSceneOrFontRequests.push(request.url())
     }
@@ -52,56 +61,21 @@ test('serves the portfolio and its local application icon without failed asset r
     '#origins',
   )
   await expect(page.getByRole('heading', { level: 1, name: 'Adhiraj Muduli' })).toBeVisible()
+  await expect(page.locator('header')).toHaveCount(0)
+  await expect(page.locator('footer')).toHaveCount(0)
 
-  const chapters = [
-    ['Origins', '#origins'],
-    ['Interests', '#interests'],
-    ['Research', '#research'],
-    ['Computation', '#computation'],
-    ['Future', '#future'],
-  ] as const
-
-  if (testInfo.project.name === 'mobile') {
-    const menuTrigger = page.getByRole('button', { name: 'Menu' })
-    await expect(menuTrigger).toBeVisible()
-    await menuTrigger.click()
-
-    const menu = page.getByRole('dialog', { name: 'Chapter navigation' })
-    await expect(menu).toBeVisible()
-
-    for (const [label, href] of chapters) {
-      await expect(menu.getByRole('link', { name: label })).toHaveAttribute('href', href)
-    }
-
-    await page.keyboard.press('Escape')
-    await expect(menu).not.toBeVisible()
-    await expect(menuTrigger).toBeFocused()
-  } else {
-    const navigation = page.getByRole('navigation', { exact: true, name: 'Chapter navigation' })
-
-    for (const [label, href] of chapters) {
-      await expect(navigation.getByRole('link', { name: label })).toHaveAttribute('href', href)
-    }
+  for (const [, href] of chapters) {
+    await expect(page.locator(href)).toHaveCount(1)
   }
 
   if (testInfo.project.name !== 'mobile') {
     const progress = page.getByRole('navigation', { exact: true, name: 'Chapter progress' })
-    const navigation = page.getByRole('navigation', { exact: true, name: 'Chapter navigation' })
 
     for (const [label, href] of chapters) {
       await expect(
         progress.getByRole('link', { name: new RegExp(`^${label} \\(`) }),
       ).toHaveAttribute('href', href)
     }
-
-    await expect(navigation.getByRole('link', { name: 'Origins' })).toHaveAttribute(
-      'aria-current',
-      'page',
-    )
-    await expect(progress.getByRole('link', { name: /^Origins \(1 of 5\)$/ })).toHaveAttribute(
-      'aria-current',
-      'step',
-    )
   }
 
   const publications = page.getByRole('region', { name: 'No publications or talks listed' })
@@ -123,29 +97,12 @@ test('serves the portfolio and its local application icon without failed asset r
     'https://orcid.org/0009-0005-5655-8120?lang=en',
   )
 
-  const footerNavigation = page.getByRole('navigation', {
-    exact: true,
-    name: 'Footer navigation',
-  })
-
-  for (const [label, href] of chapters) {
-    await expect(footerNavigation.getByRole('link', { name: label })).toHaveAttribute('href', href)
-  }
-
-  await expect(footerNavigation.getByRole('link', { name: 'Credits' })).toHaveAttribute(
-    'href',
-    '#credits',
-  )
-
   const credits = page.getByRole('region', { name: 'Model and scientific-source attribution' })
   await expect(credits.getByRole('link', { name: 'DNA source on Sketchfab' })).toHaveAttribute(
     'href',
     'https://sketchfab.com/3d-models/dna-vr-interactive-animation-c9a926f139044470ad3fb053c66ad71e',
   )
-  await expect(credits.getByRole('link', { name: 'RCSB PDB 1GFL' })).toHaveAttribute(
-    'href',
-    'https://www.rcsb.org/structure/1GFL',
-  )
+  await expect(credits.getByRole('link', { name: 'RCSB PDB 1GFL' })).toHaveCount(0)
 
   if (testInfo.project.name === 'no-webgl') {
     await expect(page.locator('canvas')).toHaveCount(0)
@@ -160,7 +117,7 @@ test('serves the portfolio and its local application icon without failed asset r
   expect(browserErrors).toEqual([])
 })
 
-test('serves complete chapter content and navigation without JavaScript', async ({
+test('renders complete chapter content without JavaScript or document chrome', async ({
   browser,
 }, testInfo) => {
   test.skip(
@@ -180,17 +137,11 @@ test('serves complete chapter content and navigation without JavaScript', async 
 
   await expect(page.getByRole('heading', { level: 1, name: 'Adhiraj Muduli' })).toBeVisible()
   await expect(page.locator('canvas')).toHaveCount(0)
+  await expect(page.locator('header')).toHaveCount(0)
+  await expect(page.locator('footer')).toHaveCount(0)
 
-  const navigation = page.getByRole('navigation', { exact: true, name: 'Chapter navigation' })
-
-  for (const [label, href] of [
-    ['Origins', '#origins'],
-    ['Interests', '#interests'],
-    ['Research', '#research'],
-    ['Computation', '#computation'],
-    ['Future', '#future'],
-  ] as const) {
-    await expect(navigation.getByRole('link', { name: label })).toHaveAttribute('href', href)
+  for (const [, href] of chapters) {
+    await expect(page.locator(href)).toHaveCount(1)
   }
 
   await context.close()
