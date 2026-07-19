@@ -71,7 +71,7 @@ function createPointerEvent(overrides: Partial<PointerHandlerEvent> = {}): TestP
 
 describe('useModelInteraction', () => {
   beforeEach(() => {
-    useNarrativeStore.setState({ activeChapter: 'research', direction: 0, selectedExhibit: null })
+    useNarrativeStore.setState({ activeChapter: 'origins', direction: 0, selectedExhibit: null })
   })
 
   it('captures, rotates, and always releases a matching pointer on cancellation', () => {
@@ -79,7 +79,7 @@ describe('useModelInteraction', () => {
     let group: THREE.Group | null = null
     render(
       <InteractionHarness
-        chapter="research"
+        chapter="origins"
         onReady={(nextHandlers, nextGroup) => {
           handlers = nextHandlers
           group = nextGroup
@@ -103,6 +103,8 @@ describe('useModelInteraction', () => {
   })
 
   it('does not capture inactive exhibits and leaves vertical touch scrolling unclaimed', () => {
+    useNarrativeStore.setState({ activeChapter: 'research' })
+
     let handlers: InteractionHandlers | null = null
     render(
       <InteractionHarness

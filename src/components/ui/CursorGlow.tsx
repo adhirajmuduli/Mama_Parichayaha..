@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { motion, useMotionValue, useSpring } from 'motion/react'
 
@@ -8,12 +8,15 @@ const glowDiameter = 224
 const glowOffset = glowDiameter / 2
 
 export default function CursorGlow() {
+  const [isMounted, setIsMounted] = useState(false)
   const pointerX = useMotionValue(-glowOffset)
   const pointerY = useMotionValue(-glowOffset)
   const x = useSpring(pointerX, { damping: 48, mass: 0.35, stiffness: 620 })
   const y = useSpring(pointerY, { damping: 48, mass: 0.35, stiffness: 620 })
 
   useEffect(() => {
+    setIsMounted(true)
+
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)')
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
     let listening = false
@@ -54,6 +57,10 @@ export default function CursorGlow() {
       }
     }
   }, [pointerX, pointerY])
+
+  if (!isMounted) {
+    return null
+  }
 
   return (
     <motion.div

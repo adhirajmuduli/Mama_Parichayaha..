@@ -19,7 +19,7 @@ export default function LiquidGlassButton({
     <a
       {...props}
       className={cn(styles.button, 'px-4 py-2 font-medium transition-colors', className)}
-      rel={target === '_blank' ? (rel ?? 'noreferrer') : rel}
+      rel={target === '_blank' ? (rel ?? 'noopener noreferrer') : rel}
       target={target}
     >
       <span>{children}</span>

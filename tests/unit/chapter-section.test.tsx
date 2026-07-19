@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
 import ChapterSection from '@/components/narrative/ChapterSection'
@@ -23,8 +23,10 @@ describe('ChapterSection', () => {
     chapterRegistry.forEach((chapter) => {
       const content = getChapterContent(chapter.id)
 
+      const section = screen.getByRole('region', { name: content.title })
+
       expect(screen.getByRole('heading', { name: content.title })).toBeInTheDocument()
-      expect(screen.getByText(content.description)).toBeInTheDocument()
+      expect(within(section).getAllByText(content.description).length).toBeGreaterThan(0)
     })
   })
 })

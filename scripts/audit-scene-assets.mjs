@@ -59,7 +59,7 @@ for (const relativePath of discoveredModels) {
 
   if (requiresDraco) {
     await Promise.all([
-      access(resolve(rootDirectory, 'public/draco/draco_decoder.js'), constants.R_OK),
+      access(resolve(rootDirectory, 'public/draco/draco_wasm_wrapper.js'), constants.R_OK),
       access(resolve(rootDirectory, 'public/draco/draco_decoder.wasm'), constants.R_OK),
     ])
   }

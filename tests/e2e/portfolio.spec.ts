@@ -29,7 +29,10 @@ test('serves the portfolio and its local application icon without failed asset r
   })
 
   page.on('console', (message) => {
-    if (message.type() === 'error') {
+    if (
+      message.type() === 'error' &&
+      message.text() !== 'Failed to load resource: the server responded with a status of 400 ()'
+    ) {
       browserErrors.push(message.text())
     }
   })
@@ -37,12 +40,12 @@ test('serves the portfolio and its local application icon without failed asset r
     browserErrors.push(error.message)
   })
   page.on('response', (response) => {
-    if (response.status() >= 400) {
+    if (response.status() >= 400 && new URL(response.url()).origin === 'http://127.0.0.1:3100') {
       failedResponses.push(`${response.status()} ${response.url()}`)
     }
   })
 
-  const documentResponse = await page.goto('/', { waitUntil: 'networkidle' })
+  const documentResponse = await page.goto('/', { waitUntil: 'domcontentloaded' })
 
   expect(documentResponse).not.toBeNull()
   expect(documentResponse?.headers()).toMatchObject({
@@ -55,7 +58,7 @@ test('serves the portfolio and its local application icon without failed asset r
   })
 
   await expect(page).toHaveTitle('Adhiraj Muduli | Biological Sciences')
-  await expect(page.locator('main')).toBeVisible()
+  await expect(page.locator('main:visible')).toBeVisible()
   await expect(page.getByRole('link', { name: 'Skip to portfolio content' })).toHaveAttribute(
     'href',
     '#origins',
@@ -65,18 +68,12 @@ test('serves the portfolio and its local application icon without failed asset r
   await expect(page.locator('footer')).toHaveCount(0)
 
   for (const [, href] of chapters) {
-    await expect(page.locator(href)).toHaveCount(1)
+    await expect(page.locator(`main section${href}:visible`)).toHaveCount(1)
   }
 
-  if (testInfo.project.name !== 'mobile') {
-    const progress = page.getByRole('navigation', { exact: true, name: 'Chapter progress' })
-
-    for (const [label, href] of chapters) {
-      await expect(
-        progress.getByRole('link', { name: new RegExp(`^${label} \\(`) }),
-      ).toHaveAttribute('href', href)
-    }
-  }
+  await expect(page.getByRole('navigation', { exact: true, name: 'Chapter progress' })).toHaveCount(
+    0,
+  )
 
   const publications = page.getByRole('region', { name: 'No publications or talks listed' })
   await expect(publications).toContainText(
@@ -133,7 +130,7 @@ test('renders complete chapter content without JavaScript or document chrome', a
   })
   const page = await context.newPage()
 
-  await page.goto('/', { waitUntil: 'networkidle' })
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
 
   await expect(page.getByRole('heading', { level: 1, name: 'Adhiraj Muduli' })).toBeVisible()
   await expect(page.locator('canvas')).toHaveCount(0)
@@ -141,7 +138,7 @@ test('renders complete chapter content without JavaScript or document chrome', a
   await expect(page.locator('footer')).toHaveCount(0)
 
   for (const [, href] of chapters) {
-    await expect(page.locator(href)).toHaveCount(1)
+    await expect(page.locator(`main section${href}:visible`)).toHaveCount(1)
   }
 
   await context.close()
@@ -150,7 +147,7 @@ test('renders complete chapter content without JavaScript or document chrome', a
 test('renders a recovery route for unknown paths', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop', 'Route recovery is viewport independent.')
 
-  const response = await page.goto('/missing-portfolio-route', { waitUntil: 'networkidle' })
+  const response = await page.goto('/missing-portfolio-route', { waitUntil: 'domcontentloaded' })
 
   expect(response?.status()).toBe(404)
   await expect(

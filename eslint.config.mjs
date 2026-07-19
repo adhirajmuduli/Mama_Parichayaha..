@@ -13,6 +13,7 @@ const config = [
       'node_modules/**',
       'playwright-report/**',
       'public/models/**',
+      'public/draco/**',
       'test-results/**',
     ],
   },

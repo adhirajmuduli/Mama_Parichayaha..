@@ -67,7 +67,7 @@ function LoadedModel({
     return () => disposeGLTFInstance(model, asset.materialOwnership)
   }, [asset.materialOwnership, model])
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (!groupRef.current) {
       return
     }
@@ -75,7 +75,7 @@ function LoadedModel({
     targetScale.current.setScalar(
       active ? asset.normalization.activeScale : asset.normalization.inactiveScale,
     )
-    groupRef.current.scale.lerp(targetScale.current, 0.08)
+    groupRef.current.scale.lerp(targetScale.current, 1 - Math.exp(-4.8 * delta))
   })
 
   return (

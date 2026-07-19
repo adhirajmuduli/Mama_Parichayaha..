@@ -1,12 +1,12 @@
 import PortfolioDocument from '@/components/layout/PortfolioDocument'
-import SceneClient from '@/components/scene/SceneClient'
+import SceneEnhancement from '@/components/scene/SceneEnhancement'
 import ScenePoster from '@/components/scene/ScenePoster'
 
 export default function HomePage() {
   return (
     <>
       <ScenePoster />
-      <SceneClient />
+      <SceneEnhancement />
       <PortfolioDocument interactiveDecorations />
     </>
   )

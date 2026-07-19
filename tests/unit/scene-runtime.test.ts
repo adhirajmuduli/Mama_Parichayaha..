@@ -18,6 +18,8 @@ describe('scene runtime contracts', () => {
       compression: 'draco',
       url: '/models/dna_for_site.glb',
     })
+    expect(isSceneAssetAvailable('dna', 'low')).toBe(false)
+    expect(isSceneAssetAvailable('dna', 'medium')).toBe(true)
     expect(isSceneAssetAvailable('protein', 'low')).toBe(false)
     expect(isSceneAssetAvailable('tardigrade', 'high')).toBe(false)
     expect(unassignedModelCandidates.some((candidate) => candidate.compression === 'draco')).toBe(

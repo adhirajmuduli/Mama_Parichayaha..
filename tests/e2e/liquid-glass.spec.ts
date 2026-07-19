@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 test('renders bounded liquid-glass surfaces with an explicit fallback and keyboard focus', async ({
   page,
 }, testInfo) => {
-  await page.goto('/lab/liquid-glass', { waitUntil: 'networkidle' })
+  await page.goto('/lab/liquid-glass', { waitUntil: 'domcontentloaded' })
 
   const harness = page.getByRole('main')
   const surfaces = harness.locator('[data-liquid-glass="true"]')
@@ -86,7 +86,7 @@ test('records a bounded liquid-glass paint trace', async ({ page }, testInfo) =>
     transferMode: 'ReportEvents',
   })
 
-  await page.goto('/lab/liquid-glass', { waitUntil: 'networkidle' })
+  await page.goto('/lab/liquid-glass', { waitUntil: 'domcontentloaded' })
   await page.locator('[data-glass-state="default"]').hover({ position: { x: 36, y: 36 } })
   await session.send('Tracing.end')
   await traceComplete

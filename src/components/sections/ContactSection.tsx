@@ -32,7 +32,7 @@ export default function ContactSection() {
                   aria-label={
                     profile.external ? `${profile.label} (opens in a new tab)` : profile.label
                   }
-                  {...(profile.external ? { rel: 'noreferrer', target: '_blank' } : {})}
+                  {...(profile.external ? { rel: 'noopener noreferrer', target: '_blank' } : {})}
                 >
                   {profile.label}
                 </LiquidGlassButton>
@@ -41,7 +41,14 @@ export default function ContactSection() {
           </ul>
           <ContactForm turnstileSiteKey={turnstileSiteKey} />
           <p className="mt-6 border-t border-white/15 pt-4 text-sm leading-relaxed text-[var(--site-muted)]">
-            {contact.privacyNotice}
+            {contact.privacyNotice}{' '}
+            <a className="text-violet-200 underline underline-offset-4" href="/privacy">
+              Privacy details
+            </a>
+            {' · '}
+            <a className="text-violet-200 underline underline-offset-4" href="/credits">
+              Credits
+            </a>
           </p>
         </LiquidGlassPanel>
       </article>

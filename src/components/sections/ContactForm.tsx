@@ -36,9 +36,7 @@ function createEmptyForm(): ContactFormState {
 
 export default function ContactForm({ turnstileSiteKey }: ContactFormProps) {
   const [form, setForm] = useState<ContactFormState>(createEmptyForm)
-  const [isOnline, setIsOnline] = useState(
-    () => typeof navigator === 'undefined' || navigator.onLine,
-  )
+  const [isOnline, setIsOnline] = useState(true)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [isPending, setIsPending] = useState(false)
   const [result, setResult] = useState<string | null>(null)
@@ -46,6 +44,7 @@ export default function ContactForm({ turnstileSiteKey }: ContactFormProps) {
   useEffect(() => {
     const syncOnlineStatus = () => setIsOnline(navigator.onLine)
 
+    syncOnlineStatus()
     window.addEventListener('online', syncOnlineStatus)
     window.addEventListener('offline', syncOnlineStatus)
     return () => {

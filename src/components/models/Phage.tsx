@@ -1,69 +1,61 @@
 'use client'
 
-import { useRef } from 'react'
-
 import { useFrame } from '@react-three/fiber'
-
+import { useRef } from 'react'
 import * as THREE from 'three'
+
+const headGeometry = new THREE.IcosahedronGeometry(0.45, 1)
+const tailGeometry = new THREE.CylinderGeometry(0.05, 0.05, 1.2, 16)
+const legGeometry = new THREE.CylinderGeometry(0.015, 0.015, 0.5, 8)
+const headMaterial = new THREE.MeshPhysicalMaterial({
+  color: '#c084fc',
+  emissive: '#7c3aed',
+  emissiveIntensity: 1,
+  metalness: 0.4,
+  roughness: 0.2,
+})
+const tailMaterial = new THREE.MeshPhysicalMaterial({
+  color: '#f97316',
+  emissive: '#ea580c',
+  emissiveIntensity: 1.2,
+})
+const legMaterial = new THREE.MeshPhysicalMaterial({ color: '#ffffff' })
+const legOffsets = [-0.3, -0.15, 0.15, 0.3] as const
 
 interface PhageProps {
   position: [number, number, number]
-
   scale?: number
-
   speed?: number
 }
 
 export default function Phage({ position, scale = 1, speed = 1 }: PhageProps) {
   const ref = useRef<THREE.Group>(null)
 
-  useFrame((state) => {
-    if (!ref.current) return
+  useFrame((state, delta) => {
+    if (!ref.current) {
+      return
+    }
 
-    const t = state.clock.elapsedTime * speed
-
-    ref.current.rotation.y += 0.003
-
-    ref.current.position.y = position[1] + Math.sin(t) * 0.15
-
-    ref.current.rotation.z = Math.sin(t * 0.5) * 0.08
+    const elapsed = state.clock.elapsedTime * speed
+    ref.current.rotation.y += delta * speed * 0.18
+    ref.current.position.y = position[1] + Math.sin(elapsed) * 0.15
+    ref.current.rotation.z = Math.sin(elapsed * 0.5) * 0.08
   })
 
   return (
-    <group ref={ref} position={position} scale={scale}>
-      {/* HEAD */}
+    <group ref={ref} dispose={null} position={position} scale={scale}>
       <mesh>
-        <icosahedronGeometry args={[0.45, 1]} />
-
-        <meshPhysicalMaterial
-          color="#c084fc"
-
-          emissive="#7c3aed"
-          emissiveIntensity={1}
-
-          roughness={0.2}
-          metalness={0.4}
-        />
+        <primitive attach="geometry" object={headGeometry} />
+        <primitive attach="material" object={headMaterial} />
       </mesh>
-
-      {/* TAIL */}
       <mesh position={[0, -0.9, 0]}>
-        <cylinderGeometry args={[0.05, 0.05, 1.2, 16]} />
-
-        <meshPhysicalMaterial
-          color="#f97316"
-
-          emissive="#ea580c"
-          emissiveIntensity={1.2}
-        />
+        <primitive attach="geometry" object={tailGeometry} />
+        <primitive attach="material" object={tailMaterial} />
       </mesh>
-
-      {/* LEGS */}
-      {[-0.3, -0.15, 0.15, 0.3].map((x, i) => (
-        <mesh key={i} position={[x, -1.45, 0]} rotation={[0, 0, x]}>
-          <cylinderGeometry args={[0.015, 0.015, 0.5, 8]} />
-
-          <meshPhysicalMaterial color="#ffffff" />
+      {legOffsets.map((offset) => (
+        <mesh key={offset} position={[offset, -1.45, 0]} rotation={[0, 0, offset]}>
+          <primitive attach="geometry" object={legGeometry} />
+          <primitive attach="material" object={legMaterial} />
         </mesh>
       ))}
     </group>

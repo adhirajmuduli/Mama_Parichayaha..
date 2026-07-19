@@ -36,7 +36,7 @@ const profiles: Record<SceneQualityTier, SceneRuntimeProfile> = {
     tier: 'medium',
     dprCap: 1.5,
     particleCount: 96,
-    postProcessing: true,
+    postProcessing: false,
     powerPreference: 'high-performance',
   },
   high: {

@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 test('keeps the initial portfolio shell visually stable', async ({ page }, testInfo) => {
-  await page.goto('/', { waitUntil: 'networkidle' })
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
   await page.locator('canvas').evaluateAll((canvases) => {
     canvases.forEach((canvas) => {
       canvas.style.visibility = 'hidden'

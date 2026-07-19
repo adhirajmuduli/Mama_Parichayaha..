@@ -36,7 +36,7 @@ export default function PortfolioDocument({
       <main id="portfolio-content" className="relative min-h-screen overflow-x-hidden">
         <div className="relative z-10">
           {interactiveDecorations ? <CursorGlow /> : null}
-          <ChapterProgressIndicator chapters={chapterNavigation} />
+          {showDocumentChrome ? <ChapterProgressIndicator chapters={chapterNavigation} /> : null}
           {chapterRegistry.map((chapter) => (
             <ChapterSection key={chapter.id} chapter={chapter} />
           ))}

@@ -37,7 +37,7 @@ if (!pageFiles) {
 const runtimeFiles = new Set(buildManifest.rootMainFiles)
 const initialRouteFiles = pageFiles.filter((file) => !runtimeFiles.has(file))
 const sceneManifestEntry = Object.entries(loadableManifest).find(([entry]) =>
-  entry.includes('components\\scene\\SceneClient.tsx -> ./Experience'),
+  entry.replaceAll('\\', '/').includes('components/scene/SceneClient.tsx -> ./Experience'),
 )
 
 if (!sceneManifestEntry) {

@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 test('exposes accessible controls only for active scene exhibits', async ({ page }, testInfo) => {
-  await page.goto('/', { waitUntil: 'networkidle' })
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
 
   const dnaControls = page.getByRole('group', { name: 'DNA model controls' })
   const phageControls = page.getByRole('group', { name: 'Bacteriophage model controls' })

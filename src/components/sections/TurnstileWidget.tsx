@@ -28,6 +28,7 @@ export default function TurnstileWidget({ onTokenChange, siteKey }: TurnstileWid
   const containerRef = useRef<HTMLDivElement>(null)
   const onTokenChangeRef = useRef(onTokenChange)
   const widgetIdRef = useRef<string | null>(null)
+  const [isClientReady, setIsClientReady] = useState(false)
   const [isScriptReady, setIsScriptReady] = useState(
     () => typeof window !== 'undefined' && Boolean(window.turnstile),
   )
@@ -35,6 +36,10 @@ export default function TurnstileWidget({ onTokenChange, siteKey }: TurnstileWid
   useEffect(() => {
     onTokenChangeRef.current = onTokenChange
   }, [onTokenChange])
+
+  useEffect(() => {
+    setIsClientReady(true)
+  }, [])
 
   useEffect(() => {
     if (!isScriptReady || !containerRef.current || !window.turnstile || widgetIdRef.current) {
@@ -59,13 +64,15 @@ export default function TurnstileWidget({ onTokenChange, siteKey }: TurnstileWid
 
   return (
     <div>
-      <Script
-        id="cloudflare-turnstile"
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-        strategy="afterInteractive"
-        onLoad={() => setIsScriptReady(true)}
-      />
-      <div ref={containerRef} aria-label="Spam protection" />
+      {isClientReady ? (
+        <Script
+          id="cloudflare-turnstile"
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+          strategy="afterInteractive"
+          onLoad={() => setIsScriptReady(true)}
+        />
+      ) : null}
+      <div ref={containerRef} role="group" aria-label="Spam protection" />
     </div>
   )
 }

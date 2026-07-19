@@ -43,7 +43,13 @@ export default function ChapterDetail({ chapter }: ChapterDetailProps) {
             <LiquidGlassButton
               key={action.href}
               href={action.href}
-              {...(action.external ? { rel: 'noreferrer', target: '_blank' } : {})}
+              {...(action.external
+                ? {
+                    'aria-label': `${action.label} (opens in a new tab)`,
+                    rel: 'noopener noreferrer',
+                    target: '_blank',
+                  }
+                : {})}
             >
               {action.label}
             </LiquidGlassButton>

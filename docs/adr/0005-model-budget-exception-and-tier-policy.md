@@ -1,9 +1,11 @@
 # ADR 0005: Model budget exception and tier policy
 
-- Status: accepted
+- Status: Superseded by ADR 0006
 - Date: 2026-07-17
 
 ## Context
+
+This decision records the pre-consolidation model inventory. Its GFP and tardigrade assignments are no longer active after the flat public/models inventory refactor; it remains as historical provenance only.
 
 The retained tardigrade GLB is 21,943,424 bytes on disk and 10,124,706 bytes with Brotli compression. It exceeds the Phase 5 default 2 MiB compressed-model budget. The current GFP derivative is 2,063,201 bytes with gzip compression, marginally above the same boundary when gzip is the negotiated encoding.
 

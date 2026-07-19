@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 test('keeps default, fallback, and reduced-motion glass states visually stable', async ({
   page,
 }, testInfo) => {
-  await page.goto('/lab/liquid-glass', { waitUntil: 'networkidle' })
+  await page.goto('/lab/liquid-glass', { waitUntil: 'domcontentloaded' })
 
   await expect(page).toHaveScreenshot(`liquid-glass-${testInfo.project.name}.png`, {
     animations: 'disabled',
@@ -20,7 +20,7 @@ test('keeps the keyboard focus surface visually stable', async ({ page }, testIn
     'The shared focus treatment is viewport independent.',
   )
 
-  await page.goto('/lab/liquid-glass', { waitUntil: 'networkidle' })
+  await page.goto('/lab/liquid-glass', { waitUntil: 'domcontentloaded' })
   await page.getByRole('link', { name: 'Focusable action' }).focus()
 
   await expect(page).toHaveScreenshot('liquid-glass-focus.png', {
@@ -38,7 +38,7 @@ test('keeps the fine-pointer specular state visually stable', async ({ page }, t
     'Pointer tracking is intentionally disabled elsewhere.',
   )
 
-  await page.goto('/lab/liquid-glass', { waitUntil: 'networkidle' })
+  await page.goto('/lab/liquid-glass', { waitUntil: 'domcontentloaded' })
   await page.locator('[data-glass-state="default"]').hover({ position: { x: 36, y: 36 } })
 
   await expect(page).toHaveScreenshot('liquid-glass-hover.png', {

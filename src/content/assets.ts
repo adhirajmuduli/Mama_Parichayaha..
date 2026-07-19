@@ -95,7 +95,7 @@ const sceneAssetManifest = {
       inactiveScale: 1.567,
       orientation: [0.35, -0.45, 0.15],
     },
-    policy: { availableTiers: ['low', 'medium', 'high'], preload: 'current' },
+    policy: { availableTiers: ['medium', 'high'], preload: 'current' },
     credit: {
       title: 'DNA VR Interactive Animation',
       author: 'nilantunes',

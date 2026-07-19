@@ -14,13 +14,14 @@ export default function ChapterCameraRig() {
   const desiredTargetRef = useRef(new THREE.Vector3())
   const targetRef = useRef(new THREE.Vector3())
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     const pose = getCameraPose(chapter, size.width)
 
     desiredPositionRef.current.fromArray(pose.position)
     desiredTargetRef.current.fromArray(pose.target)
-    camera.position.lerp(desiredPositionRef.current, 0.04)
-    targetRef.current.lerp(desiredTargetRef.current, 0.04)
+    const interpolation = 1 - Math.exp(-4.2 * delta)
+    camera.position.lerp(desiredPositionRef.current, interpolation)
+    targetRef.current.lerp(desiredTargetRef.current, interpolation)
     camera.lookAt(targetRef.current)
   })
 

@@ -17,6 +17,7 @@ const asset = getModelAsset('dna')
 
 export default function DNA() {
   const containerRef = useRef<THREE.Group>(null)
+  const targetScaleRef = useRef(new THREE.Vector3())
   const { scene, animations } = useGLTF(asset.url, getModelDracoDecoderPath(asset), true)
   const model = useMemo(() => createGLTFInstance(scene, asset.materialOwnership), [scene])
   const { actions } = useAnimations(animations, model)
@@ -47,7 +48,7 @@ export default function DNA() {
     }
   }, [actions, model])
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     if (!containerRef.current) {
       return
     }
@@ -56,7 +57,8 @@ export default function DNA() {
       ? asset.normalization.activeScale
       : asset.normalization.inactiveScale
     containerRef.current.position.y = centerY - 0.5 + Math.sin(state.clock.elapsedTime * 0.8) * 0.12
-    containerRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.05)
+    targetScaleRef.current.setScalar(targetScale)
+    containerRef.current.scale.lerp(targetScaleRef.current, 1 - Math.exp(-3 * delta))
   })
 
   return (

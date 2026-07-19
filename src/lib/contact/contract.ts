@@ -24,6 +24,8 @@ function normalizeMultiline(value: string) {
 
 const SafeSingleLineSchema = z
   .string()
+  .refine((value) => !hasUnsafeControlCharacter(value), 'Contains unsupported control characters.')
+  .refine((value) => !headerInjectionPattern.test(value), 'Line breaks are not allowed.')
   .transform(normalizeSingleLine)
   .refine((value) => !hasUnsafeControlCharacter(value), 'Contains unsupported control characters.')
   .refine((value) => !headerInjectionPattern.test(value), 'Line breaks are not allowed.')

@@ -39,10 +39,10 @@ export default function CreditsSection() {
                       key={link.href}
                       href={link.href}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="px-3 py-1.5 text-sm"
                     >
-                      {link.label}
+                      {link.label} <span className="sr-only">(opens in a new tab)</span>
                     </LiquidGlassButton>
                   ))}
                 </div>

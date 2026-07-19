@@ -1,4 +1,14 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "ignoreDependencies": ["eslint-config-next", "eslint-config-prettier"]
+  "ignoreDependencies": ["eslint-config-next", "eslint-config-prettier", "server-only"],
+  "ignoreFiles": [
+    "public/draco/**",
+    "src/components/models/ChapterGLTFModel.tsx",
+    "src/components/models/InteractiveModel.tsx",
+    "src/components/models/ProteinShowcase.tsx",
+    "src/components/models/Tradigrade.tsx"
+  ],
+  "ignoreIssues": {
+    "src/lib/contact/contract.ts": ["exports"]
+  }
 }
