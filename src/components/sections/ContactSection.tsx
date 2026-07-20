@@ -42,11 +42,17 @@ export default function ContactSection() {
           <ContactForm turnstileSiteKey={turnstileSiteKey} />
           <p className="mt-6 border-t border-white/15 pt-4 text-sm leading-relaxed text-[var(--site-muted)]">
             {contact.privacyNotice}{' '}
-            <a className="text-violet-200 underline underline-offset-4" href="/privacy">
+            <a
+              className="rounded-sm border border-violet-300/80 bg-violet-950/80 px-1.5 py-0.5 font-semibold text-white underline decoration-2 underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--site-focus)]"
+              href="/privacy"
+            >
               Privacy details
             </a>
             {' · '}
-            <a className="text-violet-200 underline underline-offset-4" href="/credits">
+            <a
+              className="rounded-sm border border-violet-300/80 bg-violet-950/80 px-1.5 py-0.5 font-semibold text-white underline decoration-2 underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--site-focus)]"
+              href="/credits"
+            >
               Credits
             </a>
           </p>

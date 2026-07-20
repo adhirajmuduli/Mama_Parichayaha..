@@ -50,8 +50,16 @@ function parseAllowedOrigins(value: string | null, issues: string[]) {
   return origins
 }
 
+export function isContactDeliveryEnabled() {
+  return process.env.CONTACT_DELIVERY_ENABLED?.trim().toLowerCase() !== 'false'
+}
+
 export function getContactRuntimeConfig(): ContactConfigResult {
   const issues: string[] = []
+
+  if (!isContactDeliveryEnabled()) {
+    return { config: null, issues }
+  }
   const isProduction = process.env.NODE_ENV === 'production'
   const resendApiKey = getRequiredEnvironmentValue('RESEND_API_KEY', issues)
   const toEmail = getRequiredEnvironmentValue('CONTACT_TO_EMAIL', issues)

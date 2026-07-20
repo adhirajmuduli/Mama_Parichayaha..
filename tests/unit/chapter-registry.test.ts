@@ -14,6 +14,7 @@ import {
   chapterRegistry,
   getCameraPose,
   getChapterContent,
+  type ChapterRegistryEntry,
 } from '@/lib/chapterRegistry'
 import {
   getAdjacentChapterIds,
@@ -48,6 +49,46 @@ describe('chapter registry', () => {
     })
   })
 
+  it('clamps scroll progress and handles chapter boundaries and exhibit ownership', () => {
+    expect(getChapterAtProgress(-0.2)).toBe('origins')
+    expect(getChapterAtProgress(1.2)).toBe('future')
+    expect(getAdjacentChapterIds('origins')).toEqual(['interests'])
+    expect(getAdjacentChapterIds('future')).toEqual(['computation'])
+    expect(getChapterPresence('origins', 'future')).toEqual({
+      active: false,
+      nearby: false,
+      distance: 4,
+    })
+    expect(getChapterPresence('computation', 'computation')).toEqual({
+      active: true,
+      nearby: true,
+      distance: 0,
+    })
+  })
+
+  it('rejects non-canonical registry mappings and unsafe scene values', () => {
+    const copyRegistry = () => structuredClone(chapterRegistry) as unknown as ChapterRegistryEntry[]
+
+    const nonCanonicalOrder = copyRegistry()
+    nonCanonicalOrder[0]!.order = 1
+    expect(() => assertChapterRegistry(nonCanonicalOrder)).toThrow('non-canonical order')
+
+    const duplicateSection = copyRegistry()
+    duplicateSection[1]!.sectionId = duplicateSection[0]!.sectionId
+    expect(() => assertChapterRegistry(duplicateSection)).toThrow('Duplicate chapter mapping')
+
+    const invalidFog = copyRegistry()
+    invalidFog[0]!.scene.atmosphere.fog.far = invalidFog[0]!.scene.atmosphere.fog.near
+    expect(() => assertChapterRegistry(invalidFog)).toThrow('invalid fog range')
+
+    const invalidOpacity = copyRegistry()
+    invalidOpacity[0]!.scene.atmosphere.particleOpacity = 1.1
+    expect(() => assertChapterRegistry(invalidOpacity)).toThrow('invalid particle opacity')
+
+    const unknownExhibit = copyRegistry()
+    unknownExhibit[0]!.scene.exhibits = [{ id: 'unknown' as never }]
+    expect(() => assertChapterRegistry(unknownExhibit)).toThrow('unknown exhibit')
+  })
   it('rejects duplicate or incomplete content ids', () => {
     const duplicateContent = [
       ...portfolioContent.chapters.slice(0, -1),

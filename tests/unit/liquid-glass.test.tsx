@@ -54,7 +54,7 @@ describe('liquid-glass primitives', () => {
     const link = screen.getByRole('link', { name: 'External profile' })
 
     expect(link).toHaveAttribute('href', 'https://example.com')
-    expect(link).toHaveAttribute('rel', 'noreferrer')
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer')
     expect(link.closest('[data-liquid-glass]')).not.toBe(link)
   })
 

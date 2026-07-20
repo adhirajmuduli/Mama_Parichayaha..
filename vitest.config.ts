@@ -37,6 +37,11 @@ export default defineConfig({
       include: ['src/hooks/**/*.{ts,tsx}', 'src/lib/**/*.{ts,tsx}'],
       provider: 'v8',
       reporter: ['text', 'json-summary', 'lcov'],
+      thresholds: {
+        branches: 80,
+        lines: 85,
+        statements: 85,
+      },
     },
   },
 })

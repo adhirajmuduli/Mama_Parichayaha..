@@ -9,6 +9,7 @@ vi.mock('@react-three/fiber', () => ({
 
 import useModelInteraction from '@/hooks/useModelInteraction'
 import { useNarrativeStore } from '@/stores/narrativeStore'
+import { useSceneInteractionStore } from '@/stores/sceneInteractionStore'
 
 type InteractionHandlers = ReturnType<typeof useModelInteraction>
 type PointerHandlerEvent = Parameters<InteractionHandlers['onPointerDown']>[0]
@@ -72,6 +73,7 @@ function createPointerEvent(overrides: Partial<PointerHandlerEvent> = {}): TestP
 describe('useModelInteraction', () => {
   beforeEach(() => {
     useNarrativeStore.setState({ activeChapter: 'origins', direction: 0, selectedExhibit: null })
+    useSceneInteractionStore.setState({ request: null })
   })
 
   it('captures, rotates, and always releases a matching pointer on cancellation', () => {
@@ -134,5 +136,36 @@ describe('useModelInteraction', () => {
 
     expect(touchDown.target.setPointerCapture).not.toHaveBeenCalled()
     expect(verticalMove.stopPropagation).not.toHaveBeenCalled()
+  })
+  it('applies scene-control commands only to the matching mounted exhibit', () => {
+    let handlers: InteractionHandlers | null = null
+    let group: THREE.Group | null = null
+    render(
+      <InteractionHarness
+        chapter="origins"
+        onReady={(nextHandlers, nextGroup) => {
+          handlers = nextHandlers
+          group = nextGroup
+        }}
+      />,
+    )
+
+    const readyHandlers = handlers as unknown as InteractionHandlers
+    const readyGroup = group as unknown as THREE.Group
+    useSceneInteractionStore.getState().dispatch('phages', 'rotate-right')
+    expect(readyGroup.rotation.y).toBe(0)
+
+    useSceneInteractionStore.getState().dispatch('dna', 'rotate-right')
+    useSceneInteractionStore.getState().dispatch('dna', 'rotate-left')
+    expect(readyGroup.rotation.y).toBe(0)
+
+    readyGroup.rotation.set(0.4, 0.8, 0.2)
+    useSceneInteractionStore.getState().dispatch('dna', 'reset')
+    expect(readyGroup.rotation.toArray()).toEqual([0, 0, 0, 'XYZ'])
+
+    const down = createPointerEvent()
+    readyHandlers.onPointerDown(down.event)
+    useSceneInteractionStore.getState().dispatch('dna', 'exit')
+    expect(down.target.releasePointerCapture).toHaveBeenCalledWith(7)
   })
 })

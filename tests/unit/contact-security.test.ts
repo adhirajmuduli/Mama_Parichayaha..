@@ -65,4 +65,70 @@ describe('contact request security', () => {
     expect(getClientIp(request)).toBe('203.0.113.5')
     expect(hashPrivacyPreservingIdentifier('203.0.113.5')).not.toContain('203.0.113.5')
   })
+  it('prioritizes Netlify client IPs and rejects missing or malformed candidates', () => {
+    expect(
+      getClientIp(
+        new Request('http://localhost:3000', {
+          headers: {
+            'X-Nf-Client-Connection-Ip': '2001:db8::5',
+            'X-Forwarded-For': '203.0.113.5',
+          },
+        }),
+      ),
+    ).toBe('2001:db8::5')
+    expect(getClientIp(new Request('http://localhost:3000'))).toBeNull()
+    expect(
+      getClientIp(
+        new Request('http://localhost:3000', {
+          headers: { 'X-Forwarded-For': 'not an ip' },
+        }),
+      ),
+    ).toBeNull()
+  })
+
+  it('rejects absent, mismatched, and malformed origins', () => {
+    expect(() =>
+      assertAllowedOrigin(new Request('http://localhost:3000'), new Set(['http://localhost:3000'])),
+    ).toThrow(ContactRequestError)
+    expect(() =>
+      assertAllowedOrigin(
+        new Request('http://localhost:3000', {
+          headers: { Host: 'localhost:3000', Origin: 'http://localhost:4000' },
+        }),
+        new Set(['http://localhost:4000']),
+      ),
+    ).toThrow(ContactRequestError)
+    expect(() =>
+      assertAllowedOrigin(
+        new Request('http://localhost:3000', {
+          headers: { Host: 'localhost:3000', Origin: 'not a URL' },
+        }),
+        new Set(['not a URL']),
+      ),
+    ).toThrow(ContactRequestError)
+  })
+
+  it('rejects invalid JSON bodies and declared oversized bodies', async () => {
+    await expect(
+      readContactJson(
+        new Request('http://localhost:3000/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: '{',
+        }),
+      ),
+    ).rejects.toMatchObject({ kind: 'invalid_json' })
+    await expect(
+      readContactJson(
+        new Request('http://localhost:3000/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Length': '12001',
+            'Content-Type': 'application/json',
+          },
+          body: '{}',
+        }),
+      ),
+    ).rejects.toMatchObject({ kind: 'body_too_large' })
+  })
 })
