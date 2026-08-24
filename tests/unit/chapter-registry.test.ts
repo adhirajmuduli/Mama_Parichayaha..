@@ -31,7 +31,13 @@ describe('chapter registry', () => {
     expect(chapterRegistry.map((chapter) => chapter.id)).toEqual(chapterIds)
     expect(chapterRegistry.map((chapter) => getChapterContent(chapter.id).id)).toEqual(chapterIds)
     expect(JSON.parse(JSON.stringify(chapterRegistry))).toEqual(chapterRegistry)
-    expect(Object.keys(exhibitLoaders).sort()).toEqual(['dna', 'phages'])
+    expect(Object.keys(exhibitLoaders).sort()).toEqual([
+      'dna',
+      'helix',
+      'lattice',
+      'orbit',
+      'phages',
+    ])
   })
 
   it('selects responsive camera poses and adjacent chapters from one order', () => {

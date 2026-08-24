@@ -91,7 +91,7 @@ const sceneAssetManifest = {
     materialOwnership: 'clone',
     normalization: {
       unitScale: 0.0319078,
-      activeScale: 7.5216,
+      activeScale: 6,
       inactiveScale: 1.567,
       orientation: [0.35, -0.45, 0.15],
     },
@@ -116,17 +116,41 @@ const sceneAssetManifest = {
       sourceUrl: 'https://github.com/adhirajmuduli',
     },
   },
-  protein: {
-    id: 'protein',
-    kind: 'unassigned',
+  helix: {
+    id: 'helix',
+    kind: 'procedural',
     chapter: 'research',
-    reason: 'Awaiting owner-selected replacement model and verified provenance.',
+    policy: { availableTiers: ['low', 'medium', 'high'], preload: 'none' },
+    credit: {
+      title: 'Procedural protein-backbone study',
+      author: 'Portfolio source',
+      license: 'Original implementation',
+      sourceUrl: 'https://github.com/adhirajmuduli',
+    },
   },
-  tardigrade: {
-    id: 'tardigrade',
-    kind: 'unassigned',
+  lattice: {
+    id: 'lattice',
+    kind: 'procedural',
     chapter: 'computation',
-    reason: 'Awaiting owner-selected replacement model and verified provenance.',
+    policy: { availableTiers: ['low', 'medium', 'high'], preload: 'none' },
+    credit: {
+      title: 'Procedural scientific-data lattice study',
+      author: 'Portfolio source',
+      license: 'Original implementation',
+      sourceUrl: 'https://github.com/adhirajmuduli',
+    },
+  },
+  orbit: {
+    id: 'orbit',
+    kind: 'procedural',
+    chapter: 'future',
+    policy: { availableTiers: ['low', 'medium', 'high'], preload: 'none' },
+    credit: {
+      title: 'Procedural discovery-orbit study',
+      author: 'Portfolio source',
+      license: 'Original implementation',
+      sourceUrl: 'https://github.com/adhirajmuduli',
+    },
   },
 } as const satisfies Record<ExhibitId, SceneAsset>
 

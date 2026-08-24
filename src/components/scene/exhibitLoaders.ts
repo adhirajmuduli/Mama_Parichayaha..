@@ -9,7 +9,10 @@ export type ExhibitLoader = () => Promise<{ default: ComponentType }>
 export const exhibitLoaders = {
   dna: () => import('@/components/models/DNA'),
   phages: () => import('@/components/models/PhageSystem'),
-} satisfies Partial<Record<ExhibitId, ExhibitLoader>>
+  helix: () => import('@/components/models/HelixExhibit'),
+  lattice: () => import('@/components/models/LatticeExhibit'),
+  orbit: () => import('@/components/models/OrbitExhibit'),
+} satisfies Record<ExhibitId, ExhibitLoader>
 
 export function assertExhibitLoaders(
   loaders: Partial<Record<ExhibitId, ExhibitLoader>> = exhibitLoaders,

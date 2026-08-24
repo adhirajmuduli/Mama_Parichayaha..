@@ -38,7 +38,7 @@ export const PublicProfileSchema = z
 
 export const ModelCreditSchema = z
   .object({
-    assetId: z.enum(['dna', 'protein', 'tardigrade']),
+    assetId: z.enum(['dna']),
     attribution: z.string().trim().min(1).max(260),
     license: z.string().trim().min(1).max(160),
     links: z.array(CreditLinkSchema).min(1).max(2),

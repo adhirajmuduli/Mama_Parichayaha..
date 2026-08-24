@@ -19,9 +19,9 @@ describe('DNA material treatment', () => {
 
     expect(material.color.getHexString()).toBe('f97316')
     expect(material.emissive.getHexString()).toBe('ea580c')
-    expect(material.emissiveIntensity).toBe(1.8)
-    expect(material.roughness).toBe(0.15)
-    expect(material.metalness).toBe(0.35)
+    expect(material.emissiveIntensity).toBe(0.3)
+    expect(material.roughness).toBe(0.5)
+    expect(material.metalness).toBe(0.2)
     expect(material.version).toBeGreaterThan(0)
   })
 
@@ -30,8 +30,8 @@ describe('DNA material treatment', () => {
 
     applyDnaMaterial(material)
 
-    expect(material.clearcoat).toBe(1)
-    expect(material.clearcoatRoughness).toBe(0)
-    expect(material.reflectivity).toBe(1)
+    expect(material.clearcoat).toBe(0.5)
+    expect(material.clearcoatRoughness).toBe(0.3)
+    expect(material.reflectivity).toBe(0.6)
   })
 })

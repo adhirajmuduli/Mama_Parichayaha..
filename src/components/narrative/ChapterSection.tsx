@@ -13,7 +13,7 @@ interface ChapterSectionProps {
 export default function ChapterSection({ chapter }: ChapterSectionProps) {
   const content = getChapterContent(chapter.id)
   const headingId = `${chapter.sectionId}-heading`
-  const alignment = chapter.order % 2 === 0 ? 'md:justify-end' : 'md:justify-start'
+  const alignment = chapter.order % 2 === 0 ? 'md:justify-start' : 'md:justify-end'
   const Heading = chapter.order === 0 ? 'h1' : 'h2'
 
   return (
@@ -24,7 +24,7 @@ export default function ChapterSection({ chapter }: ChapterSectionProps) {
     >
       <ChapterSectionObserver chapter={chapter.id} sectionId={chapter.sectionId} />
 
-      <article className={`w-full ${alignment}`}>
+      <article className={`flex w-full ${alignment}`}>
         <LiquidGlassPanel accent={chapter.scene.atmosphere.keyLight} className="max-w-xl">
           <p
             className="mb-3 text-sm uppercase tracking-[0.3em]"

@@ -23,7 +23,7 @@ function InteractionHarness({ chapter, onReady }: HarnessProps) {
   const groupRef = useRef<THREE.Group | null>(new THREE.Group())
   const handlers = useModelInteraction({
     chapter,
-    exhibitId: chapter === 'origins' ? 'dna' : 'protein',
+    exhibitId: chapter === 'origins' ? 'dna' : 'helix',
     groupRef,
     initialRotation: [0, 0, 0],
   })

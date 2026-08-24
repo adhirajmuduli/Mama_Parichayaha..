@@ -7,7 +7,7 @@ import {
 
 export { chapterIds }
 
-export const exhibitIds = ['dna', 'phages', 'protein', 'tardigrade'] as const
+export const exhibitIds = ['dna', 'phages', 'helix', 'lattice', 'orbit'] as const
 
 export type ExhibitId = (typeof exhibitIds)[number]
 export type Vector3Tuple = readonly [number, number, number]
@@ -93,8 +93,8 @@ export const chapterRegistry = [
         lighting: {
           ambientIntensity: 0.24,
           key: { color: '#a78bfa', intensity: 3.2, offset: [4, 6, 7] },
-          rim: { color: '#f59e0b', intensity: 10, offset: [-4, 1, 3] },
-          fill: { color: '#4f46e5', intensity: 6, offset: [3, -2, -4] },
+          rim: { color: '#f59e0b', intensity: 4, offset: [-4, 1, 3] },
+          fill: { color: '#4f46e5', intensity: 4.5, offset: [3, -2, -4] },
         },
         palette: ['#07020f', '#2e1065', '#f59e0b'],
         particleColor: '#c4b5fd',
@@ -164,7 +164,7 @@ export const chapterRegistry = [
         particleColor: '#a5f3fc',
         particleOpacity: 0.42,
       },
-      exhibits: [],
+      exhibits: [{ id: 'helix' }],
     },
   },
   {
@@ -196,7 +196,7 @@ export const chapterRegistry = [
         particleColor: '#c4b5fd',
         particleOpacity: 0.32,
       },
-      exhibits: [],
+      exhibits: [{ id: 'lattice' }],
     },
   },
   {
@@ -228,7 +228,7 @@ export const chapterRegistry = [
         particleColor: '#ccfbf1',
         particleOpacity: 0.24,
       },
-      exhibits: [],
+      exhibits: [{ id: 'orbit' }],
     },
   },
 ] as const satisfies readonly ChapterRegistryEntry[]
