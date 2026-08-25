@@ -56,7 +56,7 @@ export default function LatticeExhibit() {
       return
     }
 
-    targetScaleRef.current.setScalar(presence.nearby ? 1 : 0.1)
+    targetScaleRef.current.setScalar(presence.active ? 1 : 0.55)
     groupRef.current.scale.lerp(targetScaleRef.current, 1 - Math.exp(-3 * delta))
     groupRef.current.visible = presence.distance <= 2
     groupRef.current.rotation.y += delta * 0.045
@@ -83,7 +83,7 @@ export default function LatticeExhibit() {
   })
 
   return (
-    <group ref={groupRef} position={[centerX, centerY, centerZ]} scale={0.1}>
+    <group ref={groupRef} position={[centerX, centerY, centerZ]} scale={0.55}>
       <instancedMesh
         ref={meshRef}
         args={[nodeGeometry, nodeMaterial, nodeCount]}

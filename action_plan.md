@@ -147,20 +147,24 @@ The audit shows the layout system is sound (persistent canvas + semantic section
 
 ### P0 — must fix before any other visual work
 
-- [ ] D1: remove/re-layer the `*` reset in `src/app/globals.css:8-12`; verify spacing utilities compute non-zero (probe script).
-- [ ] D2: make `<article>` a flex container (or `ml-auto` panel) in `ChapterSection.tsx`; verify alternating panel x ≈ 48 / 816 at 1440px.
-- [ ] D4a: retune `applyDnaMaterial` in `src/lib/materials.ts` (emissive ≤ 0.35, roughness ~0.5) and reduce origins rim intensity in the registry; cap DNA screen height.
-- [ ] D3a: assign exhibits to research/computation/future from the existing manifest assets; extend `exhibitIds`, loaders, and registry entries.
+- [x] D1: remove/re-layer the `*` reset in `src/app/globals.css:8-12`; verify spacing utilities compute non-zero (probe script). _(Done 2026-08-24: section padding computes 48/80px; `mt-8`/`mb-4` restored.)_
+- [x] D2: make `<article>` a flex container (or `ml-auto` panel) in `ChapterSection.tsx`; verify alternating panel x ≈ 48 / 816 at 1440px. _(Done: panels measured at x=48 and x=816.)_
+- [x] D4a: retune `applyDnaMaterial` in `src/lib/materials.ts` (emissive ≤ 0.35, roughness ~0.5) and reduce origins rim intensity in the registry; cap DNA screen height. _(Done: emissive 0.3, roughness 0.5, rim 4, `activeScale` 6 — DNA fully in frame.)_
+- [x] D3a: assign exhibits to research/computation/future from the existing manifest assets; extend `exhibitIds`, loaders, and registry entries. _(Done: GLB candidates lack verified provenance per `docs/assets/model-provenance.md`, so chapters received procedural exhibits — `HelixExhibit`, `LatticeExhibit`, `OrbitExhibit` — following the `phages` precedent. GLB assignment stays blocked on owner provenance verification.)_
+
+P0 verification: computed-style probe green; per-chapter screenshots confirm margins, alternation, restrained DNA, and exhibits in all five chapters; visual baselines regenerated deliberately and re-confirmed; `npm run quality` green; full E2E matrix green (two desktop specs flaked under concurrent machine load and passed cleanly on isolated re-run).
 
 ### P1 — experience correctness
 
-- [ ] D3b: presence-based fade instead of scale/hide (`DNA.tsx`, `PhageSystem.tsx`, `useChapterPresence`).
-- [ ] D3c: compress lateral span + add Z/yaw variation in `chapterRegistry.ts` camera poses.
-- [ ] D5: specular layer off until pointer enter (`liquid-glass.module.css`, `LiquidGlassPointerTracker.tsx`).
-- [ ] D6: restore header/progress/footer or a minimal progress rail (`PortfolioDocument.tsx`).
-- [ ] D7: glass-styled form controls + bounded contact panel + themed Turnstile fallback (`ContactForm.tsx`, `TurnstileWidget.tsx`, `ContactSection.tsx`).
-- [ ] D8: fix `ModelInteractionControls` active/unavailable logic; hide controls when tier-gated.
-- [ ] D9: editorial de-duplication of chapter content (`src/content/portfolio.ts`) and compact publications section.
+- [x] D3b: presence-based fade instead of scale/hide (`DNA.tsx`, `PhageSystem.tsx`, `useChapterPresence`). _(Done: adjacent exhibits recede to 55% instead of vanishing; previous chapter's exhibit stays visible through transitions. `loading.tsx` removed — its Suspense fallback duplicated the whole document for no-JS visitors, since the streamed swap requires JavaScript.)_
+- [x] D3c: compress lateral span + add Z/yaw variation in `chapterRegistry.ts` camera poses. _(Done: chapter step 18 → 8 world units with a Z curve; camera targets offset ±1.2 units away from each chapter's card side.)_
+- [x] D5: specular layer off until pointer enter (`liquid-glass.module.css`, `LiquidGlassPointerTracker.tsx`). _(Done: radial specular is opacity-0 until `data-glass-hovered`; coarse-pointer/reduced-motion flat sheen unchanged.)_
+- [x] D6: restore header/progress/footer or a minimal progress rail (`PortfolioDocument.tsx`). _(Done: header navigation, chapter progress rail, and footer re-enabled; dead `showDocumentChrome` flag removed.)_
+- [x] D7: glass-styled form controls + bounded contact panel + themed Turnstile fallback (`ContactForm.tsx`, `TurnstileWidget.tsx`, `ContactSection.tsx`). _(Done: two-column contact layout fits the viewport; dark-themed Turnstile in a bounded container; custom select chevron. Form input padding was already restored by D1.)_
+- [x] D8: fix `ModelInteractionControls` active/unavailable logic; hide controls when tier-gated. _(Done: tier-gated/failed exhibits render no controls; the "unavailable" status appears only when the renderer is unavailable — no more per-transition churn.)_
+- [x] D9: editorial de-duplication of chapter content (`src/content/portfolio.ts`) and compact publications section. _(Done: verbatim-duplicate detail items removed (origins/computation/future); hero scroll-hint paragraph removed; publications section is a centered 60svh band; detail schema allows empty item lists.)_
+
+P1 verification: computed-style probe green; browser sweep confirms header/progress/footer, alternating cards with receding neighbor exhibits, restrained DNA framing, and a single-viewport contact panel; visual baselines regenerated deliberately and stable across four consecutive desktop runs (the shell test now waits for the scene runtime to settle before shooting); `npm run quality` green; E2E matrix green with two load-flaky specs passing cleanly in isolation (dedicated CI runners unaffected).
 
 ### P2 — polish
 

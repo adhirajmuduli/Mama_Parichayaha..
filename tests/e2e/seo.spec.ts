@@ -19,11 +19,12 @@ test('serves canonical metadata, structured data, and public discovery routes', 
   const entries = JSON.parse(structuredData ?? '[]') as Array<{ '@type': string }>
   expect(entries.map((entry) => entry['@type'])).toEqual(['Person', 'WebSite'])
 
-  await expect(page.getByRole('link', { name: 'Privacy details' })).toHaveAttribute(
+  const contact = page.getByRole('region', { name: 'Get in touch' })
+  await expect(contact.getByRole('link', { name: 'Privacy details' })).toHaveAttribute(
     'href',
     '/privacy',
   )
-  await expect(page.getByRole('link', { name: 'Credits' })).toHaveAttribute('href', '/credits')
+  await expect(contact.getByRole('link', { name: 'Credits' })).toHaveAttribute('href', '/credits')
 })
 
 test('serves privacy, credits, robots, sitemap, manifest, and social-image routes', async ({

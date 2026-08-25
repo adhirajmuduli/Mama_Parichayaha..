@@ -14,6 +14,10 @@ interface ChapterDetailProps {
 export default function ChapterDetail({ chapter }: ChapterDetailProps) {
   const detailHeadingId = `${chapter.id}-detail-heading`
 
+  if (chapter.detail.items.length === 0) {
+    return null
+  }
+
   return (
     <div className="mt-8 border-t border-white/15 pt-6">
       <p className="text-xs uppercase tracking-[0.24em] text-[var(--site-muted)]">

@@ -4,11 +4,26 @@ const chapters = ['origins', 'interests', 'research', 'computation', 'future'] a
 
 test('keeps the initial portfolio shell visually stable', async ({ page }, testInfo) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' })
-  await page.locator('canvas').evaluateAll((canvases) => {
-    canvases.forEach((canvas) => {
-      canvas.style.display = 'none'
-    })
+  await page.addStyleTag({
+    content: 'canvas, .scene-poster__cloud, .scene-poster__grain { display: none !important; }',
   })
+
+  if (testInfo.project.name === 'desktop') {
+    // Wait for the renderer to mount and for the controls' fallback status to
+    // detach so the panel height is final before the screenshot.
+    await page
+      .waitForFunction(() => Boolean(document.querySelector('[data-scene-enhancement="webgl"]')), {
+        timeout: 30_000,
+      })
+      .catch(() => {})
+    await page
+      .waitForFunction(
+        () => !document.querySelector('[data-model-interaction-controls] [role="status"]'),
+        { timeout: 15_000 },
+      )
+      .catch(() => {})
+  }
+  await page.waitForTimeout(300)
 
   await expect(page).toHaveScreenshot(`portfolio-${testInfo.project.name}.png`, {
     animations: 'disabled',

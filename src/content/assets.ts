@@ -91,8 +91,8 @@ const sceneAssetManifest = {
     materialOwnership: 'clone',
     normalization: {
       unitScale: 0.0319078,
-      activeScale: 6,
-      inactiveScale: 1.567,
+      activeScale: 5.4,
+      inactiveScale: 3.2,
       orientation: [0.35, -0.45, 0.15],
     },
     policy: { availableTiers: ['medium', 'high'], preload: 'current' },

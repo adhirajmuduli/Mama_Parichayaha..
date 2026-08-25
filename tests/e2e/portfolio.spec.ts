@@ -64,16 +64,15 @@ test('serves the portfolio and its local application icon without failed asset r
     '#origins',
   )
   await expect(page.getByRole('heading', { level: 1, name: 'Adhiraj Muduli' })).toBeVisible()
-  await expect(page.locator('header')).toHaveCount(0)
-  await expect(page.locator('footer')).toHaveCount(0)
+  await expect(page.locator('header')).toHaveCount(1)
+  await expect(page.locator('footer')).toHaveCount(1)
+  await expect(page.getByRole('navigation', { exact: true, name: 'Chapter progress' })).toHaveCount(
+    testInfo.project.name === 'mobile' ? 0 : 1,
+  )
 
   for (const [, href] of chapters) {
     await expect(page.locator(`main section${href}:visible`)).toHaveCount(1)
   }
-
-  await expect(page.getByRole('navigation', { exact: true, name: 'Chapter progress' })).toHaveCount(
-    0,
-  )
 
   const publications = page.getByRole('region', { name: 'No publications or talks listed' })
   await expect(publications).toContainText(
@@ -114,7 +113,7 @@ test('serves the portfolio and its local application icon without failed asset r
   expect(browserErrors).toEqual([])
 })
 
-test('renders complete chapter content without JavaScript or document chrome', async ({
+test('renders complete chapter content and navigation without JavaScript', async ({
   browser,
 }, testInfo) => {
   test.skip(
@@ -134,8 +133,9 @@ test('renders complete chapter content without JavaScript or document chrome', a
 
   await expect(page.getByRole('heading', { level: 1, name: 'Adhiraj Muduli' })).toBeVisible()
   await expect(page.locator('canvas')).toHaveCount(0)
-  await expect(page.locator('header')).toHaveCount(0)
-  await expect(page.locator('footer')).toHaveCount(0)
+  await expect(page.locator('header')).toHaveCount(1)
+  await expect(page.locator('footer')).toHaveCount(1)
+  await expect(page.getByRole('link', { name: 'Origins', exact: true }).first()).toBeVisible()
 
   for (const [, href] of chapters) {
     await expect(page.locator(`main section${href}:visible`)).toHaveCount(1)

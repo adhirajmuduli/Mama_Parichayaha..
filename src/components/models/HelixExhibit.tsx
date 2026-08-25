@@ -64,14 +64,14 @@ export default function HelixExhibit() {
       return
     }
 
-    targetScaleRef.current.setScalar(presence.nearby ? 1 : 0.1)
+    targetScaleRef.current.setScalar(presence.active ? 1 : 0.55)
     groupRef.current.scale.lerp(targetScaleRef.current, 1 - Math.exp(-3 * delta))
     groupRef.current.visible = presence.distance <= 2
     spinRef.current.rotation.y += delta * 0.06
   })
 
   return (
-    <group ref={groupRef} position={[centerX, centerY - 0.3, centerZ]} scale={0.1}>
+    <group ref={groupRef} position={[centerX, centerY - 0.3, centerZ]} scale={0.55}>
       <group ref={spinRef}>
         <mesh geometry={backboneGeometry} material={backboneMaterial} />
         {sideChains.map((position) => (

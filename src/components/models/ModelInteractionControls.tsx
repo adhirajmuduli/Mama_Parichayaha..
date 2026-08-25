@@ -44,8 +44,13 @@ export default function ModelInteractionControls({ chapter }: { chapter: Chapter
   }
 
   const { description, exhibitId, label } = definition
-  const isActive =
-    rendererAvailable && availableExhibits.includes(exhibitId) && activeChapter === chapter.id
+  const exhibitLoaded = rendererAvailable && availableExhibits.includes(exhibitId)
+  const isActive = exhibitLoaded && activeChapter === chapter.id
+
+  if (rendererAvailable && !exhibitLoaded) {
+    return null
+  }
+
   const instructionId = `${chapter.sectionId}-model-instructions`
   const command = (nextCommand: SceneInteractionCommand) => {
     if (isActive) {
@@ -94,7 +99,7 @@ export default function ModelInteractionControls({ chapter }: { chapter: Chapter
           Reset model pose
         </LiquidGlassControl>
       </div>
-      {!isActive ? (
+      {!isActive && !rendererAvailable ? (
         <p className="mt-3 text-sm text-[var(--site-muted)]" role="status">
           The interactive {label.toLowerCase()} is unavailable here; the{' '}
           {chapter.navigationLabel.toLowerCase()} content remains fully available.

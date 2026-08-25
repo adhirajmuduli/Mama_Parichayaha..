@@ -50,7 +50,7 @@ const ChapterDetailItemSchema = z
 const ChapterDetailSchema = z
   .object({
     eyebrow: z.string().trim().min(1).max(80),
-    items: z.array(ChapterDetailItemSchema).min(1).max(8),
+    items: z.array(ChapterDetailItemSchema).min(0).max(8),
     title: z.string().trim().min(1).max(140),
   })
   .strict()
@@ -153,15 +153,6 @@ export const portfolioContent = PortfolioContentSchema.parse({
               location: 'Origins / identity and scientific-focus statement',
             },
           },
-          {
-            title: 'Scientific approach',
-            description:
-              'Molecular systems, computational biology, scientific visualization, and AI-assisted discovery.',
-            source: {
-              file: 'docs/content/phase2-content-provenance.md',
-              location: 'Origins / identity and scientific-focus statement',
-            },
-          },
         ],
       },
       source: phase2Source,
@@ -239,17 +230,7 @@ export const portfolioContent = PortfolioContentSchema.parse({
       detail: {
         eyebrow: 'Computational focus',
         title: 'Biological computation and visualization',
-        items: [
-          {
-            title: 'Methods of interest',
-            description:
-              'Computational biology, molecular systems, scientific visualization, and AI-assisted biological research.',
-            source: {
-              file: 'README.md',
-              location: 'Author / Interests include',
-            },
-          },
-        ],
+        items: [],
       },
       source: {
         file: 'README.md',
@@ -274,15 +255,6 @@ export const portfolioContent = PortfolioContentSchema.parse({
             source: {
               file: 'docs/content/phase8-content-provenance.md',
               location: 'Owner-approved active work status',
-            },
-          },
-          {
-            title: 'Exploration',
-            description:
-              'Exploring molecular systems, computational biology, scientific visualization, and AI-assisted discovery.',
-            source: {
-              file: 'docs/content/phase2-content-provenance.md',
-              location: 'Future / molecular-systems and AI-assisted-discovery direction',
             },
           },
         ],

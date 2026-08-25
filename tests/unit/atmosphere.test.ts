@@ -26,9 +26,9 @@ describe('atmosphere runtime', () => {
 
     expect(runtime.background).toBe(background)
     expect(runtime.center).toBe(center)
-    expect(runtime.center.distanceToSquared(new THREE.Vector3(36, 2.999, 1.449))).toBeLessThan(
-      0.0001,
-    )
+    expect(
+      runtime.center.distanceToSquared(new THREE.Vector3(...research.scene.center)),
+    ).toBeLessThan(0.0001)
     expect(runtime.exposure).toBeCloseTo(research.scene.atmosphere.exposure, 3)
     expect(runtime.bloomIntensity).toBeCloseTo(research.scene.atmosphere.bloom.intensity, 3)
     expect(runtime.fogFar).toBeCloseTo(research.scene.atmosphere.fog.far, 3)

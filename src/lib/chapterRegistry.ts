@@ -80,8 +80,8 @@ export const chapterRegistry = [
     scene: {
       center: [0, 0, 4],
       camera: {
-        desktop: { position: [0, 2, 12], target: [0, 0, 4] },
-        compact: { position: [0, 1.5, 14], target: [0, 0, 4] },
+        desktop: { position: [0, 2, 12], target: [-1.2, 0, 4] },
+        compact: { position: [0, 1.5, 14], target: [-1.2, 0, 4] },
       },
       atmosphere: {
         bloom: { intensity: 0.24, threshold: 0.66 },
@@ -110,10 +110,10 @@ export const chapterRegistry = [
     navigationLabel: 'Interests',
     contentId: 'interests',
     scene: {
-      center: [18, 2.152, 3.301],
+      center: [8, 1.6, 2.4],
       camera: {
-        desktop: { position: [18, 4.152, 11.301], target: [18, 2.152, 3.301] },
-        compact: { position: [18, 3.652, 13.301], target: [18, 2.152, 3.301] },
+        desktop: { position: [8, 3.6, 10.4], target: [9.2, 1.6, 2.4] },
+        compact: { position: [8, 3.1, 12.4], target: [9.2, 1.6, 2.4] },
       },
       atmosphere: {
         bloom: { intensity: 0.18, threshold: 0.72 },
@@ -142,10 +142,10 @@ export const chapterRegistry = [
     navigationLabel: 'Research',
     contentId: 'research',
     scene: {
-      center: [36, 2.999, 1.449],
+      center: [16, 2.2, 3.6],
       camera: {
-        desktop: { position: [36, 4.999, 9.449], target: [36, 2.999, 1.449] },
-        compact: { position: [36, 4.499, 11.449], target: [36, 2.999, 1.449] },
+        desktop: { position: [16, 4.2, 11.6], target: [14.8, 2.2, 3.6] },
+        compact: { position: [16, 3.7, 13.6], target: [14.8, 2.2, 3.6] },
       },
       atmosphere: {
         bloom: { intensity: 0.28, threshold: 0.6 },
@@ -174,10 +174,10 @@ export const chapterRegistry = [
     navigationLabel: 'Computation',
     contentId: 'computation',
     scene: {
-      center: [54, 2.026, -0.909],
+      center: [24, 1.8, 1.6],
       camera: {
-        desktop: { position: [54, 4.026, 7.091], target: [54, 2.026, -0.909] },
-        compact: { position: [54, 3.526, 9.091], target: [54, 2.026, -0.909] },
+        desktop: { position: [24, 3.8, 9.6], target: [25.2, 1.8, 1.6] },
+        compact: { position: [24, 3.3, 11.6], target: [25.2, 1.8, 1.6] },
       },
       atmosphere: {
         bloom: { intensity: 0.2, threshold: 0.7 },
@@ -206,10 +206,10 @@ export const chapterRegistry = [
     navigationLabel: 'Future',
     contentId: 'future',
     scene: {
-      center: [72, -0.175, -2.949],
+      center: [32, 0.6, 3.2],
       camera: {
-        desktop: { position: [72, 1.825, 5.051], target: [72, -0.175, -2.949] },
-        compact: { position: [72, 1.325, 7.051], target: [72, -0.175, -2.949] },
+        desktop: { position: [32, 2.6, 11.2], target: [30.8, 0.6, 3.2] },
+        compact: { position: [32, 2.1, 13.2], target: [30.8, 0.6, 3.2] },
       },
       atmosphere: {
         bloom: { intensity: 0.16, threshold: 0.74 },

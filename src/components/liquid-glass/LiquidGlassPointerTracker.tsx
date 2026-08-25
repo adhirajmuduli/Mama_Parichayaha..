@@ -9,11 +9,30 @@ export default function LiquidGlassPointerTracker() {
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)')
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
     let listening = false
+    let hoveredSurface: HTMLElement | null = null
+
+    const clearHoveredSurface = () => {
+      if (!hoveredSurface) {
+        return
+      }
+
+      hoveredSurface.removeAttribute('data-glass-hovered')
+      hoveredSurface = null
+    }
 
     const updatePointer = (event: PointerEvent) => {
       const target = event.target
       const surface =
         target instanceof Element ? target.closest<HTMLElement>(pointerSelector) : null
+
+      if (surface !== hoveredSurface) {
+        clearHoveredSurface()
+
+        if (surface && !surface.hasAttribute('data-glass-fallback')) {
+          surface.setAttribute('data-glass-hovered', 'true')
+          hoveredSurface = surface
+        }
+      }
 
       if (!surface) {
         return
@@ -42,8 +61,11 @@ export default function LiquidGlassPointerTracker() {
 
       if (shouldTrack) {
         window.addEventListener('pointermove', updatePointer, { passive: true })
+        document.documentElement.addEventListener('pointerleave', clearHoveredSurface)
       } else {
+        clearHoveredSurface()
         window.removeEventListener('pointermove', updatePointer)
+        document.documentElement.removeEventListener('pointerleave', clearHoveredSurface)
       }
     }
 
@@ -52,11 +74,13 @@ export default function LiquidGlassPointerTracker() {
     syncTracking()
 
     return () => {
+      clearHoveredSurface()
       finePointer.removeEventListener('change', syncTracking)
       reducedMotion.removeEventListener('change', syncTracking)
 
       if (listening) {
         window.removeEventListener('pointermove', updatePointer)
+        document.documentElement.removeEventListener('pointerleave', clearHoveredSurface)
       }
     }
   }, [])

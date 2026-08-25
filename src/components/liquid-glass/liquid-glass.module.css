@@ -41,6 +41,11 @@
       transparent 72%,
       rgb(255 255 255 / 5%)
     );
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.surface[data-glass-hovered='true']::before {
   opacity: 0.8;
 }
 
@@ -136,6 +141,8 @@
       transparent 70%,
       rgb(255 255 255 / 4%)
     );
+    opacity: 0.8;
+    transition: none;
   }
 }
 

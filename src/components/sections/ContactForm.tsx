@@ -134,7 +134,7 @@ export default function ContactForm({ turnstileSiteKey }: ContactFormProps) {
   }
 
   return (
-    <form className="mt-8 grid gap-5" noValidate onSubmit={submit}>
+    <form className="grid content-start gap-5" noValidate onSubmit={submit}>
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="grid gap-2 text-sm font-medium text-white" htmlFor="contact-name">
           Name
@@ -187,7 +187,7 @@ export default function ContactForm({ turnstileSiteKey }: ContactFormProps) {
           onChange={(event) =>
             setField('subject', event.target.value as ContactSubmission['subject'])
           }
-          className="rounded-lg border border-white/20 bg-slate-950/80 px-3 py-2 text-base text-white outline-none focus-visible:border-[var(--site-focus)] focus-visible:ring-2 focus-visible:ring-[var(--site-focus)]"
+          className="appearance-none rounded-lg border border-white/20 bg-slate-950/80 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%228%22 viewBox=%220 0 12 8%22><path d=%22M1 1l5 5 5-5%22 fill=%22none%22 stroke=%22%23a78bfa%22 stroke-width=%222%22/></svg>')] bg-[position:right_0.75rem_center] bg-no-repeat px-3 py-2 pr-10 text-base text-white outline-none focus-visible:border-[var(--site-focus)] focus-visible:ring-2 focus-visible:ring-[var(--site-focus)]"
         >
           {contactSubjectIds.map((subject) => (
             <option key={subject} value={subject}>

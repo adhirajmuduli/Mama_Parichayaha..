@@ -28,7 +28,7 @@ export default function PhageSystem() {
       return
     }
 
-    targetScaleRef.current.setScalar(presence.nearby ? 1 : 0.1)
+    targetScaleRef.current.setScalar(presence.active ? 1 : 0.55)
     groupRef.current.scale.lerp(targetScaleRef.current, 1 - Math.exp(-3 * delta))
     groupRef.current.visible = presence.distance <= 2
   })
