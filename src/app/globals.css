@@ -112,6 +112,16 @@ html {
   scroll-padding-top: calc(4rem + env(safe-area-inset-top));
 }
 
+.immersive-journey {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100svh;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
 :target {
   scroll-margin-top: calc(4rem + env(safe-area-inset-top));
 }
