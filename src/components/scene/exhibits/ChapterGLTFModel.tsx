@@ -74,7 +74,9 @@ function LoadedModel({
       return
     }
 
-    targetScaleRef.current.setScalar(active ? asset.normalization.activeScale : asset.normalization.inactiveScale)
+    targetScaleRef.current.setScalar(
+      active ? asset.normalization.activeScale : asset.normalization.inactiveScale,
+    )
     groupRef.current.scale.lerp(targetScaleRef.current, 1 - Math.exp(-4.8 * delta))
   })
 

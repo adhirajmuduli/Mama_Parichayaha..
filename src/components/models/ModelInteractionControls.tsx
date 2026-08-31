@@ -3,7 +3,8 @@
 import type { KeyboardEvent } from 'react'
 
 import LiquidGlassControl from '@/components/liquid-glass/LiquidGlassControl'
-import type { ChapterRegistryEntry, ExhibitId } from '@/lib/chapterRegistry'
+import { resolveRuntimeExhibitId } from '@/content/assets'
+import type { ChapterRegistryEntry } from '@/lib/chapterRegistry'
 import { useNarrativeStore } from '@/stores/narrativeStore'
 import {
   useSceneInteractionStore,
@@ -12,7 +13,6 @@ import {
 
 interface InteractiveExhibitDefinition {
   description: string
-  exhibitId: ExhibitId
   label: string
 }
 
@@ -20,12 +20,10 @@ const interactiveExhibits: Partial<
   Record<ChapterRegistryEntry['id'], InteractiveExhibitDefinition>
 > = {
   origins: {
-    exhibitId: 'dna-alt',
     label: 'DNA model',
     description: 'A double-helical DNA exhibit with an available source animation.',
   },
   interests: {
-    exhibitId: 'bacteriophage',
     label: 'Bacteriophage model',
     description:
       'A procedural bacteriophage study showing a capsid, tail, base plate, and tail-fibre form.',
@@ -43,7 +41,14 @@ export default function ModelInteractionControls({ chapter }: { chapter: Chapter
     return null
   }
 
-  const { description, exhibitId, label } = definition
+  const intendedExhibit = chapter.scene.exhibits[0]
+
+  if (!intendedExhibit) {
+    return null
+  }
+
+  const { description, label } = definition
+  const exhibitId = resolveRuntimeExhibitId(intendedExhibit.id)
   const exhibitLoaded = rendererAvailable && availableExhibits.includes(exhibitId)
   const isActive = exhibitLoaded && activeChapter === chapter.id
 
@@ -79,6 +84,7 @@ export default function ModelInteractionControls({ chapter }: { chapter: Chapter
       aria-label={`${label} controls`}
       className="mt-6 border-t border-white/10 pt-4"
       data-model-interaction-controls={exhibitId}
+      data-exhibit-fallback={exhibitId === intendedExhibit.id ? 'false' : 'true'}
       onKeyDown={onKeyDown}
       tabIndex={0}
     >

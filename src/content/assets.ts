@@ -1,5 +1,6 @@
 import type { ChapterId } from '@/content/portfolio'
 import type { SceneQualityTier } from '@/lib/sceneRuntime'
+import runtimeModelManifest from '../../public/models/runtime/manifest.json'
 
 type RenderableSceneQualityTier = Exclude<SceneQualityTier, 'static'>
 type AssetLoadPolicy = 'current' | 'adjacent' | 'none'
@@ -240,7 +241,7 @@ const sceneAssetManifest: Record<ExhibitId, SceneAsset> = {
       inactiveScale: 3.2,
       orientation: [0.35, -0.45, 0.15],
     },
-    policy: { availableTiers: ['medium', 'high'], preload: 'current' },
+    policy: { availableTiers: ['low', 'medium', 'high'], preload: 'current' },
     credit: {
       title: 'DNA VR Interactive Animation',
       author: 'nilantunes',
@@ -311,12 +312,32 @@ export const exhibitIds = [
   'dna',
 ] as const
 
-export type ExhibitId = 'dna-alt' | 'bacteriophage' | 'hemoglobin-ribbon' | 'brain-point-cloud' | 'earth-animated' | 'dna'
+export type ExhibitId =
+  'dna-alt' | 'bacteriophage' | 'hemoglobin-ribbon' | 'brain-point-cloud' | 'earth-animated' | 'dna'
 
-export const modelAssetIds = ['dna', 'bacteriophage', 'hemoglobin-ribbon', 'brain-point-cloud', 'earth-animated', 'dna-alt'] as const
+export const modelAssetIds = [
+  'dna',
+  'bacteriophage',
+  'hemoglobin-ribbon',
+  'brain-point-cloud',
+  'earth-animated',
+  'dna-alt',
+] as const
 
 export function getSceneAsset(assetId: ExhibitId): SceneAsset {
   return sceneAssetManifest[assetId]
+}
+
+export function isRuntimeIntakePresent(assetId: ExhibitId): boolean {
+  return runtimeModelManifest.assets.some((asset) => asset.id === assetId && asset.present)
+}
+
+export function resolveRuntimeExhibitId(exhibitId: ExhibitId): ExhibitId {
+  if (exhibitId === 'dna-alt' && !isRuntimeIntakePresent('dna-alt')) {
+    return 'dna'
+  }
+
+  return exhibitId
 }
 
 export function getModelAsset(assetId: ExhibitId): ModelSceneAsset {
@@ -339,6 +360,21 @@ export function isSceneAssetAvailable(
 ): boolean {
   const asset = getSceneAsset(assetId)
   return asset.kind !== 'unassigned' && asset.policy.availableTiers.includes(tier)
+}
+
+export function isRuntimeExhibitAvailable(
+  exhibitId: ExhibitId,
+  tier: RenderableSceneQualityTier,
+): boolean {
+  const runtimeExhibitId = resolveRuntimeExhibitId(exhibitId)
+  const asset = getSceneAsset(runtimeExhibitId)
+
+  return (
+    asset.kind === 'gltf' &&
+    asset.bytes > 0 &&
+    asset.sha256.length === 64 &&
+    isSceneAssetAvailable(runtimeExhibitId, tier)
+  )
 }
 
 export function assertSceneAssetManifest() {

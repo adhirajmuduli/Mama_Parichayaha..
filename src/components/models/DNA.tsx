@@ -13,7 +13,7 @@ import { createGLTFInstance, disposeGLTFInstance } from '@/lib/gltfRuntime'
 import { applyDnaMaterial } from '@/lib/materials'
 
 const [centerX, centerY, centerZ] = getChapterEntry('origins').scene.center
-const asset = getModelAsset('dna-alt')
+const asset = getModelAsset('dna')
 
 export default function DNA() {
   const containerRef = useRef<THREE.Group>(null)
@@ -25,7 +25,7 @@ export default function DNA() {
   const interactionHandlers = useModelInteraction({
     autoRotateSpeed: 0.045,
     chapter: 'origins',
-    exhibitId: 'dna-alt',
+    exhibitId: 'dna',
     groupRef: containerRef,
     initialRotation: asset.normalization.orientation,
   })

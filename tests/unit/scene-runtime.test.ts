@@ -3,8 +3,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   assertSceneAssetManifest,
   getModelAsset,
+  isRuntimeExhibitAvailable,
   isSceneAssetAvailable,
   modelAssetIds,
+  resolveRuntimeExhibitId,
   unassignedModelCandidates,
 } from '@/content/assets'
 import {
@@ -59,13 +61,23 @@ describe('scene runtime contracts', () => {
   it('keeps the assigned GLB compressed and holds unassigned models outside the active scene', () => {
     assertSceneAssetManifest()
 
-    expect(modelAssetIds).toEqual(['dna', 'bacteriophage', 'hemoglobin-ribbon', 'brain-point-cloud', 'earth-animated', 'dna-alt'])
+    expect(modelAssetIds).toEqual([
+      'dna',
+      'bacteriophage',
+      'hemoglobin-ribbon',
+      'brain-point-cloud',
+      'earth-animated',
+      'dna-alt',
+    ])
     expect(getModelAsset('dna')).toMatchObject({
       compression: 'draco',
       url: '/models/dna_for_site.glb',
     })
     expect(isSceneAssetAvailable('dna-alt', 'low')).toBe(false)
     expect(isSceneAssetAvailable('dna-alt', 'medium')).toBe(true)
+    expect(isSceneAssetAvailable('dna', 'low')).toBe(true)
+    expect(resolveRuntimeExhibitId('dna-alt')).toBe('dna')
+    expect(isRuntimeExhibitAvailable('dna-alt', 'low')).toBe(true)
     expect(isSceneAssetAvailable('bacteriophage', 'low')).toBe(true)
     expect(isSceneAssetAvailable('hemoglobin-ribbon', 'medium')).toBe(false)
     expect(isSceneAssetAvailable('hemoglobin-ribbon', 'high')).toBe(true)

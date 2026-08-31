@@ -36,7 +36,10 @@ export default function HemoglobinRibbon() {
       if (child instanceof THREE.Mesh) {
         const materials = Array.isArray(child.material) ? child.material : [child.material]
         materials.forEach((material) => {
-          if (material instanceof THREE.MeshStandardMaterial || material instanceof THREE.MeshPhysicalMaterial) {
+          if (
+            material instanceof THREE.MeshStandardMaterial ||
+            material instanceof THREE.MeshPhysicalMaterial
+          ) {
             material.metalness = 0.3
             material.roughness = 0.3
             material.emissive = new THREE.Color('#22d3ee')

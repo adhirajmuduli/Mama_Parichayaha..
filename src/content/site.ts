@@ -38,7 +38,14 @@ export const PublicProfileSchema = z
 
 export const ModelCreditSchema = z
   .object({
-    assetId: z.enum(['dna-alt', 'bacteriophage', 'hemoglobin-ribbon', 'brain-point-cloud', 'earth-animated', 'dna']),
+    assetId: z.enum([
+      'dna-alt',
+      'bacteriophage',
+      'hemoglobin-ribbon',
+      'brain-point-cloud',
+      'earth-animated',
+      'dna',
+    ]),
     attribution: z.string().trim().min(1).max(260),
     license: z.string().trim().min(1).max(160),
     links: z.array(CreditLinkSchema).min(1).max(2),
@@ -117,7 +124,7 @@ export const siteContent: SiteContent = SiteContentSchema.parse({
         links: [
           {
             href: 'https://sketchfab.com/3d-models/dna-vr-interactive-animation-c9a926f139044470ad3fb053c66ad71e',
-            label: 'DNA source on Sketchfab',
+            label: 'Alternate DNA source on Sketchfab',
           },
           {
             href: 'https://sketchfab.com/nilantunes',
@@ -205,7 +212,7 @@ export const siteContent: SiteContent = SiteContentSchema.parse({
           },
           {
             href: 'https://sketchfab.com/nilantunes',
-            label: 'nilantunes on Sketchfab',
+            label: 'Rollback DNA author on Sketchfab',
           },
         ],
         source: {

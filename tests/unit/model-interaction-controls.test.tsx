@@ -54,7 +54,10 @@ describe('ModelInteractionControls', () => {
 
   it('keeps controls disabled without status churn while the chapter is adjacent', () => {
     useNarrativeStore.setState({ activeChapter: 'origins' })
-    useSceneInteractionStore.setState({ availableExhibits: ['bacteriophage'], rendererAvailable: true })
+    useSceneInteractionStore.setState({
+      availableExhibits: ['bacteriophage'],
+      rendererAvailable: true,
+    })
     render(<ModelInteractionControls chapter={getChapterEntry('interests')} />)
 
     expect(screen.getByRole('button', { name: 'Rotate model left' })).toBeDisabled()
@@ -63,7 +66,10 @@ describe('ModelInteractionControls', () => {
 
   it('explains the fallback while no renderer is available', () => {
     useNarrativeStore.setState({ activeChapter: 'interests' })
-    useSceneInteractionStore.setState({ availableExhibits: ['bacteriophage'], rendererAvailable: false })
+    useSceneInteractionStore.setState({
+      availableExhibits: ['bacteriophage'],
+      rendererAvailable: false,
+    })
     render(<ModelInteractionControls chapter={getChapterEntry('interests')} />)
 
     expect(screen.getByRole('button', { name: 'Rotate model left' })).toBeDisabled()
@@ -73,7 +79,7 @@ describe('ModelInteractionControls', () => {
   })
 
   it('provides the same discoverable DOM control contract for every active exhibit', () => {
-    useSceneInteractionStore.setState({ availableExhibits: ['dna-alt', 'bacteriophage'] })
+    useSceneInteractionStore.setState({ availableExhibits: ['dna', 'bacteriophage'] })
     render(
       <>
         {chapterRegistry.map((chapter) => (
