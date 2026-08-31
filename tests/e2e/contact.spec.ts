@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 test('renders the accessible contact form and privacy boundary without exposing server credentials', async ({
   page,
 }) => {
-  await page.goto('/')
+  await page.goto('/contact')
 
   const contact = page.getByRole('region', { name: 'Get in touch' })
 
@@ -24,7 +24,7 @@ test('renders the accessible contact form and privacy boundary without exposing 
 test('guides offline visitors to reconnect before attempting a contact submission', async ({
   page,
 }) => {
-  await page.goto('/')
+  await page.goto('/contact')
   await page.context().setOffline(true)
   await page.evaluate(() => window.dispatchEvent(new Event('offline')))
 

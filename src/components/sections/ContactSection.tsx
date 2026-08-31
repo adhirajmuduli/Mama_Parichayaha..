@@ -13,7 +13,7 @@ export default function ContactSection() {
     <section
       id={contact.id}
       aria-labelledby={headingId}
-      className="relative z-10 flex min-h-[100svh] scroll-mt-24 items-center px-6 py-20 sm:px-12"
+      className="relative z-10 flex scroll-mt-24 items-center px-6 py-20 sm:px-12"
     >
       <article className="mx-auto w-full max-w-5xl">
         <LiquidGlassPanel tone="strong">

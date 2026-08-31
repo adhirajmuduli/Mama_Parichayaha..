@@ -33,14 +33,13 @@ This intent is visible in:
 
 ### 2.2 Reality of the current implementation
 
-The actual app is a hybrid system:
+The actual app now uses the immersive stage as its default home experience:
 
-- default route is a document-style portfolio that mounts a 3D poster, scene enhancement, and chapter sections
-- a feature flag `NEXT_PUBLIC_CYCLIC_JOURNEY === 'true'` swaps in an immersive stage
-- the immersive stage exists and is extensive, but is not the default user experience
-- the app therefore presents a false mask: the codebase suggests it is already a cinematic immersive route, while production behavior often remains a static, scrollable document
+- the default route mounts the fixed immersive stage and its cyclic journey
+- supporting information is available through standalone routes
+- the retired document shell is no longer part of the shipping composition
 
-This is the major theme: the repo contains a strong intended system, but the shipping path is still partly configured for a legacy document portfolio and a partially gated immersive route.
+This phase consolidates the shipping path around that intended system and moves secondary information to dedicated routes.
 
 ---
 
@@ -54,16 +53,12 @@ Primary files:
 - `src/app/layout.tsx`
 - `src/app/providers.tsx`
 - `src/components/portfolio/ImmersiveStage.tsx`
-- `src/components/layout/PortfolioDocument.tsx`
 
 Observed behavior:
 
-- `src/app/page.tsx` chooses between `ImmersiveStage` and regular document composition.
-- `cyclicJourneyEnabled` is based on `process.env.NEXT_PUBLIC_CYCLIC_JOURNEY === 'true'`.
-- Because the default is false, the immersive route is environment-gated rather than product-gated.
-- The home page contents are therefore conditional rather than purposefully designed around a single experience.
-
-This creates a mask: the code says one thing, the runtime behavior says another. This is especially risky in production because different deploy environments can produce different experiences.
+- `src/app/page.tsx` renders `ImmersiveStage` as the home composition.
+- Secondary information is available through standalone routes.
+- The home page has one deliberate experience rather than environment-specific variants.
 
 ### 3.2 Narrative and chapter architecture
 
@@ -79,10 +74,10 @@ Observed architecture:
 
 - a canonical chapter set exists: `origins`, `interests`, `research`, `computation`, `future`
 - each chapter has content metadata, section id, navigation label, registry scene metadata, and exhibit mapping
-- `chapterRegistry` drives the 3D experience and the static doc experience
+- `chapterRegistry` drives the 3D experience
 - `narrativeStore` tracks active chapter, direction, visible pair, travel mode, loop count, and overlay state
 
-This is a structured and deliberate model. It gives the project a solid narrative spine.
+This is a structured and deliberate model. It gives the project a solid narrative spine while keeping supporting information on dedicated routes.
 
 ### 3.3 Journey timeline and continuous motion model
 
@@ -229,17 +224,15 @@ This is not a failure of the idea. It is a product architecture gap: an impressi
 
 `src/app/page.tsx`:
 
-- the immersive route is hidden behind `NEXT_PUBLIC_CYCLIC_JOURNEY` instead of becoming the main product
-- this creates environment-specific behavior and a deployment mismatch
-- the system appears immersive in code but document-like in normal builds
+- the immersive route is the main product
+- supporting content is separated into dedicated document routes
+- the home experience is consistent across deployment environments
 
-This is a primary false mask.
+The home route now has a single deliberate composition.
 
-### 6.2 Disabled chrome hidden behind dead flags
+### 6.2 Retired document chrome
 
-`src/components/layout/PortfolioDocument.tsx` includes a pattern where chrome is basically disabled or conceptually gated.
-
-This suggests a migration state where the portfolio doc is being carried forward while the immersive route is being designed in parallel. In practice, the app behaves like a partially migrated product with two overlapping systems.
+The former document shell and its navigation chrome are no longer part of the application graph.
 
 ### 6.3 Procedural/substitute model signals
 
