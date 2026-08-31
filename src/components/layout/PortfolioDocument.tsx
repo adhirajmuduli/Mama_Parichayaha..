@@ -6,7 +6,6 @@ import ChapterSection from '@/components/narrative/ChapterSection'
 import ContactSection from '@/components/sections/ContactSection'
 import CreditsSection from '@/components/sections/CreditsSection'
 import PublicationStatusSection from '@/components/sections/PublicationStatusSection'
-import CursorGlow from '@/components/ui/CursorGlow'
 import { chapterRegistry } from '@/lib/chapterRegistry'
 
 const chapterNavigation = chapterRegistry.map(({ id, navigationLabel, sectionId }) => ({
@@ -15,13 +14,7 @@ const chapterNavigation = chapterRegistry.map(({ id, navigationLabel, sectionId 
   navigationLabel,
 }))
 
-interface PortfolioDocumentProps {
-  interactiveDecorations?: boolean
-}
-
-export default function PortfolioDocument({
-  interactiveDecorations = false,
-}: PortfolioDocumentProps) {
+export default function PortfolioDocument() {
   return (
     <>
       <LiquidGlassPointerTracker />
@@ -34,7 +27,6 @@ export default function PortfolioDocument({
       <SiteHeader chapters={chapterNavigation} />
       <main id="portfolio-content" className="relative min-h-screen overflow-x-hidden">
         <div className="relative z-10">
-          {interactiveDecorations ? <CursorGlow /> : null}
           <ChapterProgressIndicator chapters={chapterNavigation} />
           {chapterRegistry.map((chapter) => (
             <ChapterSection key={chapter.id} chapter={chapter} />

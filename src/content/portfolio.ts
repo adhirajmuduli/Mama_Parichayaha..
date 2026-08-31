@@ -120,7 +120,7 @@ export const portfolioContent = PortfolioContentSchema.parse({
       eyebrow: 'Origins',
       title: 'Adhiraj Muduli',
       description:
-        'Biological sciences undergraduate exploring molecular systems, computational biology, scientific visualization, and AI-assisted discovery.',
+        'A biological sciences undergraduate studying how molecules, computation, and scientific storytelling can reveal structure, function, and systems-level insight.',
       actions: [
         {
           external: false,
@@ -162,7 +162,7 @@ export const portfolioContent = PortfolioContentSchema.parse({
       eyebrow: 'Interests',
       title: 'Molecular Systems & Biological Computation',
       description:
-        'Protein systems, bioinformatics, molecular simulation, AI-assisted discovery, scientific visualization.',
+        'Exploring protein structure, computational biology, and the visual language of biological systems through simulation, modeling, and data-driven discovery.',
       actions: [],
       detail: {
         eyebrow: 'Research questions and methods',
@@ -201,7 +201,7 @@ export const portfolioContent = PortfolioContentSchema.parse({
       eyebrow: 'Research',
       title: 'Protein Structure & Computational Biology',
       description:
-        'Research projects, scientific software, computational workflows, and biological modeling.',
+        'Investigating how molecular structure, sequence information, and computational workflows can help explain biological function and scientific discovery.',
       actions: [],
       detail: {
         eyebrow: 'Research focus',
@@ -225,7 +225,7 @@ export const portfolioContent = PortfolioContentSchema.parse({
       eyebrow: 'Computation',
       title: 'Biological Computation & Scientific Visualization',
       description:
-        'Computational biology, molecular systems, scientific visualization, and AI-assisted biological research.',
+        'Building computational tools and visual interfaces that make molecular systems more legible, interpretable, and useful for scientific reasoning.',
       actions: [],
       detail: {
         eyebrow: 'Computational focus',
@@ -242,7 +242,7 @@ export const portfolioContent = PortfolioContentSchema.parse({
       eyebrow: 'Future direction',
       title: 'Molecular Systems & AI-Assisted Discovery',
       description:
-        'Exploring molecular systems, computational biology, scientific visualization, and AI-assisted discovery.',
+        'Looking toward systems biology, AI-assisted scientific workflows, and richer interfaces for exploring biology as an interactive, computational discipline.',
       actions: [],
       detail: {
         eyebrow: 'Current work',
