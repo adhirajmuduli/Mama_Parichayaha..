@@ -9,7 +9,7 @@ export default function PublicationStatusSection() {
     <section
       id={publications.id}
       aria-labelledby={headingId}
-      className="relative z-10 flex min-h-[60svh] scroll-mt-24 items-center px-6 py-10 sm:px-12"
+      className="relative z-10 flex scroll-mt-24 items-center px-6 py-10 sm:px-12"
     >
       <article className="mx-auto max-w-4xl">
         <LiquidGlassPanel className="max-w-2xl" tone="strong">

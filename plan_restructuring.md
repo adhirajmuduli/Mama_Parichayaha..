@@ -875,7 +875,7 @@ Each patch must be independently reviewable. Do not combine the full rewrite int
 - keyboard and touch reach the same dwell centers as wheel input;
 - opening a temporary modal pause flag prevents journey movement.
 
-**Rollback point:** feature-flag controller with `NEXT_PUBLIC_CYCLIC_JOURNEY` until Patch 7 removes the old document.
+**Rollback point:** retain the previous document composition until Patch 7 removes it.
 
 ### Patch 3 — closed route, expanded layout, and camera physics
 

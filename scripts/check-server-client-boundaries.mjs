@@ -5,9 +5,6 @@ import { fileURLToPath } from 'node:url'
 const rootDirectory = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const contentRoots = ['src/content', 'src/components/narrative', 'src/components/sections']
 const sourceExtensions = new Set(['.ts', '.tsx'])
-const allowedClientStoreImportFiles = new Set([
-  'src/components/narrative/ChapterSectionObserver.tsx',
-])
 const forbiddenImports = [
   { label: 'Three.js runtime', pattern: /from\s+['"](?:three|@react-three\/[^'"]+)['"]/ },
   { label: 'client-side store', pattern: /from\s+['"]@\/stores\// },
@@ -37,11 +34,7 @@ for (const directory of contentRoots) {
     const sourcePath = relative(rootDirectory, path).replaceAll('\\', '/')
 
     for (const forbiddenImport of forbiddenImports) {
-      const permitsClientStore =
-        forbiddenImport.label === 'client-side store' &&
-        allowedClientStoreImportFiles.has(sourcePath)
-
-      if (!permitsClientStore && forbiddenImport.pattern.test(source)) {
+      if (forbiddenImport.pattern.test(source)) {
         violations.push(`${sourcePath}: ${forbiddenImport.label}`)
       }
     }
