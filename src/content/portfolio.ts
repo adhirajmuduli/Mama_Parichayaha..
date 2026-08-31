@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const chapterIds = ['origins', 'interests', 'research', 'computation', 'future'] as const
+export const chapterIds = ['origins', 'interests', 'research', 'computation', 'future', 'publications', 'contact'] as const
 
 export const ChapterIdSchema = z.enum(chapterIds)
 
@@ -260,6 +260,56 @@ export const portfolioContent = PortfolioContentSchema.parse({
         ],
       },
       source: phase2Source,
+    },
+    {
+      id: 'publications',
+      eyebrow: 'Publications and talks',
+      title: 'No publications or talks listed',
+      description:
+        'No publications, talks, or research articles are currently listed in this portfolio.',
+      actions: [],
+      detail: {
+        eyebrow: 'Research output',
+        title: 'Publications and talks',
+        items: [],
+      },
+      source: {
+        file: 'docs/content/phase8-content-provenance.md',
+        location: 'Owner-approved public details',
+      },
+    },
+    {
+      id: 'contact',
+      eyebrow: 'Contact and public profiles',
+      title: 'Get in touch',
+      description: 'Email, source code, and the public ORCID record are available below.',
+      actions: [],
+      detail: {
+        eyebrow: 'Contact information',
+        title: 'Public profiles',
+        items: [
+          {
+            title: 'Email',
+            description: 'Contact via email for inquiries and collaboration.',
+            source: {
+              file: 'docs/content/phase8-content-provenance.md',
+              location: 'Owner-approved public details',
+            },
+          },
+          {
+            title: 'GitHub',
+            description: 'Source code and repositories.',
+            source: {
+              file: 'docs/content/phase8-content-provenance.md',
+              location: 'Owner-approved public details',
+            },
+          },
+        ],
+      },
+      source: {
+        file: 'docs/content/phase8-content-provenance.md',
+        location: 'Owner-approved public details',
+      },
     },
   ],
 })

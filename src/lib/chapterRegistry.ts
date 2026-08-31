@@ -91,11 +91,11 @@ export interface ChapterRegistryEntry {
   }
 }
 
-export const chapterLookYOffsets = [0, 0.3, -0.1, 0.2, 0.1] as const
+export const chapterLookYOffsets = [0, 0.3, -0.1, 0.2, 0.1, 0, 0] as const
 
-const modelYawCorrections = [0, 0, 0.4, -0.3, 0.2] as const
-const targetDiameters = [3.4, 2.8, 3.2, 3.6, 3.2] as const
-const modelOffsetDistances = [2.2, 2.2, 2.4, 2.4, 2.2] as const
+const modelYawCorrections = [0, 0, 0.4, -0.3, 0.2, 0, 0] as const
+const targetDiameters = [3.4, 2.8, 3.2, 3.6, 3.2, 3.2, 3.2] as const
+const modelOffsetDistances = [2.2, 2.2, 2.4, 2.4, 2.2, 2.2, 2.2] as const
 
 function buildRouteScene(order: number) {
   const center = getModelCenter(order)
@@ -272,6 +272,66 @@ export const chapterRegistry = [
       },
       haloColor: '#c4b5fd',
       environmentColor: '#0b1020',
+    },
+  },
+  {
+    id: 'publications',
+    order: 5,
+    sectionId: 'publications',
+    navigationLabel: 'Publications',
+    contentId: 'publications',
+    scene: {
+      ...buildRouteScene(5),
+      exhibits: [{ id: 'dna' }],
+      atmosphere: {
+        bloom: { intensity: 0.2, threshold: 0.7 },
+        cloudDensity: 0.85,
+        exposure: 0.88,
+        fog: { near: 13, far: 54 },
+        fogColor: '#0f0f1a',
+        keyLight: '#a78bfa',
+        lighting: {
+          ambientIntensity: 0.22,
+          key: { color: '#a78bfa', intensity: 3, offset: [4, 5, 6] },
+          rim: { color: '#f472b6', intensity: 7, offset: [-4, 2, 2] },
+          fill: { color: '#6366f1', intensity: 4.5, offset: [3, -2, -4] },
+        },
+        palette: ['#0f0f1a', '#4c1d95', '#f472b6'],
+        particleColor: '#e9d5ff',
+        particleOpacity: 0.3,
+      },
+      haloColor: '#a78bfa',
+      environmentColor: '#0f0f1a',
+    },
+  },
+  {
+    id: 'contact',
+    order: 6,
+    sectionId: 'contact',
+    navigationLabel: 'Contact',
+    contentId: 'contact',
+    scene: {
+      ...buildRouteScene(6),
+      exhibits: [{ id: 'dna-alt' }],
+      atmosphere: {
+        bloom: { intensity: 0.22, threshold: 0.68 },
+        cloudDensity: 0.9,
+        exposure: 0.92,
+        fog: { near: 13, far: 54 },
+        fogColor: '#0d0d15',
+        keyLight: '#8b5cf6',
+        lighting: {
+          ambientIntensity: 0.24,
+          key: { color: '#8b5cf6', intensity: 3.2, offset: [4, 5, 6] },
+          rim: { color: '#06b6d4', intensity: 7.5, offset: [-4, 2, 2] },
+          fill: { color: '#7c3aed', intensity: 5, offset: [3, -2, -4] },
+        },
+        palette: ['#0d0d15', '#5b21b6', '#06b6d4'],
+        particleColor: '#ddd6fe',
+        particleOpacity: 0.35,
+      },
+      haloColor: '#8b5cf6',
+      environmentColor: '#0d0d15',
     },
   },
 ] as const satisfies readonly ChapterRegistryEntry[]

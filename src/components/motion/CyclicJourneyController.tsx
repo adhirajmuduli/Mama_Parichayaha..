@@ -311,7 +311,7 @@ export default function CyclicJourneyController({ children }: { children: ReactN
           break
         }
         default: {
-          if (/^[1-5]$/.test(event.key)) {
+          if (/^[1-7]$/.test(event.key)) {
             targetUnits = getDwellCenter(getNearestOrdinalForIndex(units, Number(event.key) - 1))
           }
         }

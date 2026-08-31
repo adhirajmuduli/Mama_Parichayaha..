@@ -30,7 +30,7 @@ export default function CyclicChapterStage() {
   return (
     <>
       <p className="sr-only" id="journey-instructions">
-        Scroll, swipe vertically, or use arrow keys to move between five looping chapters.
+        Scroll, swipe vertically, or use arrow keys to move between seven looping chapters.
       </p>
 
       {chapterRegistry.map((entry) => {
