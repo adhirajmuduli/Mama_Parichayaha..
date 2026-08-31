@@ -1,5 +1,4 @@
 import type { ChapterId } from '@/content/portfolio'
-import type { ExhibitId } from '@/lib/chapterRegistry'
 import type { SceneQualityTier } from '@/lib/sceneRuntime'
 
 type RenderableSceneQualityTier = Exclude<SceneQualityTier, 'static'>
@@ -73,7 +72,153 @@ export interface UnassignedModelCandidate {
 
 export type SceneAsset = ModelSceneAsset | ProceduralSceneAsset | UnassignedSceneAsset
 
-const sceneAssetManifest = {
+const sceneAssetManifest: Record<ExhibitId, SceneAsset> = {
+  'dna-alt': {
+    id: 'dna-alt',
+    kind: 'gltf',
+    chapter: 'origins',
+    url: '/models/dna_animated_alt_for_site.glb',
+    format: 'glb',
+    compression: 'draco',
+    bytes: 0,
+    gzipBytes: 0,
+    brotliBytes: 0,
+    sha256: '',
+    geometry: { meshes: 0, triangles: 0 },
+    texture: { count: 0, maximumDimension: 0 },
+    animationCount: 0,
+    materialOwnership: 'clone',
+    normalization: {
+      unitScale: 0,
+      activeScale: 5.4,
+      inactiveScale: 3.2,
+      orientation: [0.35, -0.45, 0.15],
+    },
+    policy: { availableTiers: ['medium', 'high'], preload: 'current' },
+    credit: {
+      title: 'DNA VR Interactive Animation (Alternate)',
+      author: 'nilantunes',
+      license: 'CC BY',
+      sourceUrl:
+        'https://sketchfab.com/3d-models/dna-vr-interactive-animation-c9a926f139044470ad3fb053c66ad71e',
+    },
+  },
+  bacteriophage: {
+    id: 'bacteriophage',
+    kind: 'gltf',
+    chapter: 'interests',
+    url: '/models/bacteriophage_for_site.glb',
+    format: 'glb',
+    compression: 'draco',
+    bytes: 858_352,
+    gzipBytes: 0,
+    brotliBytes: 0,
+    sha256: '45b33e4912016ade8129d80cab56ddb157b060c4f9c46cbdd79848c42ac9520e',
+    geometry: { meshes: 12, triangles: 180_754 },
+    texture: { count: 0, maximumDimension: 0 },
+    animationCount: 0,
+    materialOwnership: 'clone',
+    normalization: {
+      unitScale: 1,
+      activeScale: 1,
+      inactiveScale: 0.1,
+      orientation: [0, 0, 0],
+    },
+    policy: { availableTiers: ['low', 'medium', 'high'], preload: 'current' },
+    credit: {
+      title: 'Procedural bacteriophage study',
+      author: 'Portfolio source',
+      license: 'Original implementation',
+      sourceUrl: 'https://github.com/adhirajmuduli',
+    },
+  },
+  'hemoglobin-ribbon': {
+    id: 'hemoglobin-ribbon',
+    kind: 'gltf',
+    chapter: 'research',
+    url: '/models/6HHB-ribbon-secondary-vis_NIH3D.glb',
+    format: 'glb',
+    compression: 'none',
+    bytes: 10_890_316,
+    gzipBytes: 0,
+    brotliBytes: 0,
+    sha256: '5b363993e0c1abc3741a8a0f71bb19c32716c87873bf3ab2562b35c2330d3f41',
+    geometry: { meshes: 4, triangles: 221_844 },
+    texture: { count: 0, maximumDimension: 0 },
+    animationCount: 0,
+    materialOwnership: 'shared',
+    normalization: {
+      unitScale: 1,
+      activeScale: 1,
+      inactiveScale: 0.55,
+      orientation: [0, 0, 0],
+    },
+    policy: { availableTiers: ['high'], preload: 'current' },
+    credit: {
+      title: 'Hemoglobin Ribbon (6HHB)',
+      author: 'NIH 3D Print Exchange',
+      license: 'CC0',
+      sourceUrl: 'https://3d.nih.gov/',
+    },
+  },
+  'brain-point-cloud': {
+    id: 'brain-point-cloud',
+    kind: 'gltf',
+    chapter: 'computation',
+    url: '/models/brain_point_cloud_site.glb',
+    format: 'glb',
+    compression: 'none',
+    bytes: 33_405_696,
+    gzipBytes: 0,
+    brotliBytes: 0,
+    sha256: '86fb8cfcb35d116ffe9e76c8d2016233d2da9018db288ecd4d10ce76c6538e8f',
+    geometry: { meshes: 19, triangles: 1_192_673 },
+    texture: { count: 0, maximumDimension: 0 },
+    animationCount: 0,
+    materialOwnership: 'shared',
+    normalization: {
+      unitScale: 1,
+      activeScale: 1,
+      inactiveScale: 0.55,
+      orientation: [0, 0, 0],
+    },
+    policy: { availableTiers: ['high'], preload: 'current' },
+    credit: {
+      title: 'Brain Point Cloud',
+      author: 'Human Cell Atlas / EBI',
+      license: 'CC BY',
+      sourceUrl: 'https://www.ebi.ac.uk/',
+    },
+  },
+  'earth-animated': {
+    id: 'earth-animated',
+    kind: 'gltf',
+    chapter: 'future',
+    url: '/models/earth_animated_for_site.glb',
+    format: 'glb',
+    compression: 'none',
+    bytes: 23_342_728,
+    gzipBytes: 0,
+    brotliBytes: 0,
+    sha256: 'dd5410548408a08beeb1e9bf9da10b3347d5aadb8d156f07159aac19bbbe611d',
+    geometry: { meshes: 2, triangles: 48_766 },
+    texture: { count: 1, maximumDimension: 2048 },
+    animationCount: 1,
+    materialOwnership: 'shared',
+    normalization: {
+      unitScale: 1,
+      activeScale: 1,
+      inactiveScale: 0.1,
+      orientation: [0, 0, 0],
+    },
+    policy: { availableTiers: ['high'], preload: 'current' },
+    credit: {
+      title: 'Animated Earth',
+      author: 'NASA Visible Earth',
+      license: 'Public Domain',
+      sourceUrl: 'https://visibleearth.nasa.gov/',
+    },
+  },
   dna: {
     id: 'dna',
     kind: 'gltf',
@@ -90,7 +235,7 @@ const sceneAssetManifest = {
     animationCount: 1,
     materialOwnership: 'clone',
     normalization: {
-      unitScale: 0.0319078,
+      unitScale: 0.031_907_8,
       activeScale: 5.4,
       inactiveScale: 3.2,
       orientation: [0.35, -0.45, 0.15],
@@ -102,54 +247,6 @@ const sceneAssetManifest = {
       license: 'CC BY',
       sourceUrl:
         'https://sketchfab.com/3d-models/dna-vr-interactive-animation-c9a926f139044470ad3fb053c66ad71e',
-    },
-  },
-  phages: {
-    id: 'phages',
-    kind: 'procedural',
-    chapter: 'interests',
-    policy: { availableTiers: ['low', 'medium', 'high'], preload: 'none' },
-    credit: {
-      title: 'Procedural bacteriophage study',
-      author: 'Portfolio source',
-      license: 'Original implementation',
-      sourceUrl: 'https://github.com/adhirajmuduli',
-    },
-  },
-  helix: {
-    id: 'helix',
-    kind: 'procedural',
-    chapter: 'research',
-    policy: { availableTiers: ['low', 'medium', 'high'], preload: 'none' },
-    credit: {
-      title: 'Procedural protein-backbone study',
-      author: 'Portfolio source',
-      license: 'Original implementation',
-      sourceUrl: 'https://github.com/adhirajmuduli',
-    },
-  },
-  lattice: {
-    id: 'lattice',
-    kind: 'procedural',
-    chapter: 'computation',
-    policy: { availableTiers: ['low', 'medium', 'high'], preload: 'none' },
-    credit: {
-      title: 'Procedural scientific-data lattice study',
-      author: 'Portfolio source',
-      license: 'Original implementation',
-      sourceUrl: 'https://github.com/adhirajmuduli',
-    },
-  },
-  orbit: {
-    id: 'orbit',
-    kind: 'procedural',
-    chapter: 'future',
-    policy: { availableTiers: ['low', 'medium', 'high'], preload: 'none' },
-    credit: {
-      title: 'Procedural discovery-orbit study',
-      author: 'Portfolio source',
-      license: 'Original implementation',
-      sourceUrl: 'https://github.com/adhirajmuduli',
     },
   },
 } as const satisfies Record<ExhibitId, SceneAsset>
@@ -168,40 +265,21 @@ export const unassignedModelCandidates = [
     compression: 'draco',
   },
   {
-    id: 'bacteriophage',
-    url: '/models/bacteriophage_for_site.glb',
-    bytes: 858_352,
-    compression: 'draco',
-  },
-  {
-    id: 'brain-point-cloud',
-    url: '/models/brain_point_cloud_site.glb',
-    bytes: 33_405_696,
-    compression: 'none',
-  },
-  {
     id: 'diatom-campylodiscus',
     url: '/models/diatom_-_campylodiscus_hibernicus_for_site.glb',
     bytes: 16_119_120,
     compression: 'none',
   },
   {
-    id: 'earth-animated',
-    url: '/models/earth_animated_for_site.glb',
-    bytes: 23_342_728,
+    id: 'earth',
+    url: '/models/earth_site.glb',
+    bytes: 8_546_092,
     compression: 'none',
   },
-  { id: 'earth', url: '/models/earth_site.glb', bytes: 8_546_092, compression: 'none' },
   {
     id: 'forest-clearing',
     url: '/models/forest_clearing_1_top_skybox_site.glb',
     bytes: 12_462_384,
-    compression: 'none',
-  },
-  {
-    id: 'hemoglobin-ribbon',
-    url: '/models/hb_wohemo-ribbon-rainbow-vis-custom.glb',
-    bytes: 7_619_240,
     compression: 'none',
   },
   {
@@ -224,8 +302,18 @@ export const unassignedModelCandidates = [
   },
 ] as const satisfies readonly UnassignedModelCandidate[]
 
-const sceneAssetIds = Object.keys(sceneAssetManifest) as ExhibitId[]
-export const modelAssetIds = ['dna'] as const
+export const exhibitIds = [
+  'dna-alt',
+  'bacteriophage',
+  'hemoglobin-ribbon',
+  'brain-point-cloud',
+  'earth-animated',
+  'dna',
+] as const
+
+export type ExhibitId = 'dna-alt' | 'bacteriophage' | 'hemoglobin-ribbon' | 'brain-point-cloud' | 'earth-animated' | 'dna'
+
+export const modelAssetIds = ['dna', 'bacteriophage', 'hemoglobin-ribbon', 'brain-point-cloud', 'earth-animated', 'dna-alt'] as const
 
 export function getSceneAsset(assetId: ExhibitId): SceneAsset {
   return sceneAssetManifest[assetId]
@@ -268,7 +356,7 @@ export function assertSceneAssetManifest() {
     candidateUrls.add(candidate.url)
   }
 
-  for (const assetId of sceneAssetIds) {
+  for (const assetId of Object.keys(sceneAssetManifest) as ExhibitId[]) {
     const asset = getSceneAsset(assetId)
 
     if (asset.kind === 'unassigned') {

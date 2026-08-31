@@ -23,7 +23,7 @@ function InteractionHarness({ chapter, onReady }: HarnessProps) {
   const groupRef = useRef<THREE.Group | null>(new THREE.Group())
   const handlers = useModelInteraction({
     chapter,
-    exhibitId: chapter === 'origins' ? 'dna' : 'helix',
+    exhibitId: chapter === 'origins' ? 'dna-alt' : 'hemoglobin-ribbon',
     groupRef,
     initialRotation: [0, 0, 0],
   })
@@ -137,6 +137,7 @@ describe('useModelInteraction', () => {
     expect(touchDown.target.setPointerCapture).not.toHaveBeenCalled()
     expect(verticalMove.stopPropagation).not.toHaveBeenCalled()
   })
+
   it('applies scene-control commands only to the matching mounted exhibit', () => {
     let handlers: InteractionHandlers | null = null
     let group: THREE.Group | null = null
@@ -152,20 +153,20 @@ describe('useModelInteraction', () => {
 
     const readyHandlers = handlers as unknown as InteractionHandlers
     const readyGroup = group as unknown as THREE.Group
-    useSceneInteractionStore.getState().dispatch('phages', 'rotate-right')
+    useSceneInteractionStore.getState().dispatch('bacteriophage', 'rotate-right')
     expect(readyGroup.rotation.y).toBe(0)
 
-    useSceneInteractionStore.getState().dispatch('dna', 'rotate-right')
-    useSceneInteractionStore.getState().dispatch('dna', 'rotate-left')
+    useSceneInteractionStore.getState().dispatch('dna-alt', 'rotate-right')
+    useSceneInteractionStore.getState().dispatch('dna-alt', 'rotate-left')
     expect(readyGroup.rotation.y).toBe(0)
 
     readyGroup.rotation.set(0.4, 0.8, 0.2)
-    useSceneInteractionStore.getState().dispatch('dna', 'reset')
+    useSceneInteractionStore.getState().dispatch('dna-alt', 'reset')
     expect(readyGroup.rotation.toArray()).toEqual([0, 0, 0, 'XYZ'])
 
     const down = createPointerEvent()
     readyHandlers.onPointerDown(down.event)
-    useSceneInteractionStore.getState().dispatch('dna', 'exit')
+    useSceneInteractionStore.getState().dispatch('dna-alt', 'exit')
     expect(down.target.releasePointerCapture).toHaveBeenCalledWith(7)
   })
 })

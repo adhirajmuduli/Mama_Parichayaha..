@@ -13,24 +13,24 @@ describe('narrative store', () => {
 
   it('updates only discrete chapter and active exhibit state', () => {
     useNarrativeStore.getState().setActiveChapter('interests')
-    useNarrativeStore.getState().selectExhibit('phages')
+    useNarrativeStore.getState().selectExhibit('bacteriophage')
 
     expect(useNarrativeStore.getState()).toMatchObject({
       activeChapter: 'interests',
       direction: 1,
-      selectedExhibit: 'phages',
+      selectedExhibit: 'bacteriophage',
     })
   })
 
   it('rejects exhibits that are absent from the active chapter', () => {
-    useNarrativeStore.getState().selectExhibit('phages')
+    useNarrativeStore.getState().selectExhibit('bacteriophage')
 
     expect(useNarrativeStore.getState().selectedExhibit).toBeNull()
   })
 
   it('clears a selected exhibit when chapter navigation makes it unavailable', () => {
     useNarrativeStore.getState().setActiveChapter('interests')
-    useNarrativeStore.getState().selectExhibit('phages')
+    useNarrativeStore.getState().selectExhibit('bacteriophage')
     useNarrativeStore.getState().setActiveChapter('computation')
 
     expect(useNarrativeStore.getState()).toMatchObject({

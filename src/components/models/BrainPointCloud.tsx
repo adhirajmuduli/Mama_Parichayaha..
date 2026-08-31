@@ -1,6 +1,6 @@
 'use client'
 
-import { Center, useAnimations, useGLTF } from '@react-three/drei'
+import { Center, useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
@@ -10,43 +10,45 @@ import useChapterPresence from '@/hooks/useChapterPresence'
 import useModelInteraction from '@/hooks/useModelInteraction'
 import { getChapterEntry } from '@/lib/chapterRegistry'
 import { createGLTFInstance, disposeGLTFInstance } from '@/lib/gltfRuntime'
-import { applyDnaMaterial } from '@/lib/materials'
 
-const [centerX, centerY, centerZ] = getChapterEntry('origins').scene.center
-const asset = getModelAsset('dna-alt')
+const [centerX, centerY, centerZ] = getChapterEntry('computation').scene.center
+const asset = getModelAsset('brain-point-cloud')
 
-export default function DNA() {
+export default function BrainPointCloud() {
   const containerRef = useRef<THREE.Group>(null)
   const targetScaleRef = useRef(new THREE.Vector3())
-  const { scene, animations } = useGLTF(asset.url, getModelDracoDecoderPath(asset), true)
+  const { scene } = useGLTF(asset.url, getModelDracoDecoderPath(asset), true)
   const model = useMemo(() => createGLTFInstance(scene, asset.materialOwnership), [scene])
-  const { actions } = useAnimations(animations, model)
-  const presence = useChapterPresence('origins')
+  const presence = useChapterPresence('computation')
   const interactionHandlers = useModelInteraction({
-    autoRotateSpeed: 0.045,
-    chapter: 'origins',
-    exhibitId: 'dna-alt',
+    autoRotateSpeed: 0.02,
+    chapter: 'computation',
+    exhibitId: 'brain-point-cloud',
     groupRef: containerRef,
     initialRotation: asset.normalization.orientation,
   })
 
   useEffect(() => {
-    Object.values(actions).forEach((action) => action?.reset().play())
-
     model.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         const materials = Array.isArray(child.material) ? child.material : [child.material]
-        materials.forEach(applyDnaMaterial)
+        materials.forEach((material) => {
+          if (material instanceof THREE.MeshStandardMaterial || material instanceof THREE.MeshPhysicalMaterial) {
+            material.metalness = 0.1
+            material.roughness = 0.5
+            material.emissive = new THREE.Color('#22d3ee')
+            material.emissiveIntensity = 0.2
+          }
+        })
         child.castShadow = true
         child.receiveShadow = true
       }
     })
 
     return () => {
-      Object.values(actions).forEach((action) => action?.stop())
       disposeGLTFInstance(model, asset.materialOwnership)
     }
-  }, [actions, model])
+  }, [model])
 
   useFrame((state, delta) => {
     if (!containerRef.current) {
@@ -56,7 +58,7 @@ export default function DNA() {
     const targetScale = presence.nearby
       ? asset.normalization.activeScale
       : asset.normalization.inactiveScale
-    containerRef.current.position.y = centerY - 0.5 + Math.sin(state.clock.elapsedTime * 0.8) * 0.12
+    containerRef.current.position.y = centerY - 0.5 + Math.sin(state.clock.elapsedTime * 0.4) * 0.1
     targetScaleRef.current.setScalar(targetScale)
     containerRef.current.scale.lerp(targetScaleRef.current, 1 - Math.exp(-3 * delta))
   })

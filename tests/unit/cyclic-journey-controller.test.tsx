@@ -2,7 +2,7 @@ import { act, render } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import CyclicJourneyController from '@/components/motion/CyclicJourneyController'
-import CyclicChapterStage from '@/components/narrative/CyclicChapterStage'
+import CyclicChapterStage from '@/components/journey/CyclicChapterStage'
 import {
   JourneyRuntimeProvider,
   useJourneyRuntime,

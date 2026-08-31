@@ -37,7 +37,14 @@ describe('site content', () => {
   })
 
   it('keeps every assigned GLB credit source-linked and license-labelled', () => {
-    expect(siteContent.credits.models.map((model) => model.assetId)).toEqual(['dna'])
+    expect(siteContent.credits.models.map((model) => model.assetId)).toEqual([
+      'dna-alt',
+      'bacteriophage',
+      'hemoglobin-ribbon',
+      'brain-point-cloud',
+      'earth-animated',
+      'dna',
+    ])
 
     siteContent.credits.models.forEach((model) => {
       const asset = getModelAsset(model.assetId)

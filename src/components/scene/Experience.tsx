@@ -88,7 +88,7 @@ export default function Experience({ initialProfile, onContextLost }: Experience
     <div ref={eventSource} className="h-full w-full">
       <Canvas
         aria-hidden="true"
-        camera={{ position: [0, 0, 8], fov: 45 }}
+        camera={{ position: [0, 2.6, -11.5], fov: 42 }}
         className="h-full w-full"
         dpr={[1, profile.dprCap]}
         eventPrefix="client"
@@ -103,7 +103,7 @@ export default function Experience({ initialProfile, onContextLost }: Experience
         onCreated={configureRenderer}
         resize={{ debounce: { resize: 0, scroll: 50 }, scroll: false }}
       >
-        <fog attach="fog" args={['#07020f', 12, 40]} />
+        <fog attach="fog" args={['#07020f', 13, 54]} />
 
         <SceneContextMonitor onContextLost={onContextLost} />
         <ScenePerformanceMonitor tier={tier} onTierChange={handleTierChange} />

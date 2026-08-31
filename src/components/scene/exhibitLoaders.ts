@@ -8,10 +8,11 @@ export type ExhibitLoader = () => Promise<{ default: ComponentType }>
 
 export const exhibitLoaders = {
   dna: () => import('@/components/models/DNA'),
-  phages: () => import('@/components/models/PhageSystem'),
-  helix: () => import('@/components/models/HelixExhibit'),
-  lattice: () => import('@/components/models/LatticeExhibit'),
-  orbit: () => import('@/components/models/OrbitExhibit'),
+  'dna-alt': () => import('@/components/models/DnaAlt'),
+  bacteriophage: () => import('@/components/models/Bacteriophage'),
+  'hemoglobin-ribbon': () => import('@/components/models/HemoglobinRibbon'),
+  'brain-point-cloud': () => import('@/components/models/BrainPointCloud'),
+  'earth-animated': () => import('@/components/models/EarthAnimated'),
 } satisfies Record<ExhibitId, ExhibitLoader>
 
 export function assertExhibitLoaders(

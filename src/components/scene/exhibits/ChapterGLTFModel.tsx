@@ -8,10 +8,10 @@ import * as THREE from 'three'
 import { getModelAsset, getModelDracoDecoderPath } from '@/content/assets'
 import useChapterPresence from '@/hooks/useChapterPresence'
 import useModelInteraction from '@/hooks/useModelInteraction'
-import { createGLTFInstance, disposeGLTFInstance } from '@/lib/gltfRuntime'
 import type { ExhibitId } from '@/lib/chapterRegistry'
 import type { Chapter } from '@/lib/chapters'
 import type { RouteVector } from '@/lib/closedRoute'
+import { createGLTFInstance, disposeGLTFInstance } from '@/lib/gltfRuntime'
 
 interface Props {
   assetId: ExhibitId
@@ -38,7 +38,7 @@ function LoadedModel({
 }: Props & { active: boolean }) {
   const asset = getModelAsset(assetId)
   const groupRef = useRef<THREE.Group>(null)
-  const targetScale = useRef(new THREE.Vector3())
+  const targetScaleRef = useRef(new THREE.Vector3())
   const { animations, scene } = useGLTF(asset.url, getModelDracoDecoderPath(asset), true)
   const model = useMemo(
     () => createGLTFInstance(scene, asset.materialOwnership),
@@ -56,7 +56,7 @@ function LoadedModel({
   useEffect(() => {
     Object.values(actions).forEach((action) => action?.reset().play())
     return () => Object.values(actions).forEach((action) => action?.stop())
-  }, [actions])
+  }, [actions, model])
 
   useEffect(() => {
     model.traverse((child) => {
@@ -74,10 +74,8 @@ function LoadedModel({
       return
     }
 
-    targetScale.current.setScalar(
-      active ? asset.normalization.activeScale : asset.normalization.inactiveScale,
-    )
-    groupRef.current.scale.lerp(targetScale.current, 1 - Math.exp(-4.8 * delta))
+    targetScaleRef.current.setScalar(active ? asset.normalization.activeScale : asset.normalization.inactiveScale)
+    groupRef.current.scale.lerp(targetScaleRef.current, 1 - Math.exp(-4.8 * delta))
   })
 
   return (

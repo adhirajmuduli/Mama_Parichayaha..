@@ -3,6 +3,7 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 
 import { useJourneyRuntime } from '@/lib/journeyRuntime'
+import { chapterIds } from '@/lib/chapterRegistry'
 import {
   DWELL_CENTER_OFFSET,
   decodeJourney,
@@ -68,11 +69,17 @@ export default function CyclicJourneyController({ children }: { children: ReactN
       const units = runtime.renderUnits.get()
       const direction = runtime.getLastInputDirection()
       const sample = decodeJourney(units, direction)
+      const settledIndex = sample.mode === 'dwell' ? sample.currentIndex : sample.incomingIndex
+      const settledChapterId = chapterIds[settledIndex]
 
       restUnitsRef.current = units
 
+      if (settledChapterId) {
+        useNarrativeStore.getState().setActiveChapter(settledChapterId)
+      }
+
       useNarrativeStore.getState().publishSettledState({
-        settledIndex: sample.mode === 'dwell' ? sample.currentIndex : sample.incomingIndex,
+        settledIndex,
         loopCount: sample.loopCount,
         direction,
       })
@@ -119,7 +126,10 @@ export default function CyclicJourneyController({ children }: { children: ReactN
 
       inputSamples.push({ time: now, units })
 
-      while (inputSamples.length > 2 && now - (inputSamples[0]?.time ?? now) > INPUT_VELOCITY_WINDOW_MS) {
+      while (
+        inputSamples.length > 2 &&
+        now - (inputSamples[0]?.time ?? now) > INPUT_VELOCITY_WINDOW_MS
+      ) {
         inputSamples.shift()
       }
     }

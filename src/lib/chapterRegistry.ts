@@ -5,21 +5,35 @@ import {
   type ChapterId,
 } from '@/content/portfolio'
 
+import {
+  getDwellCameraAnchor,
+  getDwellLookTarget,
+  getModelCenter,
+  getInteriorYaw,
+  getRingTangentBasis,
+  getScreenRightBasis,
+  ROUTE_CHORD,
+  type RouteVector,
+} from '@/lib/closedRoute'
+
 export { chapterIds }
 
-export const exhibitIds = ['dna', 'phages', 'helix', 'lattice', 'orbit'] as const
+export const exhibitIds = [
+  'dna',
+  'dna-alt',
+  'bacteriophage',
+  'hemoglobin-ribbon',
+  'brain-point-cloud',
+  'earth-animated',
+] as const
 
 export type ExhibitId = (typeof exhibitIds)[number]
 export type Vector3Tuple = readonly [number, number, number]
+export type CardSide = 'left' | 'right'
 
 interface CameraPose {
   position: Vector3Tuple
   target: Vector3Tuple
-}
-
-interface ResponsiveCamera {
-  desktop: CameraPose
-  compact: CameraPose
 }
 
 interface AtmosphereLightDefinition {
@@ -63,10 +77,49 @@ export interface ChapterRegistryEntry {
   navigationLabel: string
   contentId: ChapterId
   scene: {
-    center: Vector3Tuple
-    camera: ResponsiveCamera
-    atmosphere: AtmosphereDefinition
+    center: RouteVector
     exhibits: readonly ExhibitDefinition[]
+    atmosphere: AtmosphereDefinition
+    modelRotation: Vector3Tuple
+    modelOffset: RouteVector
+    targetDiameter: number
+    lookYOffset: number
+    cardSide: CardSide
+    cardRestYawDeg: number
+    haloColor: string
+    environmentColor: string
+  }
+}
+
+export const chapterLookYOffsets = [0, 0.3, -0.1, 0.2, 0.1] as const
+
+const modelYawCorrections = [0, 0, 0.4, -0.3, 0.2] as const
+const targetDiameters = [3.4, 2.8, 3.2, 3.6, 3.2] as const
+const modelOffsetDistances = [2.2, 2.2, 2.4, 2.4, 2.2] as const
+
+function buildRouteScene(order: number) {
+  const center = getModelCenter(order)
+  const cardSide: CardSide = order % 2 === 0 ? 'left' : 'right'
+  const screenRight = getScreenRightBasis(order)
+  const offsetSign = cardSide === 'left' ? 1 : -1
+  const offsetDistance = modelOffsetDistances[order] ?? 2.2
+
+  return {
+    center,
+    cardSide,
+    modelRotation: [
+      0,
+      Number((getInteriorYaw(order) + (modelYawCorrections[order] ?? 0)).toFixed(4)),
+      0,
+    ] as Vector3Tuple,
+    modelOffset: [
+      Number((screenRight[0] * offsetDistance * offsetSign).toFixed(3)),
+      0,
+      Number((screenRight[2] * offsetDistance * offsetSign).toFixed(3)),
+    ] as RouteVector,
+    targetDiameter: targetDiameters[order] ?? 3.2,
+    lookYOffset: chapterLookYOffsets[order] ?? 0,
+    cardRestYawDeg: cardSide === 'left' ? 2.5 : -2.5,
   }
 }
 
@@ -78,16 +131,13 @@ export const chapterRegistry = [
     navigationLabel: 'Origins',
     contentId: 'origins',
     scene: {
-      center: [0, 0, 4],
-      camera: {
-        desktop: { position: [0, 2, 12], target: [-1.2, 0, 4] },
-        compact: { position: [0, 1.5, 14], target: [-1.2, 0, 4] },
-      },
+      ...buildRouteScene(0),
+      exhibits: [{ id: 'dna-alt' }],
       atmosphere: {
         bloom: { intensity: 0.24, threshold: 0.66 },
         cloudDensity: 0.94,
         exposure: 0.9,
-        fog: { near: 11, far: 39 },
+        fog: { near: 13, far: 54 },
         fogColor: '#07020f',
         keyLight: '#c084fc',
         lighting: {
@@ -100,7 +150,8 @@ export const chapterRegistry = [
         particleColor: '#c4b5fd',
         particleOpacity: 0.38,
       },
-      exhibits: [{ id: 'dna' }],
+      haloColor: '#c084fc',
+      environmentColor: '#07020f',
     },
   },
   {
@@ -110,16 +161,13 @@ export const chapterRegistry = [
     navigationLabel: 'Interests',
     contentId: 'interests',
     scene: {
-      center: [8, 1.6, 2.4],
-      camera: {
-        desktop: { position: [8, 3.6, 10.4], target: [9.2, 1.6, 2.4] },
-        compact: { position: [8, 3.1, 12.4], target: [9.2, 1.6, 2.4] },
-      },
+      ...buildRouteScene(1),
+      exhibits: [{ id: 'bacteriophage' }],
       atmosphere: {
         bloom: { intensity: 0.18, threshold: 0.72 },
         cloudDensity: 0.82,
         exposure: 0.86,
-        fog: { near: 12, far: 42 },
+        fog: { near: 13, far: 54 },
         fogColor: '#0b1020',
         keyLight: '#fb923c',
         lighting: {
@@ -132,7 +180,8 @@ export const chapterRegistry = [
         particleColor: '#99f6e4',
         particleOpacity: 0.3,
       },
-      exhibits: [{ id: 'phages' }],
+      haloColor: '#fb923c',
+      environmentColor: '#0b1020',
     },
   },
   {
@@ -142,16 +191,13 @@ export const chapterRegistry = [
     navigationLabel: 'Research',
     contentId: 'research',
     scene: {
-      center: [16, 2.2, 3.6],
-      camera: {
-        desktop: { position: [16, 4.2, 11.6], target: [14.8, 2.2, 3.6] },
-        compact: { position: [16, 3.7, 13.6], target: [14.8, 2.2, 3.6] },
-      },
+      ...buildRouteScene(2),
+      exhibits: [{ id: 'hemoglobin-ribbon' }],
       atmosphere: {
         bloom: { intensity: 0.28, threshold: 0.6 },
         cloudDensity: 1.02,
         exposure: 0.98,
-        fog: { near: 10, far: 38 },
+        fog: { near: 13, far: 54 },
         fogColor: '#081827',
         keyLight: '#22d3ee',
         lighting: {
@@ -164,7 +210,8 @@ export const chapterRegistry = [
         particleColor: '#a5f3fc',
         particleOpacity: 0.42,
       },
-      exhibits: [{ id: 'helix' }],
+      haloColor: '#22d3ee',
+      environmentColor: '#081827',
     },
   },
   {
@@ -174,16 +221,13 @@ export const chapterRegistry = [
     navigationLabel: 'Computation',
     contentId: 'computation',
     scene: {
-      center: [24, 1.8, 1.6],
-      camera: {
-        desktop: { position: [24, 3.8, 9.6], target: [25.2, 1.8, 1.6] },
-        compact: { position: [24, 3.3, 11.6], target: [25.2, 1.8, 1.6] },
-      },
+      ...buildRouteScene(3),
+      exhibits: [{ id: 'brain-point-cloud' }],
       atmosphere: {
         bloom: { intensity: 0.2, threshold: 0.7 },
         cloudDensity: 0.88,
         exposure: 0.9,
-        fog: { near: 11, far: 40 },
+        fog: { near: 13, far: 54 },
         fogColor: '#11111f',
         keyLight: '#818cf8',
         lighting: {
@@ -196,7 +240,8 @@ export const chapterRegistry = [
         particleColor: '#c4b5fd',
         particleOpacity: 0.32,
       },
-      exhibits: [{ id: 'lattice' }],
+      haloColor: '#818cf8',
+      environmentColor: '#11111f',
     },
   },
   {
@@ -206,16 +251,13 @@ export const chapterRegistry = [
     navigationLabel: 'Future',
     contentId: 'future',
     scene: {
-      center: [32, 0.6, 3.2],
-      camera: {
-        desktop: { position: [32, 2.6, 11.2], target: [30.8, 0.6, 3.2] },
-        compact: { position: [32, 2.1, 13.2], target: [30.8, 0.6, 3.2] },
-      },
+      ...buildRouteScene(4),
+      exhibits: [{ id: 'earth-animated' }],
       atmosphere: {
         bloom: { intensity: 0.16, threshold: 0.74 },
         cloudDensity: 0.76,
         exposure: 0.84,
-        fog: { near: 12, far: 43 },
+        fog: { near: 13, far: 54 },
         fogColor: '#0b1020',
         keyLight: '#c4b5fd',
         lighting: {
@@ -228,7 +270,8 @@ export const chapterRegistry = [
         particleColor: '#ccfbf1',
         particleOpacity: 0.24,
       },
-      exhibits: [{ id: 'orbit' }],
+      haloColor: '#c4b5fd',
+      environmentColor: '#0b1020',
     },
   },
 ] as const satisfies readonly ChapterRegistryEntry[]
@@ -257,9 +300,13 @@ export function getChapterContent(chapterId: ChapterId): ChapterContent {
   return chapterContentById[getChapterEntry(chapterId).contentId]
 }
 
-export function getCameraPose(chapterId: ChapterId, viewportWidth: number) {
-  const camera = getChapterEntry(chapterId).scene.camera
-  return viewportWidth < 768 ? camera.compact : camera.desktop
+export function getDwellCameraPose(chapterId: ChapterId): CameraPose {
+  const chapter = getChapterEntry(chapterId)
+
+  return {
+    position: getDwellCameraAnchor(chapter.order, chapter.scene.lookYOffset),
+    target: getDwellLookTarget(chapter.order, chapter.scene.lookYOffset),
+  }
 }
 
 function assertFiniteVector(vector: Vector3Tuple, label: string) {
@@ -325,11 +372,17 @@ export function assertChapterRegistry(
     }
 
     assertFiniteVector(chapter.scene.center, `${chapter.id} center`)
-    assertFiniteVector(chapter.scene.camera.desktop.position, `${chapter.id} desktop position`)
-    assertFiniteVector(chapter.scene.camera.desktop.target, `${chapter.id} desktop target`)
-    assertFiniteVector(chapter.scene.camera.compact.position, `${chapter.id} compact position`)
-    assertFiniteVector(chapter.scene.camera.compact.target, `${chapter.id} compact target`)
+    assertFiniteVector(chapter.scene.modelRotation, `${chapter.id} model rotation`)
+    assertFiniteVector(chapter.scene.modelOffset, `${chapter.id} model offset`)
     assertAtmosphere(chapter.scene.atmosphere, chapter.id)
+
+    if (!Number.isFinite(chapter.scene.targetDiameter) || chapter.scene.targetDiameter <= 0) {
+      throw new Error(`Chapter ${chapter.id} has an invalid target diameter.`)
+    }
+
+    if (chapter.scene.cardSide !== 'left' && chapter.scene.cardSide !== 'right') {
+      throw new Error(`Chapter ${chapter.id} has an invalid card side.`)
+    }
 
     chapter.scene.exhibits.forEach((exhibit) => {
       if (!exhibitIds.includes(exhibit.id)) {
@@ -346,6 +399,18 @@ export function assertChapterRegistry(
       throw new Error(`Missing chapter registry entry: ${chapterId}.`)
     }
   })
+
+  for (let index = 0; index < registry.length; index += 1) {
+    const current = registry[index]!.scene.center
+    const next = registry[(index + 1) % registry.length]!.scene.center
+    const chord = Math.hypot(next[0] - current[0], next[2] - current[2])
+
+    if (Math.abs(chord - ROUTE_CHORD) > 0.05) {
+      throw new Error(
+        `Chapters ${index} and ${(index + 1) % registry.length} violate the route chord.`,
+      )
+    }
+  }
 }
 
 assertChapterRegistry()

@@ -38,7 +38,7 @@ export const PublicProfileSchema = z
 
 export const ModelCreditSchema = z
   .object({
-    assetId: z.enum(['dna']),
+    assetId: z.enum(['dna-alt', 'bacteriophage', 'hemoglobin-ribbon', 'brain-point-cloud', 'earth-animated', 'dna']),
     attribution: z.string().trim().min(1).max(260),
     license: z.string().trim().min(1).max(160),
     links: z.array(CreditLinkSchema).min(1).max(2),
@@ -110,8 +110,8 @@ export const siteContent: SiteContent = SiteContentSchema.parse({
       'The interactive molecular models used by this portfolio retain their required source and license attribution.',
     models: [
       {
-        assetId: 'dna',
-        title: 'DNA VR Interactive Animation',
+        assetId: 'dna-alt',
+        title: 'DNA VR Interactive Animation (Alternate)',
         attribution: 'DNA VR Interactive Animation by nilantunes, via Sketchfab.',
         license: 'Creative Commons Attribution (CC BY).',
         links: [
@@ -124,7 +124,94 @@ export const siteContent: SiteContent = SiteContentSchema.parse({
             label: 'nilantunes on Sketchfab',
           },
         ],
-        source: modelProvenanceSource,
+        source: {
+          file: 'docs/assets/model-provenance.md',
+          location: 'Retained assets',
+        },
+      },
+      {
+        assetId: 'bacteriophage',
+        title: 'Bacteriophage Model',
+        attribution: 'Procedural bacteriophage study, portfolio source.',
+        license: 'Original implementation.',
+        links: [
+          {
+            href: 'https://github.com/adhirajmuduli',
+            label: 'GitHub repository',
+          },
+        ],
+        source: {
+          file: 'docs/assets/model-provenance.md',
+          location: 'Retained assets',
+        },
+      },
+      {
+        assetId: 'hemoglobin-ribbon',
+        title: 'Hemoglobin Ribbon (6HHB)',
+        attribution: 'Hemoglobin ribbon structure from NIH 3D Print Exchange.',
+        license: 'CC0 (Public Domain).',
+        links: [
+          {
+            href: 'https://3d.nih.gov/',
+            label: 'NIH 3D Print Exchange',
+          },
+        ],
+        source: {
+          file: 'docs/assets/model-provenance.md',
+          location: 'Retained assets',
+        },
+      },
+      {
+        assetId: 'brain-point-cloud',
+        title: 'Brain Point Cloud',
+        attribution: 'Brain point cloud data from Human Cell Atlas / EBI.',
+        license: 'Creative Commons Attribution (CC BY).',
+        links: [
+          {
+            href: 'https://www.ebi.ac.uk/',
+            label: 'European Bioinformatics Institute',
+          },
+        ],
+        source: {
+          file: 'docs/assets/model-provenance.md',
+          location: 'Retained assets',
+        },
+      },
+      {
+        assetId: 'earth-animated',
+        title: 'Animated Earth',
+        attribution: 'Animated Earth model from NASA Visible Earth.',
+        license: 'Public Domain.',
+        links: [
+          {
+            href: 'https://visibleearth.nasa.gov/',
+            label: 'NASA Visible Earth',
+          },
+        ],
+        source: {
+          file: 'docs/assets/model-provenance.md',
+          location: 'Retained assets',
+        },
+      },
+      {
+        assetId: 'dna',
+        title: 'DNA VR Interactive Animation (Rollback)',
+        attribution: 'DNA VR Interactive Animation by nilantunes, via Sketchfab.',
+        license: 'Creative Commons Attribution (CC BY).',
+        links: [
+          {
+            href: 'https://sketchfab.com/3d-models/dna-vr-interactive-animation-c9a926f139044470ad3fb053c66ad71e',
+            label: 'DNA source on Sketchfab',
+          },
+          {
+            href: 'https://sketchfab.com/nilantunes',
+            label: 'nilantunes on Sketchfab',
+          },
+        ],
+        source: {
+          file: 'docs/assets/model-provenance.md',
+          location: 'Retained assets',
+        },
       },
     ],
   },
@@ -140,19 +227,28 @@ export const siteContent: SiteContent = SiteContentSchema.parse({
       external: false,
       href: 'mailto:adhiraj.muduli@niser.ac.in',
       label: 'Email Adhiraj',
-      source: phase8Source,
+      source: {
+        file: 'docs/content/phase8-content-provenance.md',
+        location: 'Owner-approved public details',
+      },
     },
     {
       external: true,
       href: 'https://github.com/adhirajmuduli',
       label: 'GitHub profile',
-      source: phase8Source,
+      source: {
+        file: 'docs/content/phase8-content-provenance.md',
+        location: 'Owner-approved public details',
+      },
     },
     {
       external: true,
       href: 'https://orcid.org/0009-0005-5655-8120?lang=en',
       label: 'ORCID record',
-      source: phase8Source,
+      source: {
+        file: 'docs/content/phase8-content-provenance.md',
+        location: 'Owner-approved public details',
+      },
     },
   ],
 })

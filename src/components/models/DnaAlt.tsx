@@ -15,7 +15,7 @@ import { applyDnaMaterial } from '@/lib/materials'
 const [centerX, centerY, centerZ] = getChapterEntry('origins').scene.center
 const asset = getModelAsset('dna-alt')
 
-export default function DNA() {
+export default function DnaAlt() {
   const containerRef = useRef<THREE.Group>(null)
   const targetScaleRef = useRef(new THREE.Vector3())
   const { scene, animations } = useGLTF(asset.url, getModelDracoDecoderPath(asset), true)

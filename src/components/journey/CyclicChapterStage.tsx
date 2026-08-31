@@ -1,8 +1,10 @@
 'use client'
 
+'use client'
+
 import { useEffect, useRef } from 'react'
 
-import ChapterCardShell from '@/components/narrative/ChapterCardShell'
+import ChapterCardShell from '@/components/journey/ChapterCardShell'
 import ChapterDetail from '@/components/narrative/ChapterDetail'
 import { chapterRegistry, getChapterContent } from '@/lib/chapterRegistry'
 import { useJourneyRuntime } from '@/lib/journeyRuntime'

@@ -1,7 +1,7 @@
 'use client'
 
 import { useMotionValue, useSpring } from 'motion/react'
-import { createContext, useContext, useMemo, useRef, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useMemo, useRef, type ReactNode } from 'react'
 import type { MotionValue } from 'motion/react'
 
 import {
@@ -37,6 +37,7 @@ export function JourneyRuntimeProvider({ children }: { children: ReactNode }) {
   const movingRef = useRef(false)
   const restFramesRef = useRef(0)
   const lastDirectionRef = useRef<JourneyDirection>(0)
+  const restLoopRef = useRef<number | null>(null)
   const settleListenersRef = useRef(new Set<() => void>())
   const settleStateRef = useRef({ pausedRef, movingRef, restFramesRef, settleListenersRef })
   settleStateRef.current = {
@@ -46,37 +47,62 @@ export function JourneyRuntimeProvider({ children }: { children: ReactNode }) {
     settleListenersRef,
   }
 
-  renderUnits.on('change', () => {
+  const completeSettle = () => {
     const state = settleStateRef.current
+
+    if (restLoopRef.current !== null) {
+      cancelAnimationFrame(restLoopRef.current)
+      restLoopRef.current = null
+    }
 
     if (!state.movingRef.current) {
       return
     }
 
-    const position = renderUnits.get()
-    const target = inputUnits.get()
-    const velocity = renderUnits.getVelocity()
+    state.movingRef.current = false
+    state.restFramesRef.current = 0
 
-    if (
-      Math.abs(position - target) < SETTLE_POSITION_EPSILON &&
-      Math.abs(velocity) < SETTLE_VELOCITY_EPSILON
-    ) {
-      state.restFramesRef.current += 1
+    for (const listener of state.settleListenersRef.current) {
+      listener()
+    }
+  }
 
-      if (state.restFramesRef.current >= 2) {
-        state.movingRef.current = false
-        state.restFramesRef.current = 0
-
-        for (const listener of state.settleListenersRef.current) {
-          listener()
-        }
-      }
-
+  const startRestLoop = () => {
+    if (restLoopRef.current !== null) {
       return
     }
 
-    state.restFramesRef.current = 0
-  })
+    const tick = () => {
+      restLoopRef.current = null
+      const state = settleStateRef.current
+
+      if (!state.movingRef.current) {
+        return
+      }
+
+      const settled =
+        Math.abs(renderUnits.get() - inputUnits.get()) < SETTLE_POSITION_EPSILON &&
+        Math.abs(renderUnits.getVelocity()) < SETTLE_VELOCITY_EPSILON
+
+      if (settled) {
+        state.restFramesRef.current += 1
+      } else {
+        state.restFramesRef.current = 0
+      }
+
+      if (state.restFramesRef.current >= 2) {
+        completeSettle()
+        return
+      }
+
+      restLoopRef.current = requestAnimationFrame(tick)
+    }
+
+    restLoopRef.current = requestAnimationFrame(tick)
+  }
+
+  const runtimeRef = useRef({ startRestLoop })
+  runtimeRef.current = { startRestLoop }
 
   const api = useMemo<JourneyRuntimeApi>(() => {
     const recordDirection = (delta: number) => {
@@ -100,6 +126,7 @@ export function JourneyRuntimeProvider({ children }: { children: ReactNode }) {
         recordDirection(deltaUnits)
         movingRef.current = true
         restFramesRef.current = 0
+        runtimeRef.current.startRestLoop()
         inputUnits.set(inputUnits.get() + deltaUnits)
       },
       navigateTo(targetUnits: number) {
@@ -110,6 +137,7 @@ export function JourneyRuntimeProvider({ children }: { children: ReactNode }) {
         recordDirection(targetUnits - inputUnits.get())
         movingRef.current = true
         restFramesRef.current = 0
+        runtimeRef.current.startRestLoop()
         inputUnits.set(targetUnits)
       },
       jumpTo(targetUnits: number) {
@@ -131,6 +159,7 @@ export function JourneyRuntimeProvider({ children }: { children: ReactNode }) {
       markMoving() {
         movingRef.current = true
         restFramesRef.current = 0
+        runtimeRef.current.startRestLoop()
       },
       subscribeSettle(listener: () => void) {
         settleListenersRef.current.add(listener)
@@ -141,6 +170,15 @@ export function JourneyRuntimeProvider({ children }: { children: ReactNode }) {
       },
     }
   }, [inputUnits, renderUnits])
+
+  useEffect(() => {
+    return () => {
+      if (restLoopRef.current !== null) {
+        cancelAnimationFrame(restLoopRef.current)
+        restLoopRef.current = null
+      }
+    }
+  }, [])
 
   return <JourneyRuntimeContext.Provider value={api}>{children}</JourneyRuntimeContext.Provider>
 }

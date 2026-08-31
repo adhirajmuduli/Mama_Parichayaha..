@@ -10,22 +10,21 @@ import useChapterPresence from '@/hooks/useChapterPresence'
 import useModelInteraction from '@/hooks/useModelInteraction'
 import { getChapterEntry } from '@/lib/chapterRegistry'
 import { createGLTFInstance, disposeGLTFInstance } from '@/lib/gltfRuntime'
-import { applyDnaMaterial } from '@/lib/materials'
 
-const [centerX, centerY, centerZ] = getChapterEntry('origins').scene.center
-const asset = getModelAsset('dna-alt')
+const [centerX, centerY, centerZ] = getChapterEntry('interests').scene.center
+const asset = getModelAsset('bacteriophage')
 
-export default function DNA() {
+export default function Bacteriophage() {
   const containerRef = useRef<THREE.Group>(null)
   const targetScaleRef = useRef(new THREE.Vector3())
   const { scene, animations } = useGLTF(asset.url, getModelDracoDecoderPath(asset), true)
   const model = useMemo(() => createGLTFInstance(scene, asset.materialOwnership), [scene])
   const { actions } = useAnimations(animations, model)
-  const presence = useChapterPresence('origins')
+  const presence = useChapterPresence('interests')
   const interactionHandlers = useModelInteraction({
-    autoRotateSpeed: 0.045,
-    chapter: 'origins',
-    exhibitId: 'dna-alt',
+    autoRotateSpeed: 0.09,
+    chapter: 'interests',
+    exhibitId: 'bacteriophage',
     groupRef: containerRef,
     initialRotation: asset.normalization.orientation,
   })
@@ -36,7 +35,14 @@ export default function DNA() {
     model.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         const materials = Array.isArray(child.material) ? child.material : [child.material]
-        materials.forEach(applyDnaMaterial)
+        materials.forEach((material) => {
+          if (material instanceof THREE.MeshStandardMaterial || material instanceof THREE.MeshPhysicalMaterial) {
+            material.metalness = 0.4
+            material.roughness = 0.2
+            material.emissive = new THREE.Color('#7c3aed')
+            material.emissiveIntensity = 1
+          }
+        })
         child.castShadow = true
         child.receiveShadow = true
       }

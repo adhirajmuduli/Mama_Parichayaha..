@@ -20,12 +20,12 @@ const interactiveExhibits: Partial<
   Record<ChapterRegistryEntry['id'], InteractiveExhibitDefinition>
 > = {
   origins: {
-    exhibitId: 'dna',
+    exhibitId: 'dna-alt',
     label: 'DNA model',
     description: 'A double-helical DNA exhibit with an available source animation.',
   },
   interests: {
-    exhibitId: 'phages',
+    exhibitId: 'bacteriophage',
     label: 'Bacteriophage model',
     description:
       'A procedural bacteriophage study showing a capsid, tail, base plate, and tail-fibre form.',
