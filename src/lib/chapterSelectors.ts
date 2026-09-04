@@ -45,5 +45,9 @@ export function getChapterPresence(activeChapter: ChapterId, chapter: ChapterId)
 }
 
 export function chapterHasExhibit(chapter: ChapterId, exhibit: ExhibitId) {
-  return getChapterEntry(chapter).scene.exhibits.some((candidate) => candidate.id === exhibit)
+  const exhibits = getChapterEntry(chapter).scene.exhibits
+  if (exhibits.length === 0) {
+    return false
+  }
+  return exhibits.some((candidate) => candidate.id === exhibit)
 }

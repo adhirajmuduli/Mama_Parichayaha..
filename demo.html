@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Glass Card — Preview</title>
+<style>
+  :root {
+    --gc-surface: #060a12;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+      radial-gradient(60% 50% at 20% 0%, rgba(47,184,240,0.10), transparent 60%),
+      radial-gradient(50% 40% at 90% 100%, rgba(139,107,240,0.10), transparent 60%),
+      var(--gc-surface);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    padding: 64px 24px;
+  }
+  .page-title {
+    color: #f3f6fb;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+    text-align: center;
+    opacity: 0.55;
+    margin: 0 0 40px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* ── Card shell (mirrors glass-card.css) ───────────────────────────── */
+  .glass-card {
+    position: relative;
+    isolation: isolate;
+    border-radius: var(--gc-radius, 20px);
+    overflow: hidden;
+    padding: 24px;
+    background:
+      linear-gradient(160deg,
+        color-mix(in srgb, var(--gc-rim) 22%, transparent) 0%,
+        color-mix(in srgb, var(--gc-core) 10%, transparent) 45%,
+        rgba(8, 14, 24, 0.35) 100%);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid color-mix(in srgb, var(--gc-rim) 35%, rgba(255,255,255,0.12));
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--gc-core) 18%, transparent),
+      0 0 48px -12px var(--gc-ambient),
+      0 24px 40px -20px rgba(0,0,0,0.6),
+      inset 0 1px 0 rgba(255,255,255,0.35),
+      inset 0 -18px 30px -22px rgba(0,0,0,0.45);
+    transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+    cursor: pointer;
+  }
+  .glass-card:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--gc-rim) 55%, rgba(255,255,255,0.12));
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--gc-core) 28%, transparent),
+      0 0 64px -10px var(--gc-ambient),
+      0 32px 48px -20px rgba(0,0,0,0.65),
+      inset 0 1px 0 rgba(255,255,255,0.4),
+      inset 0 -18px 30px -22px rgba(0,0,0,0.45);
+  }
+  .glass-card__sheen {
+    position: absolute;
+    inset: -20% -10% auto -10%;
+    height: 55%;
+    background: linear-gradient(115deg,
+      transparent 10%, rgba(255,255,255,0.22) 42%,
+      rgba(255,255,255,0.05) 55%, transparent 70%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    transform: rotate(-4deg);
+  }
+  .glass-card__content { position: relative; z-index: 1; }
+  .glass-card__eyebrow {
+    font-size: 12px; letter-spacing: 0.02em;
+    color: color-mix(in srgb, var(--gc-rim) 70%, white);
+    margin-bottom: 6px;
+  }
+  .glass-card__title { margin: 0 0 8px; font-size: 20px; font-weight: 600; color: #f3f6fb; }
+  .glass-card__body { color: rgba(233,240,250,0.78); font-size: 14.5px; line-height: 1.55; }
+  .glass-card__footer { margin-top: 20px; display: flex; gap: 10px; align-items: center; }
+
+  .glass-btn {
+    appearance: none; border-radius: 999px; padding: 10px 18px;
+    font-size: 14px; font-weight: 600; cursor: pointer; border: none;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+    border: 1px solid color-mix(in srgb, var(--gc-rim) 45%, transparent);
+    color: #0b1017;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--gc-rim) 90%, white) 0%, var(--gc-core) 100%);
+    box-shadow: 0 8px 20px -8px var(--gc-ambient), inset 0 1px 0 rgba(255,255,255,0.5);
+  }
+  .glass-btn:hover { transform: translateY(-1px); }
+
+  .glass-btn--ghost {
+    background: color-mix(in srgb, var(--gc-core) 12%, transparent);
+    color: #eaf2fb;
+    box-shadow: none;
+  }
+</style>
+</head>
+<body>
+
+  <p class="page-title">GlassCard — hover the cards</p>
+
+  <div class="grid">
+
+    <div class="glass-card" style="--gc-rim:#7dd8ff; --gc-core:#2fb8f0; --gc-ambient:rgba(47,184,240,0.35);">
+      <span class="glass-card__sheen"></span>
+      <div class="glass-card__content">
+        <div class="glass-card__eyebrow">Plan</div>
+        <h3 class="glass-card__title">Studio</h3>
+        <p class="glass-card__body">For small teams shipping a design system across a handful of products.</p>
+        <div class="glass-card__footer">
+          <button class="glass-btn">Choose Studio</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card" style="--gc-rim:#c9b6ff; --gc-core:#8b6bf0; --gc-ambient:rgba(139,107,240,0.35);">
+      <span class="glass-card__sheen"></span>
+      <div class="glass-card__content">
+        <div class="glass-card__eyebrow">Plan</div>
+        <h3 class="glass-card__title">Atelier</h3>
+        <p class="glass-card__body">Unlimited projects, shared libraries, and version history for growing teams.</p>
+        <div class="glass-card__footer">
+          <button class="glass-btn">Choose Atelier</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card" style="--gc-rim:#ffd9a0; --gc-core:#f0a83f; --gc-ambient:rgba(240,168,63,0.32);">
+      <span class="glass-card__sheen"></span>
+      <div class="glass-card__content">
+        <div class="glass-card__eyebrow">Plan</div>
+        <h3 class="glass-card__title">Foundry</h3>
+        <p class="glass-card__body">Custom tokens, SSO, and a dedicated review channel for larger orgs.</p>
+        <div class="glass-card__footer">
+          <button class="glass-btn">Choose Foundry</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

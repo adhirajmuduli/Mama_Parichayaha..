@@ -7,7 +7,7 @@ interface ErrorPageProps {
 
 export default function ErrorPage({ reset }: ErrorPageProps) {
   return (
-    <main className="grid min-h-screen place-items-center bg-[#07020f] px-6 text-center text-zinc-100">
+    <main className="grid min-h-screen place-items-center bg-[#FDFCF8] px-6 text-center text-[oklch(0.22_0.015_45)]">
       <div className="max-w-md space-y-5">
         <p className="text-sm uppercase tracking-[0.28em] text-violet-200">Portfolio error</p>
         <h1 className="text-4xl font-semibold">The current view could not be loaded.</h1>

@@ -19,7 +19,12 @@ export function assertExhibitLoaders(
   loaders: Partial<Record<ExhibitId, ExhibitLoader>> = exhibitLoaders,
 ) {
   const registeredExhibits = new Set(
-    chapterRegistry.flatMap((chapter) => chapter.scene.exhibits.map((exhibit) => exhibit.id)),
+    chapterRegistry.flatMap((chapter) => {
+      if (chapter.scene.exhibits.length === 0) {
+        return []
+      }
+      return chapter.scene.exhibits.map((exhibit) => exhibit.id)
+    }),
   )
 
   for (const exhibitId of registeredExhibits) {

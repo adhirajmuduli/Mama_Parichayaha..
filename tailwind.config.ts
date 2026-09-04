@@ -6,25 +6,25 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: '#07020F',
+        background: '#FDFCF8',
 
-        surface: '#12061F',
+        surface: '#F7F2E8',
 
-        primary: '#7C3AED',
+        primary: '#7C5C3A',
 
-        secondary: '#C084FC',
+        secondary: '#D4A574',
 
-        accent: '#F97316',
+        accent: '#C17A3A',
 
-        muted: '#A78BFA',
+        muted: '#8B7355',
       },
 
       backgroundImage: {
-        'hero-gradient': 'radial-gradient(circle at top, rgba(124,58,237,0.35), rgba(7,2,15,1))',
+        'hero-gradient': 'radial-gradient(circle at top, rgba(212,165,116,0.18), rgba(253,252,248,1))',
       },
 
       boxShadow: {
-        glow: '0 0 40px rgba(192,132,252,0.35)',
+        glow: '0 0 40px rgba(193,122,58,0.22)',
       },
 
       backdropBlur: {

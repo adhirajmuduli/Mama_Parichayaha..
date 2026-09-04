@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react'
 
-import LiquidGlassPanel from '@/components/liquid-glass/LiquidGlassPanel'
+import { GlassCard } from '@root/GlassCard'
 import type { ChapterId } from '@/content/portfolio'
 
 interface ChapterCardShellProps {
@@ -11,6 +11,7 @@ interface ChapterCardShellProps {
   visible: boolean
   focusable: boolean
   labelledById: string
+  glow: string
   onPointerEnter?: () => void
   children: ReactNode
 }
@@ -20,6 +21,7 @@ export default function ChapterCardShell({
   chapterId,
   children,
   focusable,
+  glow,
   labelledById,
   visible,
 }: ChapterCardShellProps) {
@@ -38,11 +40,14 @@ export default function ChapterCardShell({
           visible ? 'opacity-100' : 'opacity-0'
         } ${focusable ? 'pointer-events-auto' : 'pointer-events-none'}`}
       >
-        <LiquidGlassPanel className="max-h-[62svh] overflow-y-auto">
+        <GlassCard
+          className="max-h-[62svh] overflow-y-auto"
+          glow={glow}
+        >
           <div aria-labelledby={labelledById} role="group" data-chapter-card-content={chapterId}>
             {children}
           </div>
-        </LiquidGlassPanel>
+        </GlassCard>
       </div>
     </div>
   )

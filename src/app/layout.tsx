@@ -1,10 +1,15 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 
 import { getStructuredData, siteDescription, siteName, siteUrl } from '@/lib/siteMetadata'
+import RegisterSW from '@/components/RegisterSW'
+import Providers from './providers'
 
 import './globals.css'
+import '../../glass-card.css'
 
-import Providers from './providers'
+export const viewport: Viewport = {
+  themeColor: '#FDFCF8',
+}
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,
@@ -19,8 +24,11 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   icons: {
-    icon: '/icon.png',
-    apple: '/icon.png',
+    icon: [
+      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
   },
   manifest: '/manifest.webmanifest',
   openGraph: {
@@ -68,6 +76,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           }}
         />
         <Providers>{children}</Providers>
+        <RegisterSW />
       </body>
     </html>
   )

@@ -20,6 +20,8 @@
 
     "moduleResolution": "bundler",
 
+    "baseUrl": ".",
+
     "resolveJsonModule": true,
 
     "isolatedModules": true,
@@ -35,7 +37,8 @@
     ],
 
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@root/*": ["./*"]
     }
   },
 

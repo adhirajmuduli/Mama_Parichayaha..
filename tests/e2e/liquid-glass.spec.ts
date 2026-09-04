@@ -53,6 +53,16 @@ test('renders bounded liquid-glass surfaces with an explicit fallback and keyboa
   }
 })
 
+test('uses the restored GlassCard visual system for live portfolio cards', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+
+  const chapterCard = page.locator('[data-chapter-card="origins"] .glass-card')
+
+  await expect(chapterCard).toHaveCount(1)
+  await expect(chapterCard).toHaveClass(/glass-card--interactive/)
+  await expect(page.locator('[data-chapter-card="origins"] [data-liquid-glass="true"]')).toHaveCount(0)
+})
+
 test('records a bounded liquid-glass paint trace', async ({ page }, testInfo) => {
   test.skip(
     testInfo.project.name !== 'desktop',

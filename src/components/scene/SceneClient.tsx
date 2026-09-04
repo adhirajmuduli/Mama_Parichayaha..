@@ -1,16 +1,11 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useState } from 'react'
 
-import SceneRendererBoundary from '@/components/scene/SceneRendererBoundary'
+import Experience from './Experience'
+import SceneErrorBoundary from './SceneErrorBoundary'
 import { getSceneRuntimeProfile, supportsWebGL, type SceneRuntimeProfile } from '@/lib/sceneRuntime'
 import { useSceneInteractionStore } from '@/stores/sceneInteractionStore'
-
-const Experience = dynamic(() => import('./Experience'), {
-  ssr: false,
-  loading: () => null,
-})
 
 type SceneFallbackReason = 'context_lost' | 'renderer_error' | 'static_preference' | 'unsupported'
 
@@ -26,54 +21,57 @@ const fallbackMessages: Record<SceneFallbackReason, string> = {
 }
 
 export default function SceneClient() {
-  const [runtimeProfile, setRuntimeProfile] = useState<SceneRuntimeProfile | null>(null)
-  const [fallbackReason, setFallbackReason] = useState<SceneFallbackReason | null>(null)
   const setRendererAvailable = useSceneInteractionStore((state) => state.setRendererAvailable)
+  const [profile, setProfile] = useState<SceneRuntimeProfile | null>(null)
+  const [fallbackReason, setFallbackReason] = useState<SceneFallbackReason | null>(null)
 
-  const handleRendererFailure = useCallback(
-    (reason: Exclude<SceneFallbackReason, 'static_preference' | 'unsupported'>) => {
-      setFallbackReason(reason)
+  const disableRenderer = useCallback(
+    (reason: SceneFallbackReason) => {
       setRendererAvailable(false)
+      setProfile(null)
+      setFallbackReason(reason)
     },
     [setRendererAvailable],
   )
 
   useEffect(() => {
     if (!supportsWebGL()) {
-      setRuntimeProfile(null)
-      setFallbackReason('unsupported')
-      setRendererAvailable(false)
+      disableRenderer('unsupported')
       return
     }
 
     const nextProfile = getSceneRuntimeProfile()
-    setRuntimeProfile(nextProfile)
-    setFallbackReason(nextProfile.tier === 'static' ? 'static_preference' : null)
-    setRendererAvailable(nextProfile.tier !== 'static')
 
-    return () => {
-      setRendererAvailable(false)
+    if (nextProfile.tier === 'static') {
+      disableRenderer('static_preference')
+      return
     }
-  }, [setRendererAvailable])
 
-  if (fallbackReason || !runtimeProfile || runtimeProfile.tier === 'static') {
-    const reason = fallbackReason ?? 'static_preference'
+    setRendererAvailable(true)
+    setProfile(nextProfile)
+    setFallbackReason(null)
+  }, [disableRenderer, setRendererAvailable])
 
+  if (profile) {
     return (
-      <p className="sr-only" role="status" aria-live="polite">
-        {fallbackMessages[reason]}
-      </p>
+      <SceneErrorBoundary name="webgl" onError={() => disableRenderer('renderer_error')}>
+        <div data-scene-enhancement="webgl" className="pointer-events-none absolute inset-0 z-0">
+          <Experience
+            initialProfile={profile}
+            onContextLost={() => disableRenderer('context_lost')}
+          />
+        </div>
+      </SceneErrorBoundary>
     )
   }
 
+  if (!fallbackReason) {
+    return null
+  }
+
   return (
-    <div className="fixed inset-0 z-0" data-scene-enhancement="webgl">
-      <SceneRendererBoundary onError={() => handleRendererFailure('renderer_error')}>
-        <Experience
-          initialProfile={runtimeProfile}
-          onContextLost={() => handleRendererFailure('context_lost')}
-        />
-      </SceneRendererBoundary>
-    </div>
+    <p className="sr-only" role="status" aria-live="polite">
+      {fallbackMessages[fallbackReason]}
+    </p>
   )
 }

@@ -12,27 +12,28 @@ export const metadata: Metadata = {
 
 export default function LiquidGlassHarnessPage() {
   return (
-    <main className="relative z-10 min-h-screen px-6 py-16 text-[var(--site-foreground)] sm:px-12">
+    <>
       <LiquidGlassPointerTracker />
-      <div className="mx-auto max-w-6xl">
-        <header className="mb-10 max-w-3xl">
-          <p className="text-sm uppercase tracking-[0.3em] text-violet-200">Component harness</p>
-          <h1 className="mt-3 text-4xl font-semibold sm:text-5xl">Liquid-glass states</h1>
-          <p className="mt-4 text-[var(--site-muted)]">
-            Isolated references for the bounded surface, opaque fallback, keyboard focus, disabled,
-            loading, and responsive compositions.
-          </p>
-        </header>
-
-        <section className="grid gap-6 md:grid-cols-2" aria-label="Liquid-glass component states">
-          <LiquidGlassPanel aria-labelledby="glass-default" data-glass-state="default">
-            <h2 id="glass-default" className="text-2xl font-semibold">
-              Default surface
-            </h2>
-            <p className="mt-3 text-[var(--site-muted)]">
-              Pointer-responsive highlights are scoped to this bounded panel.
+      <main className="relative z-10 min-h-screen px-6 py-16 text-[var(--site-foreground)] sm:px-12">
+        <div className="mx-auto max-w-6xl">
+          <header className="mb-10 max-w-3xl">
+            <p className="text-sm uppercase tracking-[0.3em] text-violet-200">Component harness</p>
+            <h1 className="mt-3 text-4xl font-semibold sm:text-5xl">Liquid-glass states</h1>
+            <p className="mt-4 text-[var(--site-muted)]">
+              Isolated references for the bounded surface, opaque fallback, keyboard focus, disabled,
+              loading, and responsive compositions.
             </p>
-          </LiquidGlassPanel>
+          </header>
+
+          <section className="grid gap-6 md:grid-cols-2" aria-label="Liquid-glass component states">
+            <LiquidGlassPanel aria-labelledby="glass-default" data-glass-state="default">
+              <h2 id="glass-default" className="text-2xl font-semibold">
+                Default surface
+              </h2>
+              <p className="mt-3 text-[var(--site-muted)]">
+                Pointer-responsive highlights are scoped to this bounded panel.
+              </p>
+            </LiquidGlassPanel>
 
           <LiquidGlassPanel
             aria-labelledby="glass-fallback"
@@ -79,8 +80,9 @@ export default function LiquidGlassHarnessPage() {
               </span>
             </div>
           </LiquidGlass>
-        </section>
-      </div>
-    </main>
+          </section>
+        </div>
+      </main>
+    </>
   )
 }

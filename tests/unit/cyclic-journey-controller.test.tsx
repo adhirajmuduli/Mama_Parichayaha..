@@ -51,6 +51,24 @@ function dispatchKey(key: string, target?: Element, shiftKey = false) {
   ;(target ?? window).dispatchEvent(event)
 }
 
+function dispatchPointer(
+  element: Element,
+  type: 'pointerdown' | 'pointermove' | 'pointerup',
+  values: { clientX: number; clientY: number; pointerId?: number },
+) {
+  const event = new Event(type, { bubbles: true, cancelable: true })
+
+  Object.assign(event, {
+    clientX: values.clientX,
+    clientY: values.clientY,
+    isPrimary: true,
+    pointerId: values.pointerId ?? 1,
+    pointerType: 'touch',
+  })
+
+  element.dispatchEvent(event)
+}
+
 async function waitForRest(api: JourneyRuntimeApi) {
   await vi.waitFor(
     () => {
@@ -119,6 +137,30 @@ describe('cyclic journey controller', () => {
 
     expect(api!.inputUnits.get()).toBe(25)
   })
+
+  it('settles touch drags through the velocity-aware magnetic target', async () => {
+    let api: JourneyRuntimeApi | null = null
+    const { container } = render(
+      <Harness
+        onReady={(nextApi) => {
+          api = nextApi
+        }}
+      />,
+    )
+    const stage = container.querySelector('[data-journey-controller]')!
+    const now = vi.spyOn(performance, 'now')
+    now.mockReturnValueOnce(0).mockReturnValueOnce(20).mockReturnValueOnce(40)
+
+    dispatchPointer(stage, 'pointerdown', { clientX: 100, clientY: 400 })
+    dispatchPointer(stage, 'pointermove', { clientX: 100, clientY: 300 })
+    dispatchPointer(stage, 'pointermove', { clientX: 100, clientY: 200 })
+    dispatchPointer(stage, 'pointerup', { clientX: 100, clientY: 200 })
+    now.mockRestore()
+
+    await waitForRest(api!)
+    expect(Number.isFinite(api!.inputUnits.get())).toBe(true)
+    expect(api!.inputUnits.get()).toBe(125)
+  }, 15_000)
 
   it('reaches the same dwell centers from the keyboard, including wrap and digit targets', () => {
     let api: JourneyRuntimeApi | null = null
@@ -199,7 +241,7 @@ describe('cyclic journey controller', () => {
     expect(api!.inputUnits.get()).toBe(75)
   })
 
-  it('keeps exactly five card roots across three loops and manages visibility semantics', async () => {
+  it('keeps only visible card roots across three loops and manages visibility semantics', async () => {
     let api: JourneyRuntimeApi | null = null
     const { container } = render(
       <Harness
@@ -211,13 +253,13 @@ describe('cyclic journey controller', () => {
 
     const cards = container.querySelectorAll('[data-chapter-card]')
 
-    expect(cards.length).toBe(5)
+    expect(cards.length).toBe(1)
     expect(
       container.querySelector('[data-chapter-card="origins"]')?.getAttribute('data-card-visible'),
     ).toBe('true')
     expect(
       container.querySelector('[data-chapter-card="interests"]')?.getAttribute('data-card-visible'),
-    ).toBe('false')
+    ).toBeUndefined()
 
     act(() => {
       useNarrativeStore.getState().setVisiblePair(4, 0, 0)
@@ -240,7 +282,7 @@ describe('cyclic journey controller', () => {
         })
       })
 
-      expect(container.querySelectorAll('[data-chapter-card]').length).toBe(5)
+      expect(container.querySelectorAll('[data-chapter-card]').length).toBe(1)
     }
 
     expect(container.querySelectorAll('[aria-hidden="false"][data-chapter-card]').length).toBe(1)

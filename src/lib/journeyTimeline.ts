@@ -1,4 +1,4 @@
-export const CHAPTER_COUNT = 5
+export const CHAPTER_COUNT = 7
 export const ENTRY_UNITS = 5
 export const DWELL_UNITS = 40
 export const EXIT_UNITS = 5
@@ -67,7 +67,7 @@ export function getNearestOrdinalForIndex(units: number, index: number): number 
   return Math.abs(forward - base) <= Math.abs(backward - base) ? forward : backward
 }
 
-function nearestDwellCenter(units: number): number {
+export function nearestDwellCenter(units: number): number {
   return Math.round((units - DWELL_CENTER_OFFSET) / SLOT_UNITS) * SLOT_UNITS + DWELL_CENTER_OFFSET
 }
 
@@ -174,46 +174,46 @@ function expectSameCyclicPhase(a: JourneySample, b: JourneySample, label: string
 }
 
 export function assertJourneyTimelineInvariants(): void {
-  const forward = decodeJourney(245, 1)
+  const forward = decodeJourney(345, 1)
 
   if (forward.mode !== 'transition') {
-    throw new Error('Journey timeline invariant failed: 245 must decode as a transition.')
+    throw new Error('Journey timeline invariant failed: 345 must decode as a transition.')
   }
 
-  expectClose(forward.segmentFromOrdinal, 4, 0, 'seam-from')
-  expectClose(forward.segmentToOrdinal, 5, 0, 'seam-to')
+  expectClose(forward.segmentFromOrdinal, 6, 0, 'seam-from')
+  expectClose(forward.segmentToOrdinal, 7, 0, 'seam-to')
   expectClose(forward.routeCanonicalT, 0, 1e-9, 'seam-start')
 
-  const midpoint = decodeJourney(250, 1)
+  const midpoint = decodeJourney(350, 1)
 
   if (midpoint.mode !== 'transition') {
-    throw new Error('Journey timeline invariant failed: 250 must decode as a transition.')
+    throw new Error('Journey timeline invariant failed: 350 must decode as a transition.')
   }
 
   expectClose(midpoint.routeCanonicalT, 0.5, 1e-9, 'seam-midpoint')
   expectClose(midpoint.easedTransitionT, 0.5, 1e-9, 'seam-eased')
 
-  const arrived = decodeJourney(255, 1)
+  const arrived = decodeJourney(355, 1)
 
-  if (arrived.mode !== 'dwell' || arrived.currentOrdinal !== 5 || arrived.currentIndex !== 0) {
-    throw new Error('Journey timeline invariant failed: 255 must dwell Origins on loop 1.')
+  if (arrived.mode !== 'dwell' || arrived.currentOrdinal !== 7 || arrived.currentIndex !== 0) {
+    throw new Error('Journey timeline invariant failed: 355 must dwell Origins on loop 1.')
   }
 
   expectClose(arrived.loopCount, 1, 0, 'seam-loop')
   expectClose(arrived.dwellT, 0, 1e-9, 'seam-dwell-start')
 
-  const preSeam = decodeJourney(244.99, 1)
+  const preSeam = decodeJourney(344.99, 1)
 
-  if (preSeam.mode !== 'dwell' || preSeam.currentOrdinal !== 4) {
-    throw new Error('Journey timeline invariant failed: 244.99 must dwell Future.')
+  if (preSeam.mode !== 'dwell' || preSeam.currentOrdinal !== 6) {
+    throw new Error('Journey timeline invariant failed: 344.99 must dwell Contact.')
   }
 
   expectClose(preSeam.dwellT, 39.99 / 40, 1e-9, 'pre-seam-dwellT')
 
-  const postSeam = decodeJourney(255.01, 1)
+  const postSeam = decodeJourney(355.01, 1)
 
-  if (postSeam.mode !== 'dwell' || postSeam.currentOrdinal !== 5) {
-    throw new Error('Journey timeline invariant failed: 255.01 must dwell Origins.')
+  if (postSeam.mode !== 'dwell' || postSeam.currentOrdinal !== 7) {
+    throw new Error('Journey timeline invariant failed: 355.01 must dwell Origins.')
   }
 
   const backwardStart = decodeJourney(-5, -1)
@@ -223,24 +223,24 @@ export function assertJourneyTimelineInvariants(): void {
     backwardStart.segmentFromOrdinal !== -1 ||
     backwardStart.segmentToOrdinal !== 0 ||
     backwardStart.outgoingIndex !== 0 ||
-    backwardStart.incomingIndex !== 4
+    backwardStart.incomingIndex !== 6
   ) {
-    throw new Error('Journey timeline invariant failed: -5 must reverse from Origins to Future.')
+    throw new Error('Journey timeline invariant failed: -5 must reverse from Origins to Contact.')
   }
 
   const backwardDwell = decodeJourney(-45, -1)
 
-  if (backwardDwell.mode !== 'dwell' || backwardDwell.currentIndex !== 4) {
-    throw new Error('Journey timeline invariant failed: -45 must dwell Future below zero.')
+  if (backwardDwell.mode !== 'dwell' || backwardDwell.currentIndex !== 6) {
+    throw new Error('Journey timeline invariant failed: -45 must dwell Contact below zero.')
   }
 
-  expectSameCyclicPhase(decodeJourney(25, 1), decodeJourney(275, 1), '+250-dwell')
-  expectSameCyclicPhase(decodeJourney(250, 1), decodeJourney(500, 1), '+250-transition')
-  expectSameCyclicPhase(decodeJourney(25, 1), decodeJourney(-225, -1), '-250-dwell')
+  expectSameCyclicPhase(decodeJourney(25, 1), decodeJourney(375, 1), '+350-dwell')
+  expectSameCyclicPhase(decodeJourney(350, 1), decodeJourney(700, 1), '+350-transition')
+  expectSameCyclicPhase(decodeJourney(25, 1), decodeJourney(-325, -1), '-350-dwell')
 
   expectClose(decodeJourney(25, 1).loopCount, 0, 0, 'loop-base')
-  expectClose(decodeJourney(275, 1).loopCount, 1, 0, 'loop-plus')
-  expectClose(decodeJourney(-225, -1).loopCount, -1, 0, 'loop-minus')
+  expectClose(decodeJourney(375, 1).loopCount, 1, 0, 'loop-plus')
+  expectClose(decodeJourney(-325, -1).loopCount, -1, 0, 'loop-minus')
 
   expectClose(smootherstep01(0), 0, 0, 'smootherstep-start')
   expectClose(smootherstep01(1), 1, 0, 'smootherstep-end')

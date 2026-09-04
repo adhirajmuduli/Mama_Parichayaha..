@@ -14,14 +14,14 @@ import {
 } from '@/lib/journeyTimeline'
 import { useNarrativeStore } from '@/stores/narrativeStore'
 
-const WHEEL_SETTLE_DELAY_MS = 140
-const WHEEL_EVENT_CLAMP_PX = 120
-const WHEEL_PIXELS_PER_SLOT = 720
+const WHEEL_SETTLE_DELAY_MS = 100
+const WHEEL_EVENT_CLAMP_PX = 80
+const WHEEL_PIXELS_PER_SLOT = 500
 const LINE_MODE_PIXELS = 16
-const TOUCH_REFERENCE_PX = 420
-const TOUCH_VIEWPORT_FRACTION = 0.48
-const TOUCH_VELOCITY_WINDOW_MS = 120
-const INPUT_VELOCITY_WINDOW_MS = 160
+const TOUCH_REFERENCE_PX = 350
+const TOUCH_VIEWPORT_FRACTION = 0.5
+const TOUCH_VELOCITY_WINDOW_MS = 100
+const INPUT_VELOCITY_WINDOW_MS = 120
 
 const EDITABLE_SELECTOR = 'input, textarea, select, [contenteditable="true"], [contenteditable=""]'
 const DIALOG_SELECTOR = '[role="dialog"], dialog'
@@ -154,10 +154,7 @@ export default function CyclicJourneyController({ children }: { children: ReactN
 
     const navigateToMagneticTarget = (velocity: number) => {
       const units = runtime.renderUnits.get()
-
-      runtime.navigateTo(
-        getMagneticTarget(units, velocity, runtime.getLastInputDirection(), restUnitsRef.current),
-      )
+      runtime.navigateTo(getMagneticTarget(units, velocity, runtime.getLastInputDirection()))
     }
 
     const scheduleMagneticSettle = (releaseVelocity?: number) => {
@@ -261,8 +258,10 @@ export default function CyclicJourneyController({ children }: { children: ReactN
 
       if (first && last && last.time > first.time) {
         const releaseVelocity = ((last.units - first.units) / (last.time - first.time)) * 1000
-
-        navigateToMagneticTarget(releaseVelocity)
+        const units = runtime.renderUnits.get()
+        runtime.navigateTo(
+          getMagneticTarget(units, releaseVelocity, runtime.getLastInputDirection()),
+        )
         return
       }
 

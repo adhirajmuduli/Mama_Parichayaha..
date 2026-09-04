@@ -1,4 +1,4 @@
-import LiquidGlassPanel from '@/components/liquid-glass/LiquidGlassPanel'
+import { GlassCard } from '../../../GlassCard'
 import { siteContent } from '@/content/site'
 
 export default function PublicationStatusSection() {
@@ -12,7 +12,7 @@ export default function PublicationStatusSection() {
       className="relative z-10 flex scroll-mt-24 items-center px-6 py-10 sm:px-12"
     >
       <article className="mx-auto max-w-4xl">
-        <LiquidGlassPanel className="max-w-2xl" tone="strong">
+        <GlassCard className="max-w-2xl" glow="#A08B6F">
           <p className="mb-3 text-sm uppercase tracking-[0.3em] text-violet-200">
             {publications.eyebrow}
           </p>
@@ -22,7 +22,7 @@ export default function PublicationStatusSection() {
           <p className="mt-4 leading-relaxed text-[var(--site-muted)]">
             {publications.description}
           </p>
-        </LiquidGlassPanel>
+        </GlassCard>
       </article>
     </section>
   )

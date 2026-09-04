@@ -9,7 +9,7 @@ export default function GlobalErrorPage({ reset }: GlobalErrorPageProps) {
   return (
     <html lang="en">
       <body
-        style={{ background: '#07020f', color: '#f4f4f5', fontFamily: 'system-ui, sans-serif' }}
+        style={{ background: '#FDFCF8', color: '#2B2118', fontFamily: 'system-ui, sans-serif' }}
       >
         <main
           style={{

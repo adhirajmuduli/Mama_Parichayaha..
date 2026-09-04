@@ -1,6 +1,7 @@
-import LiquidGlassButton from '@/components/liquid-glass/LiquidGlassButton'
-import LiquidGlassPanel from '@/components/liquid-glass/LiquidGlassPanel'
+import { GlassCard } from '../../../GlassCard'
 import { siteContent } from '@/content/site'
+
+import LiquidGlassButton from '@/components/liquid-glass/LiquidGlassButton'
 
 import ContactForm from './ContactForm'
 
@@ -16,7 +17,7 @@ export default function ContactSection() {
       className="relative z-10 flex scroll-mt-24 items-center px-6 py-20 sm:px-12"
     >
       <article className="mx-auto w-full max-w-5xl">
-        <LiquidGlassPanel tone="strong">
+        <GlassCard glow="#C17A3A" className="p-0">
           <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
             <div>
               <p className="mb-3 text-sm uppercase tracking-[0.3em] text-violet-200">
@@ -62,7 +63,7 @@ export default function ContactSection() {
             </div>
             <ContactForm turnstileSiteKey={turnstileSiteKey} />
           </div>
-        </LiquidGlassPanel>
+        </GlassCard>
       </article>
     </section>
   )

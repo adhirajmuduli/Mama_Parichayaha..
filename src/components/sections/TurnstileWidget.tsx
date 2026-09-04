@@ -8,7 +8,7 @@ interface TurnstileRenderOptions {
   'error-callback': () => void
   'expired-callback': () => void
   sitekey: string
-  theme: 'dark'
+  theme: 'light'
 }
 
 declare global {
@@ -49,7 +49,7 @@ export default function TurnstileWidget({ onTokenChange, siteKey }: TurnstileWid
 
     widgetIdRef.current = window.turnstile.render(containerRef.current, {
       sitekey: siteKey,
-      theme: 'dark',
+      theme: 'light',
       callback: (token) => onTokenChangeRef.current(token),
       'error-callback': () => onTokenChangeRef.current(''),
       'expired-callback': () => onTokenChangeRef.current(''),

@@ -36,6 +36,9 @@ export default function SceneContent({ tier }: { tier: Exclude<SceneQualityTier,
 
   const availableExhibits = useMemo(() => {
     return chapterRegistry.flatMap((chapter) => {
+      if (chapter.scene.exhibits.length === 0) {
+        return []
+      }
       const intended = chapter.scene.exhibits[0]
       if (!intended) {
         return []
@@ -64,7 +67,10 @@ export default function SceneContent({ tier }: { tier: Exclude<SceneQualityTier,
       const adjacentIds = getAdjacentChapterIds('origins')
       for (const chapterId of adjacentIds) {
         const chapter = chapterRegistry.find((entry) => entry.id === chapterId)
-        const adjacentExhibit = chapter?.scene.exhibits[0]
+        if (!chapter || chapter.scene.exhibits.length === 0) {
+          continue
+        }
+        const adjacentExhibit = chapter.scene.exhibits[0]
         if (!adjacentExhibit) {
           continue
         }
@@ -81,6 +87,9 @@ export default function SceneContent({ tier }: { tier: Exclude<SceneQualityTier,
           (entry) => entry.id !== 'origins' && !getAdjacentChapterIds('origins').includes(entry.id),
         )
         .flatMap((entry) => {
+          if (entry.scene.exhibits.length === 0) {
+            return []
+          }
           const exhibit = entry.scene.exhibits[0]
           return exhibit ? [resolveRuntimeExhibitId(exhibit.id)] : []
         })
@@ -98,6 +107,9 @@ export default function SceneContent({ tier }: { tier: Exclude<SceneQualityTier,
   return (
     <>
       {chapterRegistry.map((chapter) => {
+        if (chapter.scene.exhibits.length === 0) {
+          return null
+        }
         const intended = chapter.scene.exhibits[0]
         if (!intended) {
           return null

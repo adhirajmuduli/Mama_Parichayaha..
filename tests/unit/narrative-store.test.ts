@@ -12,7 +12,7 @@ describe('narrative store', () => {
   })
 
   it('updates only discrete chapter and active exhibit state', () => {
-    useNarrativeStore.getState().setActiveChapter('interests')
+    useNarrativeStore.getState().setActiveChapter('research')
     useNarrativeStore.getState().selectExhibit('bacteriophage')
 
     expect(useNarrativeStore.getState()).toMatchObject({
@@ -29,7 +29,7 @@ describe('narrative store', () => {
   })
 
   it('clears a selected exhibit when chapter navigation makes it unavailable', () => {
-    useNarrativeStore.getState().setActiveChapter('interests')
+    useNarrativeStore.getState().setActiveChapter('research')
     useNarrativeStore.getState().selectExhibit('bacteriophage')
     useNarrativeStore.getState().setActiveChapter('computation')
 

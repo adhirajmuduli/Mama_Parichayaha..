@@ -1,7 +1,5 @@
 'use client'
 
-'use client'
-
 import { useEffect, useRef } from 'react'
 
 import ChapterCardShell from '@/components/journey/ChapterCardShell'
@@ -30,10 +28,10 @@ export default function CyclicChapterStage() {
   return (
     <>
       <p className="sr-only" id="journey-instructions">
-        Scroll, swipe vertically, or use arrow keys to move between seven looping chapters.
+        Scroll, swipe vertically, or use arrow keys to move between five looping chapters.
       </p>
 
-      {chapterRegistry.map((entry) => {
+      {chapterRegistry.filter((entry) => visibleChapterIds.includes(entry.id)).map((entry) => {
         const content = getChapterContent(entry.id)
         const visible = visibleChapterIds.includes(entry.id)
         const focusable = focusableChapterId === entry.id
@@ -46,6 +44,7 @@ export default function CyclicChapterStage() {
             cardSide={entry.order % 2 === 0 ? 'left' : 'right'}
             chapterId={entry.id}
             focusable={focusable}
+            glow={entry.scene.atmosphere.keyLight}
             labelledById={labelledById}
             visible={visible}
           >
