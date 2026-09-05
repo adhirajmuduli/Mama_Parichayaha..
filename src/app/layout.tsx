@@ -5,7 +5,7 @@ import RegisterSW from '@/components/RegisterSW'
 import Providers from './providers'
 
 import './globals.css'
-import '../../glass-card.css'
+import '@/components/glass-card/glass-card.css'
 
 export const viewport: Viewport = {
   themeColor: '#FDFCF8',

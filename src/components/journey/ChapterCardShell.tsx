@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react'
 
-import { GlassCard } from '@root/GlassCard'
+import { GlassCard } from '@/components/glass-card/GlassCard'
 import type { ChapterId } from '@/content/portfolio'
 
 interface ChapterCardShellProps {
@@ -28,7 +28,7 @@ export default function ChapterCardShell({
   return (
     <div
       aria-hidden={!visible}
-      className={`pointer-events-none fixed inset-0 z-20 flex items-end px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:items-center sm:px-10 ${
+      className={`pointer-events-none fixed inset-0 z-20 flex items-end px-4 pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:items-center sm:px-10 ${
         cardSide === 'left' ? 'sm:justify-start' : 'sm:justify-end'
       }`}
       data-chapter-card={chapterId}
@@ -41,7 +41,7 @@ export default function ChapterCardShell({
         } ${focusable ? 'pointer-events-auto' : 'pointer-events-none'}`}
       >
         <GlassCard
-          className="max-h-[62svh] overflow-y-auto"
+          className="max-h-[68svh] overflow-y-auto sm:max-h-[72svh]"
           glow={glow}
         >
           <div aria-labelledby={labelledById} role="group" data-chapter-card-content={chapterId}>

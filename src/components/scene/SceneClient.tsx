@@ -1,11 +1,14 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useState } from 'react'
 
-import Experience from './Experience'
 import SceneErrorBoundary from './SceneErrorBoundary'
+import type { ExperienceProps } from './Experience'
 import { getSceneRuntimeProfile, supportsWebGL, type SceneRuntimeProfile } from '@/lib/sceneRuntime'
 import { useSceneInteractionStore } from '@/stores/sceneInteractionStore'
+
+const Experience = dynamic<ExperienceProps>(() => import('./Experience'), { ssr: false })
 
 type SceneFallbackReason = 'context_lost' | 'renderer_error' | 'static_preference' | 'unsupported'
 

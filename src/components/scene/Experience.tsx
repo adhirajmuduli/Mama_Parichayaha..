@@ -15,7 +15,7 @@ import {
   type SceneRuntimeProfile,
 } from '@/lib/sceneRuntime'
 
-interface ExperienceProps {
+export interface ExperienceProps {
   initialProfile: SceneRuntimeProfile
   onContextLost: () => void
 }
@@ -103,7 +103,7 @@ export default function Experience({ initialProfile, onContextLost }: Experience
         onCreated={configureRenderer}
         resize={{ debounce: { resize: 0, scroll: 50 }, scroll: false }}
       >
-        <fog attach="fog" args={['#F7F2E8', 13, 54]} />
+        <fog attach="fog" args={['#05070D', 13, 54]} />
 
         <SceneContextMonitor onContextLost={onContextLost} />
         <ScenePerformanceMonitor tier={tier} onTierChange={handleTierChange} />

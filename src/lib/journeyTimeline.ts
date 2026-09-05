@@ -134,7 +134,16 @@ export function getMagneticTarget(
     return velocity > 0 ? nextDwellCenterAbove(units) : nextDwellCenterBelow(units)
   }
 
-  void lastDirection
+  const lowerCenter =
+    Math.floor((units - DWELL_CENTER_OFFSET) / SLOT_UNITS) * SLOT_UNITS + DWELL_CENTER_OFFSET
+  const upperCenter = lowerCenter + SLOT_UNITS
+  const lowerDistance = Math.abs(units - lowerCenter)
+  const upperDistance = Math.abs(upperCenter - units)
+
+  if (lowerDistance === upperDistance && lastDirection !== 0) {
+    return lastDirection > 0 ? upperCenter : lowerCenter
+  }
+
   return nearestDwellCenter(units)
 }
 

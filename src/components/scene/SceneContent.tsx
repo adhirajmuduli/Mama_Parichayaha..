@@ -82,23 +82,6 @@ export default function SceneContent({ tier }: { tier: Exclude<SceneQualityTier,
         }
       }
 
-      const remainingIds = chapterRegistry
-        .filter(
-          (entry) => entry.id !== 'origins' && !getAdjacentChapterIds('origins').includes(entry.id),
-        )
-        .flatMap((entry) => {
-          if (entry.scene.exhibits.length === 0) {
-            return []
-          }
-          const exhibit = entry.scene.exhibits[0]
-          return exhibit ? [resolveRuntimeExhibitId(exhibit.id)] : []
-        })
-      for (const exhibitId of remainingIds) {
-        const asset = getSceneAsset(exhibitId)
-        if (asset.kind === 'gltf' && asset.policy.preload === 'none') {
-          await preloadModelAsset(exhibitId)
-        }
-      }
     }
 
     return scheduleIdleWork(preloadAssets)

@@ -1,8 +1,6 @@
-import LiquidGlassButton from '@/components/liquid-glass/LiquidGlassButton'
-import styles from '@/components/liquid-glass/liquid-glass.module.css'
+import { GlassButton, GlassLink } from '@/components/glass-card/GlassCard'
 import type { ChapterContent } from '@/content/portfolio'
 import { chapterIds, type ChapterId } from '@/content/portfolio'
-import { cn } from '@/lib/utils'
 
 const statusLabels = {
   active: 'Active',
@@ -59,19 +57,19 @@ export default function ChapterDetail({ chapter, onAnchorNavigation }: ChapterDe
 
             if (onAnchorNavigation && anchorChapterId) {
               return (
-                <button
+                <GlassButton
                   key={action.href}
                   type="button"
-                  className={cn(styles.button, 'px-4 py-2 font-medium transition-colors')}
+                  className="font-medium"
                   onClick={() => onAnchorNavigation(anchorChapterId)}
                 >
-                  <span>{action.label}</span>
-                </button>
+                  {action.label}
+                </GlassButton>
               )
             }
 
             return (
-              <LiquidGlassButton
+              <GlassLink
                 key={action.href}
                 href={action.href}
                 {...(action.external
@@ -83,7 +81,7 @@ export default function ChapterDetail({ chapter, onAnchorNavigation }: ChapterDe
                   : {})}
               >
                 {action.label}
-              </LiquidGlassButton>
+              </GlassLink>
             )
           })}
         </div>

@@ -5,11 +5,13 @@ import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import useChapter from '@/hooks/useChapter'
 import { getChapterEntry } from '@/lib/chapterRegistry'
 import { getSceneRuntimeProfile, type SceneRuntimeProfile } from '@/lib/sceneRuntime'
+import { useSceneInteractionStore } from '@/stores/sceneInteractionStore'
 
 type PosterStyle = CSSProperties &
   Record<'--scene-fallback-base' | '--scene-fallback-mid' | '--scene-fallback-accent', string>
 
 export default function ScenePoster() {
+  const rendererAvailable = useSceneInteractionStore((state) => state.rendererAvailable)
   const [isMounted, setIsMounted] = useState(false)
   const [profile, setProfile] = useState<SceneRuntimeProfile | null>(null)
   const { chapter } = useChapter()
@@ -37,11 +39,16 @@ export default function ScenePoster() {
     setProfile(getSceneRuntimeProfile())
   }, [])
 
+  if (rendererAvailable) {
+    return null
+  }
+
   if (!isMounted || !profile) {
     return null
   }
 
-  const particleCount = Math.min(20, Math.ceil(profile.particleCount / 16))
+  const particleCount =
+    profile.tier === 'static' ? 12 : Math.min(20, Math.max(8, Math.ceil(profile.particleCount / 16)))
 
   return (
     <div

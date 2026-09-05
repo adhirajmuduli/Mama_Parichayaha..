@@ -324,6 +324,12 @@ describe('getMagneticTarget', () => {
     expect(getMagneticTarget(240, 0, 1)).toBe(225)
   })
 
+  it('uses the last input direction for exact midpoint ties', () => {
+    expect(getMagneticTarget(50, 0, 1)).toBe(75)
+    expect(getMagneticTarget(50, 0, -1)).toBe(25)
+    expect(getMagneticTarget(50, 0, 0)).toBe(75)
+  })
+
   it('advances one chapter in the velocity direction when fast and displaced beyond the halo', () => {
     expect(getMagneticTarget(40, 20, 1)).toBe(75)
     expect(getMagneticTarget(12, -20, -1)).toBe(-25)

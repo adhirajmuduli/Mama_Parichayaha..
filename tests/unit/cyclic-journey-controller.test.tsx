@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import CyclicJourneyController from '@/components/motion/CyclicJourneyController'
 import CyclicChapterStage from '@/components/journey/CyclicChapterStage'
+import { chapterRegistry } from '@/lib/chapterRegistry'
 import {
   JourneyRuntimeProvider,
   useJourneyRuntime,
@@ -253,6 +254,7 @@ describe('cyclic journey controller', () => {
 
     const cards = container.querySelectorAll('[data-chapter-card]')
 
+    expect(chapterRegistry).toHaveLength(7)
     expect(cards.length).toBe(1)
     expect(
       container.querySelector('[data-chapter-card="origins"]')?.getAttribute('data-card-visible'),

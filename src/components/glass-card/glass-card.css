@@ -1,61 +1,31 @@
-/**
- * glass-card.css
- * ─────────────────────────────────────────────────────────────────────────
- * Companion styles for GlassCard.tsx. Designed against a dark surface
- * (see --gc-surface below) — the glow reads best with a near-black or
- * deep navy background behind it, same as the reference image.
- *
- * Every color/size knob a card needs is passed in as a CSS custom property
- * from the React component (--gc-rim, --gc-core, --gc-ambient, --gc-radius).
- * Nothing here depends on a preprocessor or a build step.
- * ─────────────────────────────────────────────────────────────────────────
- */
-
 :root {
-  /* Suggested page background. Not required — override freely. */
   --gc-surface: #060a12;
 }
 
-/* ── Card shell ───────────────────────────────────────────────────────── */
-
 .glass-card {
   position: relative;
-  isolation: isolate; /* keeps the sheen's blend mode contained to this card */
+  isolation: isolate;
   border-radius: var(--gc-radius, 20px);
   overflow: hidden;
-
-  /* Translucent glass fill: a soft diagonal wash from a bright cool tint
-     at the top-left toward a darker, more neutral glass at the bottom-right —
-     this is what reads as "thickness" rather than a flat tinted rectangle. */
   background:
     linear-gradient(
       160deg,
       color-mix(in srgb, var(--gc-rim) 22%, transparent) 0%,
       color-mix(in srgb, var(--gc-core) 10%, transparent) 45%,
-      rgba(8, 14, 24, 0.35) 100%
+      rgba(8, 14, 24, 0.62) 100%
     );
-
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
-
   border: 1px solid color-mix(in srgb, var(--gc-rim) 35%, rgba(255, 255, 255, 0.12));
-
   box-shadow:
-    /* thin colored ring just outside the border, like light bending at the edge */
     0 0 0 1px color-mix(in srgb, var(--gc-core) 18%, transparent),
-    /* soft ambient glow, the "backlit" quality from the reference image */
     0 0 48px -12px var(--gc-ambient),
-    /* grounding shadow so the card reads as floating above the page */
     0 24px 40px -20px rgba(0, 0, 0, 0.6),
-    /* inner rim highlight along the top edge, catching light like glass */
     inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    /* inner shadow along the bottom, giving the panel a sense of thickness */
     inset 0 -18px 30px -22px rgba(0, 0, 0, 0.45);
-
   transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
 }
 
-/* Turn off the blur for low-power rendering; keeps every other layer. */
 .glass-card--no-blur {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -68,8 +38,6 @@
     );
 }
 
-/* Browsers without backdrop-filter support: raise the fill opacity so the
-   card still reads as glass rather than going flat/invisible. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .glass-card {
     background:
@@ -82,9 +50,6 @@
   }
 }
 
-/* Glossy sheen — a static diagonal highlight band across the upper third,
-   the same kind of streak you see catching the top curve of the glass rings
-   in the reference image. Pure gradient, no filter, no animation. */
 .glass-card__sheen {
   position: absolute;
   inset: -20% -10% auto -10%;
@@ -106,17 +71,16 @@
   z-index: 1;
 }
 
-/* ── Padding scale ────────────────────────────────────────────────────── */
+.glass-card__content > p,
+.glass-card__content > div > p {
+  color: var(--site-muted-strong, rgba(233, 240, 250, 0.86));
+}
 
 .glass-card--pad-sm { padding: 16px; }
 .glass-card--pad-md { padding: 24px; }
 .glass-card--pad-lg { padding: 32px; }
 
-/* ── Hover interactivity (transform + shadow only — compositor-cheap) ──── */
-
-.glass-card--interactive {
-  cursor: pointer;
-}
+.glass-card--interactive { cursor: pointer; }
 
 .glass-card--interactive:hover {
   transform: translateY(-4px);
@@ -133,8 +97,6 @@
   outline: 2px solid var(--gc-rim);
   outline-offset: 3px;
 }
-
-/* ── Typography inside cards ─────────────────────────────────────────── */
 
 .glass-card__eyebrow {
   font-size: 12px;
@@ -162,8 +124,6 @@
   gap: 10px;
   align-items: center;
 }
-
-/* ── GlassButton ──────────────────────────────────────────────────────── */
 
 .glass-btn {
   appearance: none;
@@ -198,23 +158,18 @@
   box-shadow: 0 10px 26px -8px var(--gc-ambient), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-.glass-btn:active {
-  transform: translateY(0);
-}
+.glass-btn:active { transform: translateY(0); }
 
 .glass-btn:focus-visible {
   outline: 2px solid var(--gc-rim);
   outline-offset: 2px;
 }
 
-/* ── Respect reduced-motion preference ───────────────────────────────── */
-
 @media (prefers-reduced-motion: reduce) {
   .glass-card,
   .glass-btn {
     transition: none;
   }
-  .glass-card--interactive:hover {
-    transform: none;
-  }
+
+  .glass-card--interactive:hover { transform: none; }
 }

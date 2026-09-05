@@ -1,7 +1,5 @@
-import { GlassCard } from '../../../GlassCard'
+import { GlassCard, GlassLink } from '@/components/glass-card/GlassCard'
 import { siteContent } from '@/content/site'
-
-import LiquidGlassButton from '@/components/liquid-glass/LiquidGlassButton'
 
 import ContactForm from './ContactForm'
 
@@ -30,7 +28,7 @@ export default function ContactSection() {
               <ul className="mt-6 flex flex-wrap gap-3" aria-label="Public contact links">
                 {publicProfiles.map((profile) => (
                   <li key={profile.href}>
-                    <LiquidGlassButton
+                    <GlassLink
                       href={profile.href}
                       aria-label={
                         profile.external ? `${profile.label} (opens in a new tab)` : profile.label
@@ -40,7 +38,7 @@ export default function ContactSection() {
                         : {})}
                     >
                       {profile.label}
-                    </LiquidGlassButton>
+                    </GlassLink>
                   </li>
                 ))}
               </ul>

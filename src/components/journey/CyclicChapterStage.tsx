@@ -1,13 +1,17 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import dynamic from 'next/dynamic'
 
 import ChapterCardShell from '@/components/journey/ChapterCardShell'
 import ChapterDetail from '@/components/narrative/ChapterDetail'
 import { chapterRegistry, getChapterContent } from '@/lib/chapterRegistry'
+import { portfolioContent } from '@/content/portfolio'
 import { useJourneyRuntime } from '@/lib/journeyRuntime'
 import { getDwellCenter, getNearestOrdinalForIndex } from '@/lib/journeyTimeline'
 import { useNarrativeStore } from '@/stores/narrativeStore'
+
+const ChapterProgress = dynamic(() => import('./ChapterProgress'), { ssr: false })
 
 export default function CyclicChapterStage() {
   const runtime = useJourneyRuntime()
@@ -28,8 +32,10 @@ export default function CyclicChapterStage() {
   return (
     <>
       <p className="sr-only" id="journey-instructions">
-        Scroll, swipe vertically, or use arrow keys to move between five looping chapters.
+        Scroll, swipe vertically, or use arrow keys to move between seven looping chapters.
       </p>
+
+      <ChapterProgress />
 
       {chapterRegistry.filter((entry) => visibleChapterIds.includes(entry.id)).map((entry) => {
         const content = getChapterContent(entry.id)
@@ -49,15 +55,26 @@ export default function CyclicChapterStage() {
             visible={visible}
           >
             <div ref={isSettled ? activeCardRef : undefined} tabIndex={-1} className="outline-none">
+              {entry.id === 'origins' ? (
+                <p className="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-[var(--site-muted-strong)]">
+                  {portfolioContent.profile.discipline} · Molecules · Computation
+                </p>
+              ) : null}
               <p
                 className="mb-3 text-sm uppercase tracking-[0.3em]"
                 style={{ color: entry.scene.atmosphere.keyLight }}
               >
                 {content.eyebrow}
               </p>
-              <h2 id={labelledById} className="mb-4 text-4xl font-semibold sm:text-5xl">
-                {content.title}
-              </h2>
+              {entry.id === 'origins' ? (
+                <h1 id={labelledById} className="mb-4 text-4xl font-semibold sm:text-6xl">
+                  {content.title}
+                </h1>
+              ) : (
+                <h2 id={labelledById} className="mb-4 text-4xl font-semibold sm:text-5xl">
+                  {content.title}
+                </h2>
+              )}
               <p className="leading-relaxed text-[var(--site-muted)]">{content.description}</p>
               <ChapterDetail
                 chapter={content}

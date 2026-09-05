@@ -1,4 +1,4 @@
-import { GlassCard } from '../../../GlassCard'
+import { GlassCard } from '@/components/glass-card/GlassCard'
 import { siteContent } from '@/content/site'
 
 export default function PublicationStatusSection() {
