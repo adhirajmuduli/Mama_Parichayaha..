@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import dynamic from 'next/dynamic'
+import ChapterProgress from './ChapterProgress'
+import ModelControls from './ModelControls'
+import ChapterSupplement from './ChapterSupplement'
 
 import ChapterCardShell from '@/components/journey/ChapterCardShell'
 import ChapterDetail from '@/components/narrative/ChapterDetail'
@@ -11,9 +13,7 @@ import { useJourneyRuntime } from '@/lib/journeyRuntime'
 import { getDwellCenter, getNearestOrdinalForIndex } from '@/lib/journeyTimeline'
 import { useNarrativeStore } from '@/stores/narrativeStore'
 
-const ChapterProgress = dynamic(() => import('./ChapterProgress'), { ssr: false })
-
-export default function CyclicChapterStage() {
+export default function CyclicChapterStage({ enhanced = true }: { enhanced?: boolean }) {
   const runtime = useJourneyRuntime()
   const settledChapterId = useNarrativeStore((state) => state.settledChapterId)
   const visibleChapterIds = useNarrativeStore((state) => state.visibleChapterIds)
@@ -35,9 +35,9 @@ export default function CyclicChapterStage() {
         Scroll, swipe vertically, or use arrow keys to move between seven looping chapters.
       </p>
 
-      <ChapterProgress />
+      <ChapterProgress enhanced={enhanced} />
 
-      {chapterRegistry.filter((entry) => visibleChapterIds.includes(entry.id)).map((entry) => {
+      {chapterRegistry.map((entry) => {
         const content = getChapterContent(entry.id)
         const visible = visibleChapterIds.includes(entry.id)
         const focusable = focusableChapterId === entry.id
@@ -47,7 +47,8 @@ export default function CyclicChapterStage() {
         return (
           <ChapterCardShell
             key={entry.id}
-            cardSide={entry.order % 2 === 0 ? 'left' : 'right'}
+            enhanced={enhanced}
+            cardSide={entry.scene.cardSide}
             chapterId={entry.id}
             focusable={focusable}
             glow={entry.scene.atmosphere.keyLight}
@@ -76,19 +77,26 @@ export default function CyclicChapterStage() {
                 </h2>
               )}
               <p className="leading-relaxed text-[var(--site-muted)]">{content.description}</p>
+              <ModelControls chapterId={entry.id} />
+              <ChapterSupplement chapterId={entry.id} />
               <ChapterDetail
                 chapter={content}
-                onAnchorNavigation={(chapterId) => {
-                  runtime.navigateTo(
-                    getDwellCenter(
-                      getNearestOrdinalForIndex(
-                        runtime.inputUnits.get(),
-                        chapterIndexFor(chapterId),
-                      ),
-                    ),
-                  )
-                  useNarrativeStore.getState().requestKeyboardFocus()
-                }}
+                onAnchorNavigation={
+                  enhanced
+                    ? (chapterId) => {
+                        runtime.navigateTo(
+                          getDwellCenter(
+                            getNearestOrdinalForIndex(
+                              runtime.inputUnits.get(),
+                              chapterIndexFor(chapterId),
+                            ),
+                          ),
+                        )
+                        window.history.pushState(null, '', `#${chapterId}`)
+                        useNarrativeStore.getState().requestKeyboardFocus()
+                      }
+                    : undefined
+                }
               />
             </div>
           </ChapterCardShell>

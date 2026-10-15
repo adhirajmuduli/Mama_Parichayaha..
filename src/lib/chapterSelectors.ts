@@ -1,3 +1,4 @@
+import { resolveRuntimeExhibitId } from '@/content/assets'
 import type { ChapterId } from '@/content/portfolio'
 
 import {
@@ -23,13 +24,15 @@ export function getChapterAtProgress(progress: number): ChapterId {
 }
 
 function getChapterDistance(activeChapter: ChapterId, chapter: ChapterId) {
-  return Math.abs(chapterIndexMap[activeChapter] - chapterIndexMap[chapter])
+  const distance = Math.abs(chapterIndexMap[activeChapter] - chapterIndexMap[chapter])
+  return Math.min(distance, chapterRegistry.length - distance)
 }
 
 export function getAdjacentChapterIds(chapter: ChapterId) {
   const index = chapterIndexMap[chapter]
-  const previous = chapterRegistry[index - 1]?.id
-  const next = chapterRegistry[index + 1]?.id
+  const previous =
+    chapterRegistry[(index - 1 + chapterRegistry.length) % chapterRegistry.length]?.id
+  const next = chapterRegistry[(index + 1) % chapterRegistry.length]?.id
 
   return [previous, next].filter((chapterId): chapterId is ChapterId => chapterId !== undefined)
 }
@@ -49,5 +52,7 @@ export function chapterHasExhibit(chapter: ChapterId, exhibit: ExhibitId) {
   if (exhibits.length === 0) {
     return false
   }
-  return exhibits.some((candidate) => candidate.id === exhibit)
+  return exhibits.some(
+    (candidate) => candidate.id === exhibit || resolveRuntimeExhibitId(candidate.id) === exhibit,
+  )
 }

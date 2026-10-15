@@ -66,7 +66,11 @@ export default function useModelInteraction({
     const pointerId = interaction.current.pointerId
 
     if (pointerId !== null) {
-      capturedTarget.current?.releasePointerCapture?.(pointerId)
+      try {
+        capturedTarget.current?.releasePointerCapture?.(pointerId)
+      } catch {
+        /* The browser may already have released capture. */
+      }
     }
 
     capturedTarget.current = null
@@ -74,13 +78,14 @@ export default function useModelInteraction({
   }, [])
 
   const reset = useCallback(() => {
+    release()
     resetModelInteraction(interaction.current)
     capturedTarget.current = null
 
     if (groupRef.current) {
       groupRef.current.rotation.set(...initialRotation)
     }
-  }, [groupRef, initialRotation])
+  }, [groupRef, initialRotation, release])
 
   useEffect(() => {
     const releaseOnVisibilityChange = () => {
@@ -146,12 +151,20 @@ export default function useModelInteraction({
 
   const isInteractable = () => {
     const activeChapter = useNarrativeStore.getState().activeChapter
-    return activeChapter === chapter && chapterHasExhibit(activeChapter, exhibitId)
+    return (
+      !reducedMotion.current &&
+      activeChapter === chapter &&
+      chapterHasExhibit(activeChapter, exhibitId)
+    )
   }
 
   const capture = (event: R3FPointerEvent) => {
     const target = event.target as unknown as CapturableEventTarget
-    target.setPointerCapture?.(event.pointerId)
+    try {
+      target.setPointerCapture?.(event.pointerId)
+    } catch {
+      return
+    }
     capturedTarget.current = target
   }
 
@@ -160,6 +173,7 @@ export default function useModelInteraction({
       return
     }
 
+    if (interaction.current.pointerId !== null) return
     const mode = beginModelInteraction(interaction.current, event)
 
     if (mode === 'dragging') {
@@ -169,6 +183,10 @@ export default function useModelInteraction({
   }
 
   const onPointerMove = (event: R3FPointerEvent) => {
+    if (!isInteractable()) {
+      release()
+      return
+    }
     const previousMode = interaction.current.mode
     const delta = moveModelInteraction(interaction.current, event)
 

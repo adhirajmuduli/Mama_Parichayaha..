@@ -12,7 +12,7 @@ import { getChapterEntry } from '@/lib/chapterRegistry'
 import type { SceneQualityTier } from '@/lib/sceneRuntime'
 
 import Lighting from './Lighting'
-import NebulaBackground from './NebulaBackground'
+import BoundaryBackground from './BoundaryBackground'
 import { AtmosphereRuntimeProvider } from './AtmosphereContext'
 
 interface AtmosphereControllerProps {
@@ -70,7 +70,7 @@ export default function AtmosphereController({
 
   return (
     <AtmosphereRuntimeProvider value={runtime}>
-      <NebulaBackground tier={tier} />
+      <BoundaryBackground tier={tier} />
       <Lighting />
       <Particles count={particleCount} />
       {postProcessing ? <PostProcessing /> : null}

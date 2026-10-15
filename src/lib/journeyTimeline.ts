@@ -1,4 +1,6 @@
-export const CHAPTER_COUNT = 7
+import { chapterIds } from '@/content/portfolio'
+
+export const CHAPTER_COUNT = chapterIds.length
 export const ENTRY_UNITS = 5
 export const DWELL_UNITS = 40
 export const EXIT_UNITS = 5

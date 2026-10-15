@@ -8,9 +8,10 @@ import * as THREE from 'three'
 import { getModelAsset, getModelDracoDecoderPath } from '@/content/assets'
 import useChapterPresence from '@/hooks/useChapterPresence'
 import useModelInteraction from '@/hooks/useModelInteraction'
-import type { ExhibitId } from '@/lib/chapterRegistry'
+import { getChapterEntry, type ExhibitId } from '@/lib/chapterRegistry'
 import type { Chapter } from '@/lib/chapters'
 import type { RouteVector } from '@/lib/closedRoute'
+import { useSceneInteractionStore } from '@/stores/sceneInteractionStore'
 import { createGLTFInstance, disposeGLTFInstance } from '@/lib/gltfRuntime'
 
 interface Props {
@@ -37,6 +38,7 @@ function LoadedModel({
   rotationSpeed = 0.08,
 }: Props & { active: boolean }) {
   const asset = getModelAsset(assetId)
+  const entry = getChapterEntry(chapter)
   const groupRef = useRef<THREE.Group>(null)
   const targetScaleRef = useRef(new THREE.Vector3())
   const { animations, scene } = useGLTF(asset.url, getModelDracoDecoderPath(asset), true)
@@ -44,14 +46,36 @@ function LoadedModel({
     () => createGLTFInstance(scene, asset.materialOwnership),
     [asset.materialOwnership, scene],
   )
+  const normalizedScale = useMemo(() => {
+    const size = new THREE.Box3().setFromObject(model).getSize(new THREE.Vector3())
+    const diameter = Math.max(size.x, size.y, size.z)
+    if (!Number.isFinite(diameter) || diameter <= 0)
+      throw new Error(`Invalid bounds for ${assetId}`)
+    return entry.scene.targetDiameter / diameter
+  }, [model, assetId, entry.scene.targetDiameter])
+  const initialRotation = useMemo(
+    () =>
+      [
+        asset.normalization.orientation[0],
+        asset.normalization.orientation[1] + entry.scene.modelRotation[1],
+        asset.normalization.orientation[2],
+      ] as const,
+    [asset, entry],
+  )
   const { actions } = useAnimations(animations, model)
   const interactionHandlers = useModelInteraction({
     autoRotateSpeed: rotationSpeed,
     chapter,
     exhibitId: assetId,
     groupRef,
-    initialRotation: asset.normalization.orientation,
+    initialRotation,
   })
+
+  useEffect(() => {
+    const store = useSceneInteractionStore.getState()
+    store.setAvailableExhibits([...new Set([...store.availableExhibits, assetId])])
+    return () => useSceneInteractionStore.getState().markExhibitUnavailable(assetId)
+  }, [assetId])
 
   useEffect(() => {
     Object.values(actions).forEach((action) => action?.reset().play())
@@ -74,22 +98,24 @@ function LoadedModel({
       return
     }
 
-    targetScaleRef.current.setScalar(
-      active ? asset.normalization.activeScale : asset.normalization.inactiveScale,
-    )
+    targetScaleRef.current.setScalar(active ? 1 : 0.8)
     groupRef.current.scale.lerp(targetScaleRef.current, 1 - Math.exp(-4.8 * delta))
   })
 
   return (
     <group
       ref={groupRef}
-      position={position}
-      rotation={asset.normalization.orientation}
-      scale={asset.normalization.inactiveScale}
+      position={[
+        position[0] + entry.scene.modelOffset[0],
+        position[1] + entry.scene.modelOffset[1],
+        position[2] + entry.scene.modelOffset[2],
+      ]}
+      rotation={initialRotation}
+      scale={0.8}
       {...interactionHandlers}
     >
       <Center>
-        <primitive object={model} scale={asset.normalization.unitScale} />
+        <primitive object={model} scale={normalizedScale} />
       </Center>
     </group>
   )

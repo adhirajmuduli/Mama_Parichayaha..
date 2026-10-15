@@ -1,6 +1,14 @@
 import { z } from 'zod'
 
-export const chapterIds = ['origins', 'interests', 'research', 'computation', 'future', 'publications', 'contact'] as const
+export const chapterIds = [
+  'origins',
+  'interests',
+  'research',
+  'computation',
+  'future',
+  'publications',
+  'contact',
+] as const
 
 export const ChapterIdSchema = z.enum(chapterIds)
 

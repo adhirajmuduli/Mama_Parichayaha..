@@ -58,7 +58,7 @@ export default function SceneClient() {
   if (profile) {
     return (
       <SceneErrorBoundary name="webgl" onError={() => disableRenderer('renderer_error')}>
-        <div data-scene-enhancement="webgl" className="pointer-events-none absolute inset-0 z-0">
+        <div data-scene-enhancement="webgl" className="absolute inset-0 z-0">
           <Experience
             initialProfile={profile}
             onContextLost={() => disableRenderer('context_lost')}
@@ -73,7 +73,11 @@ export default function SceneClient() {
   }
 
   return (
-    <p className="sr-only" role="status" aria-live="polite">
+    <p
+      className="relative z-20 mx-auto max-w-4xl px-6 py-4 text-sm"
+      role="status"
+      aria-live="polite"
+    >
       {fallbackMessages[fallbackReason]}
     </p>
   )

@@ -41,291 +41,81 @@ a {
 }
 
 .scene-poster {
-  --scene-fallback-base: oklch(0 0 0);
-  --scene-fallback-mid: oklch(0.25 0.05 75);
-  --scene-fallback-accent: oklch(0.55 0.18 45);
-  background:
-    radial-gradient(ellipse at 18% 18%, color-mix(in srgb, var(--scene-fallback-accent) 26%, transparent), transparent 42%),
-    radial-gradient(ellipse at 84% 28%, color-mix(in srgb, var(--scene-fallback-mid) 32%, transparent), transparent 46%),
-    radial-gradient(ellipse at 64% 86%, color-mix(in srgb, var(--scene-fallback-accent) 20%, transparent), transparent 44%),
-    linear-gradient(145deg, #05070d 0%, var(--scene-fallback-base) 48%, #0b101b 100%);
+  background: #000;
   isolation: isolate;
-  transition: background-color 700ms ease;
-}
-
-.scene-poster__filters {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  visibility: hidden;
-}
-
-.scene-poster__cloud,
-.scene-poster__grain {
-  inset: -15%;
   pointer-events: none;
+}
+
+.scene-poster__boundary {
   position: absolute;
-}
-
-.scene-poster[data-quality-tier='low'] .scene-poster__cloud--secondary,
-.scene-poster[data-quality-tier='low'] .scene-poster__texture-overlay,
-.scene-poster[data-quality-tier='medium'] .scene-poster__texture-overlay,
-.scene-poster[data-quality-tier='static'] .scene-poster__texture-overlay {
-  display: none;
-}
-
-.scene-poster[data-quality-tier='static'] {
-  background:
-    radial-gradient(ellipse at 16% 18%, color-mix(in srgb, var(--scene-fallback-accent) 36%, transparent), transparent 44%),
-    radial-gradient(ellipse at 82% 26%, color-mix(in srgb, var(--scene-fallback-mid) 38%, transparent), transparent 48%),
-    radial-gradient(ellipse at 62% 84%, color-mix(in srgb, var(--scene-fallback-accent) 24%, transparent), transparent 46%),
-    linear-gradient(145deg, #05070d 0%, var(--scene-fallback-base) 52%, #0b101b 100%);
-}
-
-.scene-poster__cloud {
-  filter: blur(30px);
-  opacity: 0.82;
-  transform: translateZ(0);
-  animation: cloud-drift 24s ease-in-out infinite alternate;
-  will-change: transform;
-}
-
-@keyframes cloud-drift {
-  0% {
-    transform: translateZ(0) translate(0, 0) scale(1);
-  }
-  100% {
-    transform: translateZ(0) translate(4.5%, 3.5%) scale(1.04);
-  }
-}
-
-.scene-poster__cloud--primary {
+  inset: -4%;
   background:
     radial-gradient(
-      ellipse at 28% 22%,
-      color-mix(in srgb, var(--scene-fallback-mid) 70%, transparent) 0%,
-      color-mix(in srgb, var(--scene-fallback-mid) 40%, transparent) 22%,
-      color-mix(in srgb, var(--scene-fallback-accent) 35%, transparent) 45%,
-      transparent 62%
+      ellipse at 0% 40%,
+      color-mix(in srgb, var(--scene-fallback-accent) 38%, transparent),
+      transparent 48%
     ),
     radial-gradient(
-      ellipse at 72% 68%,
-      color-mix(in srgb, var(--scene-fallback-accent) 60%, transparent) 0%,
-      color-mix(in srgb, var(--scene-fallback-accent) 30%, transparent) 35%,
-      transparent 58%
-    ),
-    radial-gradient(
-      ellipse at 48% 45%,
-      color-mix(in srgb, var(--scene-fallback-mid) 50%, transparent) 0%,
-      color-mix(in srgb, var(--scene-fallback-mid) 25%, transparent) 30%,
-      transparent 52%
+      ellipse at 100% 70%,
+      color-mix(in srgb, var(--scene-fallback-mid) 45%, transparent),
+      transparent 48%
     );
-  background-size: 120% 120%;
-  animation:
-    cloud-drift 28s ease-in-out infinite alternate,
-    cloud-pulse 18s ease-in-out infinite,
-    gradient-move 20s ease-in-out infinite;
-  filter: blur(26px);
-  mix-blend-mode: screen;
-  border-radius: 48% 52% 44% 56% / 52% 44% 56% 48%;
+  mask-image: radial-gradient(ellipse, transparent 28%, #000 78%);
+  animation: boundary-pulse 10s ease-in-out infinite alternate;
 }
 
-@keyframes gradient-move {
-  0%, 100% {
-    background-position: 0% 0%, 100% 100%, 50% 50%;
+@keyframes boundary-pulse {
+  from {
+    opacity: 0.45;
+    transform: scale(1);
   }
-  33% {
-    background-position: 30% 20%, 70% 80%, 60% 40%;
-  }
-  66% {
-    background-position: 60% 80%, 40% 20%, 40% 60%;
-  }
-}
-
-@keyframes cloud-pulse {
-  0%,
-  100% {
-    opacity: 0.92;
-    transform: translateZ(0) translate(0, 0) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: translateZ(0) translate(0, 0) scale(1.06);
-  }
-}
-
-.scene-poster__cloud--secondary {
-  background:
-    radial-gradient(
-      ellipse at 68% 28%,
-      color-mix(in srgb, var(--scene-fallback-mid) 55%, transparent) 0%,
-      color-mix(in srgb, var(--scene-fallback-mid) 30%, transparent) 18%,
-      color-mix(in srgb, var(--scene-fallback-accent) 25%, transparent) 45%,
-      transparent 62%
-    ),
-    radial-gradient(
-      ellipse at 32% 72%,
-      color-mix(in srgb, var(--scene-fallback-accent) 50%, transparent) 0%,
-      color-mix(in srgb, var(--scene-fallback-mid) 35%, transparent) 35%,
-      transparent 55%
-    );
-  background-size: 110% 110%;
-  opacity: 0.75;
-  animation:
-    cloud-drift-reverse 32s ease-in-out infinite alternate,
-    cloud-pulse-secondary 22s ease-in-out infinite,
-    gradient-move-secondary 24s ease-in-out infinite;
-  filter: blur(30px);
-  mix-blend-mode: screen;
-  border-radius: 52% 48% 56% 44% / 44% 56% 48% 52%;
-}
-
-@keyframes gradient-move-secondary {
-  0%, 100% {
-    background-position: 0% 0%, 100% 100%;
-  }
-  50% {
-    background-position: 20% 30%, 80% 70%;
-  }
-}
-
-@keyframes cloud-pulse-secondary {
-  0%,
-  100% {
-    opacity: 0.82;
-  }
-  50% {
+  to {
     opacity: 0.95;
-  }
-}
-
-.scene-poster__texture-overlay {
-  inset: 0;
-  pointer-events: none;
-  position: absolute;
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="4" seed="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="discrete" tableValues="0 0.5 1"/><feFuncG type="discrete" tableValues="0 0.5 1"/><feFuncB type="discrete" tableValues="0 0.5 1"/></feComponentTransfer></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.12"/></svg>');
-  animation: texture-drift 60s ease-in-out infinite alternate;
-  mix-blend-mode: multiply;
-  opacity: 0.18;
-}
-
-@keyframes texture-drift {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  100% {
-    transform: translate(2%, 1.2%) scale(1.04);
-  }
-}
-
-@keyframes cloud-drift-reverse {
-  0% {
-    transform: translateZ(0) translate(0, 0) scale(1);
-  }
-  100% {
-    transform: translateZ(0) translate(-3.5%, -4%) scale(1.03);
-  }
-}
-
-.scene-poster__grain {
-  background-image:
-    repeating-radial-gradient(circle at 0 0, oklch(1 0 0 / 3%) 0 1px, transparent 1px 5px),
-    linear-gradient(145deg, transparent 0%, oklch(0.2 0.02 75 / 25%) 100%);
-  mix-blend-mode: overlay;
-  opacity: 0.25;
-  animation: grain-pulse 10s ease-in-out infinite alternate;
-}
-
-.scene-poster[data-quality-tier='static'] .scene-poster__cloud {
-  animation: none;
-  opacity: 0.72;
-}
-
-.scene-poster[data-quality-tier='static'] .scene-poster__grain {
-  animation: none;
-  opacity: 0.16;
-}
-
-@keyframes grain-pulse {
-  0% {
-    opacity: 0.25;
-  }
-  100% {
-    opacity: 0.32;
+    transform: scale(1.06) rotate(3deg);
   }
 }
 
 .scene-poster__particles {
-  inset: 0;
-  pointer-events: none;
   position: absolute;
+  inset: 0;
   overflow: hidden;
 }
 
 .scene-poster__particle {
-  background: radial-gradient(
-    circle at 35% 35%,
-    color-mix(in srgb, var(--scene-fallback-accent) 100%, transparent) 0%,
-    color-mix(in srgb, var(--scene-fallback-mid) 90%, transparent) 28%,
-    color-mix(in srgb, var(--scene-fallback-accent) 70%, transparent) 62%,
-    transparent 72%
-  );
-  border-radius: 50%;
   position: absolute;
-  animation: particle-float 7s ease-in-out infinite;
-  will-change: transform, opacity;
-  box-shadow:
-    0 2px 12px color-mix(in srgb, var(--scene-fallback-accent) 60%, transparent),
-    0 4px 20px color-mix(in srgb, var(--scene-fallback-mid) 40%, transparent),
-    inset 0 1px 2px color-mix(in srgb, var(--scene-fallback-accent) 80%, transparent);
-  filter: blur(0.3px);
+  border-radius: 50%;
+  background: var(--scene-fallback-accent);
+  box-shadow: 0 0 8px var(--scene-fallback-accent);
+  animation: particle-float 16s ease-in-out infinite alternate;
 }
 
 @keyframes particle-float {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.3;
+  }
+  to {
+    transform: translate3d(24px, -64px, 0);
     opacity: 0.85;
   }
-  25% {
-    transform: translate(18px, -42px) scale(1.15);
-    opacity: 1;
-  }
-  50% {
-    transform: translate(-10px, -78px) scale(0.92);
-    opacity: 0.9;
-  }
-  75% {
-    transform: translate(-24px, -38px) scale(1.08);
-    opacity: 0.95;
+}
+
+.scene-poster[data-quality-tier='static'] *,
+.scene-poster[data-quality-tier='static'] .scene-poster__particle {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-poster__boundary,
+  .scene-poster__particle {
+    animation: none;
   }
 }
 
 @media (forced-colors: active), (prefers-reduced-transparency: reduce) {
-  .scene-poster__cloud,
-  .scene-poster__grain,
-  .scene-poster__particles,
-  .scene-poster__texture-overlay {
+  .scene-poster__boundary,
+  .scene-poster__particles {
     display: none;
-  }
-}
-
-@supports not (filter: url(#test)) {
-  .scene-poster__cloud--primary,
-  .scene-poster__cloud--secondary {
-    filter: blur(32px);
-  }
-  .scene-poster__texture-overlay {
-    display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .scene-poster__cloud,
-  .scene-poster__texture-overlay,
-  .scene-poster__particle {
-    animation: none;
   }
 }
 
@@ -403,7 +193,9 @@ html {
   font-size: 0.68rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  transition: color 160ms ease, transform 160ms ease;
+  transition:
+    color 160ms ease,
+    transform 160ms ease;
 }
 
 .chapter-progress__button:hover,
@@ -419,7 +211,11 @@ html {
   border: 1px solid currentColor;
   border-radius: 999px;
   box-shadow: 0 0 0 transparent;
-  transition: width 160ms ease, height 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+  transition:
+    width 160ms ease,
+    height 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
 }
 
 .chapter-progress__button[data-active='true'] .chapter-progress__dot {
@@ -490,4 +286,42 @@ html {
   body {
     padding-inline: max(0px, env(safe-area-inset-left)) max(0px, env(safe-area-inset-right));
   }
+}
+
+.portfolio-document {
+  position: relative;
+  min-height: 100svh;
+}
+.portfolio-navigation {
+  position: relative;
+  z-index: 30;
+  padding: 1.5rem;
+}
+.portfolio-navigation .chapter-progress__rail {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.portfolio-navigation .chapter-progress__mobile-status,
+.portfolio-navigation .chapter-progress__cue {
+  display: none;
+}
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 50;
+  transform: translateY(-200%);
+  padding: 0.75rem;
+  background: #000;
+  color: #fff;
+}
+.skip-link:focus {
+  transform: none;
+}
+[data-journey-enhanced='true'] [data-chapter-card][data-card-visible='false'] {
+  visibility: hidden;
+}
+[data-journey-enhanced='true'] [data-chapter-card] .overflow-y-auto {
+  touch-action: pan-y;
 }

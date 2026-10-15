@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo } from 'react'
+import { Suspense, useEffect } from 'react'
 
 import { getSceneAsset, isRuntimeExhibitAvailable, resolveRuntimeExhibitId } from '@/content/assets'
 import { getAdjacentChapterIds } from '@/lib/chapterSelectors'
@@ -32,30 +32,6 @@ function scheduleIdleWork(callback: () => void) {
 
 export default function SceneContent({ tier }: { tier: Exclude<SceneQualityTier, 'static'> }) {
   const markExhibitUnavailable = useSceneInteractionStore((state) => state.markExhibitUnavailable)
-  const setAvailableExhibits = useSceneInteractionStore((state) => state.setAvailableExhibits)
-
-  const availableExhibits = useMemo(() => {
-    return chapterRegistry.flatMap((chapter) => {
-      if (chapter.scene.exhibits.length === 0) {
-        return []
-      }
-      const intended = chapter.scene.exhibits[0]
-      if (!intended) {
-        return []
-      }
-      const runtimeId = resolveRuntimeExhibitId(intended.id)
-
-      return isRuntimeExhibitAvailable(intended.id, tier) ? [runtimeId] : []
-    })
-  }, [tier])
-
-  useEffect(() => {
-    setAvailableExhibits(availableExhibits)
-    return () => {
-      setAvailableExhibits([])
-    }
-  }, [availableExhibits, setAvailableExhibits])
-
   useEffect(() => {
     const preloadAssets = async () => {
       const originsRuntimeId = resolveRuntimeExhibitId('dna-alt')
@@ -81,10 +57,13 @@ export default function SceneContent({ tier }: { tier: Exclude<SceneQualityTier,
           await preloadModelAsset(exhibitId)
         }
       }
-
     }
 
-    return scheduleIdleWork(preloadAssets)
+    return scheduleIdleWork(() => {
+      void preloadAssets().catch(() => {
+        /* Model boundaries report visible loading failures. */
+      })
+    })
   }, [])
 
   return (
@@ -111,11 +90,13 @@ export default function SceneContent({ tier }: { tier: Exclude<SceneQualityTier,
             name={exhibitId}
             onError={() => markExhibitUnavailable(exhibitId)}
           >
-            <ChapterGLTFModel
-              assetId={exhibitId}
-              chapter={chapter.id}
-              position={chapter.scene.center}
-            />
+            <Suspense fallback={null}>
+              <ChapterGLTFModel
+                assetId={exhibitId}
+                chapter={chapter.id}
+                position={chapter.scene.center}
+              />
+            </Suspense>
           </SceneErrorBoundary>
         )
       })}

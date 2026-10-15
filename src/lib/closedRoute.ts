@@ -1,22 +1,22 @@
-import { positiveModulo } from '@/lib/journeyTimeline'
+import { CHAPTER_COUNT, positiveModulo } from '@/lib/journeyTimeline'
 
 export const ROUTE_RADIUS = 22
-export const ROUTE_CHORD = 2 * ROUTE_RADIUS * Math.sin(Math.PI / 5)
+export const ROUTE_CHORD = 2 * ROUTE_RADIUS * Math.sin(Math.PI / CHAPTER_COUNT)
 export const DWELL_CAMERA_DISTANCE = 10.5
 export const DWELL_CAMERA_HEIGHT = 2.6
 
 const START_ANGLE = -Math.PI / 2
-const Y_OFFSETS = [0, 2.4, -1.3, 1.9, 0.5] as const
+const Y_OFFSETS = [0, 2.4, -1.3, 1.9, 0.5, 0, 0] as const
 
 export type RouteVector = readonly [number, number, number]
 
 export function getRingAngle(index: number): number {
-  return START_ANGLE + positiveModulo(index, 5) * ((2 * Math.PI) / 5)
+  return START_ANGLE + positiveModulo(index, CHAPTER_COUNT) * ((2 * Math.PI) / CHAPTER_COUNT)
 }
 
 export function getModelCenter(index: number): RouteVector {
   const angle = getRingAngle(index)
-  const yOffset = Y_OFFSETS[positiveModulo(index, 5)] ?? 0
+  const yOffset = Y_OFFSETS[positiveModulo(index, CHAPTER_COUNT)] ?? 0
 
   return [
     Number((ROUTE_RADIUS * Math.cos(angle)).toFixed(3)),

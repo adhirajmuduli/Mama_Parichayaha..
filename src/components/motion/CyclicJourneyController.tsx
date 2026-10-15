@@ -51,7 +51,13 @@ function velocityFromSamples(samples: InputSample[], now: number): number {
   return elapsedSeconds > 0 ? (last.units - first.units) / elapsedSeconds : 0
 }
 
-export default function CyclicJourneyController({ children }: { children: ReactNode }) {
+export default function CyclicJourneyController({
+  children,
+  enabled = true,
+}: {
+  children: ReactNode
+  enabled?: boolean
+}) {
   const runtime = useJourneyRuntime()
   const stageRef = useRef<HTMLDivElement | null>(null)
   const restUnitsRef = useRef(runtime.inputUnits.get())
@@ -104,9 +110,22 @@ export default function CyclicJourneyController({ children }: { children: ReactN
   }, [runtime])
 
   useEffect(() => {
+    if (!enabled) return
+    const syncHash = () => {
+      const index = chapterIds.findIndex((id) => `#${id}` === window.location.hash)
+      if (index < 0) return
+      runtime.navigateTo(getDwellCenter(getNearestOrdinalForIndex(runtime.inputUnits.get(), index)))
+      useNarrativeStore.getState().requestKeyboardFocus()
+    }
+    syncHash()
+    window.addEventListener('hashchange', syncHash)
+    return () => window.removeEventListener('hashchange', syncHash)
+  }, [enabled, runtime])
+
+  useEffect(() => {
     const stage = stageRef.current
 
-    if (!stage) {
+    if (!stage || !enabled) {
       return
     }
 
@@ -153,8 +172,10 @@ export default function CyclicJourneyController({ children }: { children: ReactN
     }
 
     const navigateToMagneticTarget = (velocity: number) => {
-      const units = runtime.renderUnits.get()
-      runtime.navigateTo(getMagneticTarget(units, velocity, runtime.getLastInputDirection()))
+      const units = runtime.inputUnits.get()
+      runtime.navigateTo(
+        getMagneticTarget(units, velocity, runtime.getLastInputDirection(), restUnitsRef.current),
+      )
     }
 
     const scheduleMagneticSettle = (releaseVelocity?: number) => {
@@ -181,6 +202,17 @@ export default function CyclicJourneyController({ children }: { children: ReactN
         return
       }
 
+      const target = event.target
+      if (target instanceof Element) {
+        const scroller = target.closest('[data-chapter-card] .overflow-y-auto')
+        if (
+          scroller &&
+          ((normalized > 0 &&
+            scroller.scrollTop + scroller.clientHeight < scroller.scrollHeight - 1) ||
+            (normalized < 0 && scroller.scrollTop > 0))
+        )
+          return
+      }
       event.preventDefault()
       stage.dataset.wheelCount = String(Number(stage.dataset.wheelCount ?? '0') + 1)
       runtime.nudge(normalized * unitsPerPixel)
@@ -196,18 +228,17 @@ export default function CyclicJourneyController({ children }: { children: ReactN
         return
       }
 
+      if (
+        event.target instanceof Element &&
+        event.target.closest('a, button, input, textarea, select, [data-chapter-card]')
+      )
+        return
       activePointerId = event.pointerId
       dragStartX = event.clientX
       dragStartY = event.clientY
       dragStartUnits = runtime.renderUnits.get()
       verticalIntent = false
       touchSamples = [{ time: performance.now(), units: dragStartUnits }]
-
-      try {
-        stage.setPointerCapture(event.pointerId)
-      } catch {
-        // Pointer capture is best-effort; drag tracking continues regardless.
-      }
     }
 
     const onPointerMove = (event: PointerEvent) => {
@@ -224,11 +255,17 @@ export default function CyclicJourneyController({ children }: { children: ReactN
           return
         }
 
+        if (Math.abs(deltaY) < 12) return
         verticalIntent = true
+        try {
+          stage.setPointerCapture(event.pointerId)
+        } catch {
+          /* Capture can be lost during navigation. */
+        }
       }
 
       const nextUnits = dragStartUnits - deltaY * touchUnitsPerPixel()
-      const delta = nextUnits - runtime.renderUnits.get()
+      const delta = nextUnits - runtime.inputUnits.get()
 
       if (delta !== 0) {
         runtime.nudge(delta)
@@ -252,15 +289,22 @@ export default function CyclicJourneyController({ children }: { children: ReactN
       }
 
       activePointerId = null
+      if (stage.hasPointerCapture?.(event.pointerId)) stage.releasePointerCapture(event.pointerId)
+      if (!verticalIntent) return
 
       const first = touchSamples[0]
       const last = touchSamples[touchSamples.length - 1]
 
       if (first && last && last.time > first.time) {
         const releaseVelocity = ((last.units - first.units) / (last.time - first.time)) * 1000
-        const units = runtime.renderUnits.get()
+        const units = runtime.inputUnits.get()
         runtime.navigateTo(
-          getMagneticTarget(units, releaseVelocity, runtime.getLastInputDirection()),
+          getMagneticTarget(
+            units,
+            releaseVelocity,
+            runtime.getLastInputDirection(),
+            restUnitsRef.current,
+          ),
         )
         return
       }
@@ -277,7 +321,9 @@ export default function CyclicJourneyController({ children }: { children: ReactN
 
       if (
         target instanceof Element &&
-        (target.closest(EDITABLE_SELECTOR) !== null || target.closest(DIALOG_SELECTOR) !== null)
+        (target.closest(EDITABLE_SELECTOR) !== null ||
+          target.closest(DIALOG_SELECTOR) !== null ||
+          target.closest('[data-model-controls]') !== null)
       ) {
         return
       }
@@ -356,10 +402,14 @@ export default function CyclicJourneyController({ children }: { children: ReactN
       window.removeEventListener('keydown', onKeyDown)
       document.removeEventListener('visibilitychange', onVisibilityChange)
     }
-  }, [runtime])
+  }, [runtime, enabled])
 
   return (
-    <div ref={stageRef} data-journey-controller="true" className="fixed inset-0 z-10">
+    <div
+      ref={stageRef}
+      data-journey-controller="true"
+      className={enabled ? 'fixed inset-0 z-10' : 'relative'}
+    >
       {children}
     </div>
   )

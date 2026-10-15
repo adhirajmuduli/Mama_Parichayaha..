@@ -10,7 +10,6 @@ export interface AtmosphereRuntimeState {
   center: THREE.Vector3
   cloudAccent: THREE.Color
   cloudBase: THREE.Color
-  cloudDensity: number
   cloudMid: THREE.Color
   exposure: number
   fillColor: THREE.Color
@@ -49,7 +48,6 @@ export function createAtmosphereRuntime(
     center: new THREE.Vector3(...center),
     cloudAccent: new THREE.Color(atmosphere.palette[2]),
     cloudBase: new THREE.Color(atmosphere.palette[0]),
-    cloudDensity: atmosphere.cloudDensity,
     cloudMid: new THREE.Color(atmosphere.palette[1]),
     exposure: atmosphere.exposure,
     fillColor: new THREE.Color(atmosphere.lighting.fill.color),
@@ -110,7 +108,6 @@ export function transitionAtmosphereRuntime(
     atmosphere.bloom.threshold,
     chapterFactor,
   )
-  runtime.cloudDensity = dampNumber(runtime.cloudDensity, atmosphere.cloudDensity, chapterFactor)
   runtime.exposure = dampNumber(runtime.exposure, atmosphere.exposure, chapterFactor)
   runtime.fillIntensity = dampNumber(
     runtime.fillIntensity,

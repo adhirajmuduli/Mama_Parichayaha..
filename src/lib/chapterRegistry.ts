@@ -47,7 +47,6 @@ export interface AtmosphereDefinition {
     intensity: number
     threshold: number
   }
-  cloudDensity: number
   exposure: number
   fog: {
     far: number
@@ -85,9 +84,6 @@ export interface ChapterRegistryEntry {
     targetDiameter: number
     lookYOffset: number
     cardSide: CardSide
-    cardRestYawDeg: number
-    haloColor: string
-    environmentColor: string
   }
 }
 
@@ -119,7 +115,6 @@ function buildRouteScene(order: number) {
     ] as RouteVector,
     targetDiameter: targetDiameters[order] ?? 3.2,
     lookYOffset: chapterLookYOffsets[order] ?? 0,
-    cardRestYawDeg: cardSide === 'left' ? 2.5 : -2.5,
   }
 }
 
@@ -132,10 +127,9 @@ export const chapterRegistry = [
     contentId: 'origins',
     scene: {
       ...buildRouteScene(0),
-      exhibits: [] as readonly ExhibitDefinition[],
+      exhibits: [{ id: 'dna-alt' }] as readonly ExhibitDefinition[],
       atmosphere: {
         bloom: { intensity: 0.18, threshold: 0.88 },
-        cloudDensity: 0.85,
         exposure: 1.05,
         fog: { near: 14, far: 58 },
         fogColor: '#05070D',
@@ -150,8 +144,6 @@ export const chapterRegistry = [
         particleColor: '#E8DDD0',
         particleOpacity: 0.28,
       },
-      haloColor: '#C17A3A',
-      environmentColor: '#05070D',
     },
   },
   {
@@ -162,10 +154,9 @@ export const chapterRegistry = [
     contentId: 'interests',
     scene: {
       ...buildRouteScene(1),
-      exhibits: [] as readonly ExhibitDefinition[],
+      exhibits: [{ id: 'bacteriophage' }] as readonly ExhibitDefinition[],
       atmosphere: {
         bloom: { intensity: 0.16, threshold: 0.88 },
-        cloudDensity: 0.78,
         exposure: 1.08,
         fog: { near: 14, far: 58 },
         fogColor: '#05070D',
@@ -180,8 +171,6 @@ export const chapterRegistry = [
         particleColor: '#EDE8E0',
         particleOpacity: 0.22,
       },
-      haloColor: '#A08B6F',
-      environmentColor: '#05070D',
     },
   },
   {
@@ -192,10 +181,9 @@ export const chapterRegistry = [
     contentId: 'research',
     scene: {
       ...buildRouteScene(2),
-      exhibits: [] as readonly ExhibitDefinition[],
+      exhibits: [{ id: 'hemoglobin-ribbon' }] as readonly ExhibitDefinition[],
       atmosphere: {
         bloom: { intensity: 0.15, threshold: 0.9 },
-        cloudDensity: 0.88,
         exposure: 1.1,
         fog: { near: 14, far: 58 },
         fogColor: '#05070D',
@@ -210,8 +198,6 @@ export const chapterRegistry = [
         particleColor: '#E8F0EC',
         particleOpacity: 0.2,
       },
-      haloColor: '#7A9B8E',
-      environmentColor: '#05070D',
     },
   },
   {
@@ -222,10 +208,9 @@ export const chapterRegistry = [
     contentId: 'computation',
     scene: {
       ...buildRouteScene(3),
-      exhibits: [] as readonly ExhibitDefinition[],
+      exhibits: [{ id: 'brain-point-cloud' }] as readonly ExhibitDefinition[],
       atmosphere: {
         bloom: { intensity: 0.14, threshold: 0.9 },
-        cloudDensity: 0.82,
         exposure: 1.06,
         fog: { near: 14, far: 58 },
         fogColor: '#05070D',
@@ -240,8 +225,6 @@ export const chapterRegistry = [
         particleColor: '#EFEBF5',
         particleOpacity: 0.18,
       },
-      haloColor: '#8B7AA8',
-      environmentColor: '#05070D',
     },
   },
   {
@@ -252,10 +235,9 @@ export const chapterRegistry = [
     contentId: 'future',
     scene: {
       ...buildRouteScene(4),
-      exhibits: [] as readonly ExhibitDefinition[],
+      exhibits: [{ id: 'earth-animated' }] as readonly ExhibitDefinition[],
       atmosphere: {
         bloom: { intensity: 0.12, threshold: 0.92 },
-        cloudDensity: 0.72,
         exposure: 1.04,
         fog: { near: 14, far: 58 },
         fogColor: '#05070D',
@@ -270,8 +252,6 @@ export const chapterRegistry = [
         particleColor: '#FDF6E8',
         particleOpacity: 0.2,
       },
-      haloColor: '#C9A86A',
-      environmentColor: '#05070D',
     },
   },
   {
@@ -285,7 +265,6 @@ export const chapterRegistry = [
       exhibits: [] as readonly ExhibitDefinition[],
       atmosphere: {
         bloom: { intensity: 0.13, threshold: 0.9 },
-        cloudDensity: 0.78,
         exposure: 1.05,
         fog: { near: 14, far: 58 },
         fogColor: '#05070D',
@@ -300,8 +279,6 @@ export const chapterRegistry = [
         particleColor: '#F5F0FF',
         particleOpacity: 0.18,
       },
-      haloColor: '#9B8EC4',
-      environmentColor: '#05070D',
     },
   },
   {
@@ -315,7 +292,6 @@ export const chapterRegistry = [
       exhibits: [] as readonly ExhibitDefinition[],
       atmosphere: {
         bloom: { intensity: 0.12, threshold: 0.92 },
-        cloudDensity: 0.8,
         exposure: 1.06,
         fog: { near: 14, far: 58 },
         fogColor: '#05070D',
@@ -330,8 +306,6 @@ export const chapterRegistry = [
         particleColor: '#EEF6F3',
         particleOpacity: 0.2,
       },
-      haloColor: '#7BAFA5',
-      environmentColor: '#05070D',
     },
   },
 ] as const satisfies readonly ChapterRegistryEntry[]
@@ -379,7 +353,6 @@ function assertAtmosphere(atmosphere: AtmosphereDefinition, chapterId: ChapterId
   const scalarValues = [
     atmosphere.bloom.intensity,
     atmosphere.bloom.threshold,
-    atmosphere.cloudDensity,
     atmosphere.exposure,
     atmosphere.fog.near,
     atmosphere.fog.far,
