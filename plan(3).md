@@ -299,7 +299,7 @@ but route geometry remains mathematically fivefold:
 
 ```ts
 positiveModulo(index, 5)
-2 * Math.PI / 5
+;(2 * Math.PI) / 5
 Math.sin(Math.PI / 5)
 Y_OFFSETS.length === 5
 ```
@@ -909,7 +909,7 @@ No runtime bounding-box traversal is required to position canonical assets after
 Current code calls:
 
 ```ts
-Object.values(actions).forEach(action => action?.reset().play())
+Object.values(actions).forEach((action) => action?.reset().play())
 ```
 
 and does not pause far/non-active mixers according to the ADR runtime budget.
@@ -1053,13 +1053,13 @@ The existing `optimize-scene-asset.mjs`:
 
 Current canonical sources include approximately:
 
-| Asset | Source size | Geometry / animation note |
-|---|---:|---|
-| bacteriophage | 0.86 MB | ~180k vertices, Draco |
-| hemoglobin | 10.89 MB | ~222k vertices, uncompressed |
-| brain | 33.41 MB | ~1.19M vertices, uncompressed |
-| animated Earth | 23.34 MB | textures + embedded animation |
-| rollback DNA | 2.66 MB | manifest ~504k vertices, Draco |
+| Asset          | Source size | Geometry / animation note      |
+| -------------- | ----------: | ------------------------------ |
+| bacteriophage  |     0.86 MB | ~180k vertices, Draco          |
+| hemoglobin     |    10.89 MB | ~222k vertices, uncompressed   |
+| brain          |    33.41 MB | ~1.19M vertices, uncompressed  |
+| animated Earth |    23.34 MB | textures + embedded animation  |
+| rollback DNA   |     2.66 MB | manifest ~504k vertices, Draco |
 
 **Refactor**
 
@@ -1176,7 +1176,9 @@ ADR 0009 requires this to be an explicit diagnostics-flagged rollback. The inspe
 Return a structured resolution:
 
 ```ts
-{ requestedId, resolvedId, reason, isRollback }
+{
+  ;(requestedId, resolvedId, reason, isRollback)
+}
 ```
 
 Surface rollback state in development diagnostics and QA. Do not label the rollback as the intended alternate.
@@ -2407,7 +2409,7 @@ These are architecture-level release gates. Hardware-specific FPS thresholds sho
 
 ---
 
-## 7. What should *not* be done
+## 7. What should _not_ be done
 
 Do not:
 

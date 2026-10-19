@@ -13,7 +13,7 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "typecheck": "tsc --noEmit",
-    "boundaries": "node scripts/check-server-client-boundaries.mjs",
+    "boundaries": "node scripts/quality/check-boundaries.mjs",
     "links:check": "node scripts/check-public-links.mjs",
     "unit": "vitest run",
     "coverage": "vitest run --coverage",

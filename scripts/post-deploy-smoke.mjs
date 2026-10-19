@@ -23,7 +23,7 @@ const expectedHeaders = [
 const checks = [
   { path: '/', contentType: 'text/html' },
   { path: '/api/health', contentType: 'application/json', cacheControl: 'no-store' },
-  { path: '/icon.png', contentType: 'image/png' },
+  { path: '/icons/icon-192.png', contentType: 'image/png' },
   { path: '/manifest.webmanifest', contentType: 'application/manifest+json' },
   { path: '/robots.txt', contentType: 'text/plain' },
   { path: '/sitemap.xml', contentType: 'application/xml' },

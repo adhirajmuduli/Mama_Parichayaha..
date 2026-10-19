@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 
-import { getStructuredData, siteDescription, siteName, siteUrl } from '@/lib/siteMetadata'
-import RegisterSW from '@/components/RegisterSW'
+import { getStructuredData, siteDescription, siteName, siteUrl } from '@/config/site'
 import Providers from './providers'
 
 import './globals.css'
@@ -76,7 +75,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
           }}
         />
         <Providers>{children}</Providers>
-        <RegisterSW />
       </body>
     </html>
   )

@@ -104,15 +104,15 @@
 
 **Suggested motif map**
 
-| Chapter | Visual direction |
-|---|---|
-| Origins | DNA or molecular helix / structure |
-| Interests | organism, ecology, or systems form |
-| Research | protein or molecular geometry |
-| Computation | neural, graph, or data-network pattern |
-| Future | planetary or systems-scale form |
-| Publications | evidence, paper, or signal motif |
-| Contact | restrained connection/network motif |
+| Chapter      | Visual direction                       |
+| ------------ | -------------------------------------- |
+| Origins      | DNA or molecular helix / structure     |
+| Interests    | organism, ecology, or systems form     |
+| Research     | protein or molecular geometry          |
+| Computation  | neural, graph, or data-network pattern |
+| Future       | planetary or systems-scale form        |
+| Publications | evidence, paper, or signal motif       |
+| Contact      | restrained connection/network motif    |
 
 **Actions**
 
@@ -223,16 +223,16 @@
 
 Every implementation phase must be checked at these states:
 
-| State | Required checks |
-|---|---|
-| Desktop 1440x900 | Composition, visual hierarchy, canvas/card layering, chapter rail |
-| Desktop 1280x720 | Vertical crowding, card height, action visibility |
-| Mobile 390x844 | Safe-area spacing, readable title/body, touch targets, progress indicator |
-| Mobile 430x932 | Larger mobile composition and card balance |
-| Reduced motion | No animated transforms/staggers; content and navigation remain complete |
-| No WebGL | Fallback motif, no scene chunk request, complete semantic content |
-| Keyboard | Skip path, chapter rail, action focus, arrow/page/digit navigation |
-| High contrast | Card borders, buttons, active chapter state, text contrast |
+| State            | Required checks                                                           |
+| ---------------- | ------------------------------------------------------------------------- |
+| Desktop 1440x900 | Composition, visual hierarchy, canvas/card layering, chapter rail         |
+| Desktop 1280x720 | Vertical crowding, card height, action visibility                         |
+| Mobile 390x844   | Safe-area spacing, readable title/body, touch targets, progress indicator |
+| Mobile 430x932   | Larger mobile composition and card balance                                |
+| Reduced motion   | No animated transforms/staggers; content and navigation remain complete   |
+| No WebGL         | Fallback motif, no scene chunk request, complete semantic content         |
+| Keyboard         | Skip path, chapter rail, action focus, arrow/page/digit navigation        |
+| High contrast    | Card borders, buttons, active chapter state, text contrast                |
 
 ## 4. Measurement and regression strategy
 
