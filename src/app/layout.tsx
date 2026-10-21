@@ -62,12 +62,30 @@ interface RootLayoutProps {
   children: React.ReactNode
 }
 
+/**
+ * Pre-paint mode boot (new_plan.md §12.1): runs before first paint, before
+ * hydration, with no framework cost. Sets the experience mode and capability
+ * hints on <html> so CSS can adopt the immersive layout immediately —
+ * eliminating the document→immersive flash — while no-JS visitors keep the
+ * semantic document layout that the markup below ships by default.
+ */
+const BOOT_SCRIPT = `(function(){try{
+var d=document.documentElement;
+d.dataset.experience='immersive';
+var m=window.matchMedia;
+if(m){d.dataset.reducedMotion=m('(prefers-reduced-motion: reduce)').matches?'true':'false';
+d.dataset.coarsePointer=m('(pointer: coarse)').matches?'true':'false';}
+var c=navigator.connection;
+d.dataset.saveData=(c&&c.saveData===true)?'true':'false';
+}catch(e){document.documentElement.dataset.experience='document';}})();`
+
 export default function RootLayout({ children }: RootLayoutProps) {
   const structuredData = getStructuredData()
 
   return (
-    <html lang="en" suppressHydrationWarning className="font-sans">
+    <html lang="en" suppressHydrationWarning className="font-sans" data-experience="document">
       <body>
+        <script dangerouslySetInnerHTML={{ __html: BOOT_SCRIPT }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

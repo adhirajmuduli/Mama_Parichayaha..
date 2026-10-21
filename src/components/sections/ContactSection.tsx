@@ -1,10 +1,20 @@
 import { GlassCard, GlassLink } from '@/components/glass-card/GlassCard'
-import { siteContent } from '@/content/site'
+
+import type { ClientContent, ClientPublicProfile } from '@/types/experience'
 
 import ContactForm from './ContactForm'
 
-export default function ContactSection() {
-  const { contact, publicProfiles } = siteContent
+export interface ContactSectionProps {
+  contact: ClientContent['contact']
+  publicProfiles: ClientPublicProfile[]
+}
+
+/**
+ * Props-driven since P5: the server page passes projected (provenance-free)
+ * content — importing `@/content` here would pull zod into the client graph
+ * via the content index (boundaries: client layers consume projection only).
+ */
+export default function ContactSection({ contact, publicProfiles }: ContactSectionProps) {
   const headingId = `${contact.id}-heading`
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? null
 

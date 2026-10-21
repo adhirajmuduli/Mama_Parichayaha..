@@ -1,0 +1,194 @@
+/*
+ * FX layer styles (new_plan.md §7.7, §12.7) — cursor blob and rotating copy.
+ * Transform/opacity only; no filters on the hot path.
+ */
+
+.fx-cursor-blob {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 80;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle at 35% 35%,
+    color-mix(in oklab, var(--site-accent) 75%, white 12%),
+    color-mix(in oklab, var(--site-accent) 32%, transparent)
+  );
+  mix-blend-mode: plus-lighter;
+  will-change: transform;
+}
+
+html[data-experience='document'] .fx-cursor-blob,
+html[data-coarse-pointer='true'] .fx-cursor-blob,
+html[data-reduced-motion='true'] .fx-cursor-blob,
+html[data-save-data='true'] .fx-cursor-blob {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .fx-cursor-blob {
+    display: none;
+  }
+}
+
+.fx-rotating {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  color: var(--site-muted-strong);
+  font-size: 0.92rem;
+}
+
+.fx-rotating__prefix {
+  flex: none;
+  color: var(--site-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.66rem;
+}
+
+.fx-rotating__viewport {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.fx-rotating__word {
+  display: inline-block;
+  white-space: nowrap;
+  color: var(--card-accent, var(--site-accent));
+}
+
+.fx-rotating__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+ * Project spiral (react-bits InfiniteSpiral adaptation)
+ * ------------------------------------------------------------------------- */
+
+.spiral {
+  position: relative;
+  height: 100%;
+  min-height: 18rem;
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.spiral__stage {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.spiral__tile {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--spiral-width);
+  height: var(--spiral-height);
+  display: grid;
+  align-content: center;
+  gap: 0.4rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid color-mix(in oklab, var(--panel-accent, var(--site-accent)) 40%, transparent);
+  border-radius: 0.8rem;
+  background: color-mix(in oklab, var(--site-panel-opaque) 62%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  text-decoration: none;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
+  box-shadow: 0 14px 38px rgba(8, 6, 18, 0.2);
+}
+
+.spiral__tile-title {
+  color: var(--site-foreground);
+  font-size: 0.78rem;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.spiral__tile-description {
+  color: var(--site-muted-strong);
+  font-size: 0.64rem;
+  line-height: 1.45;
+}
+
+.spiral__sr-list {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  list-style: none;
+}
+
+.spiral__sr-list a {
+  color: var(--site-foreground);
+}
+
+/* Reduced motion / inactive chapter: a static, readable fan — no loop. */
+.spiral--static .spiral__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1rem;
+  transform-style: flat;
+}
+
+.spiral--static .spiral__tile {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: min(16rem, 42vw);
+  height: auto;
+  min-height: var(--spiral-height);
+  transform: none;
+  opacity: 1;
+  filter: none;
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spiral__tile {
+    will-change: auto;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Lanyard island (the single sanctioned three.js surface, R11)
+ * ------------------------------------------------------------------------- */
+
+.lanyard-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 22rem;
+  display: grid;
+  place-items: center;
+}
+
+.lanyard-stage canvas {
+  width: 100%;
+  height: 100%;
+}

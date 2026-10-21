@@ -1,7 +1,15 @@
-@import 'tailwindcss';
+@import 'tailwindcss' source(none);
 @import '../styles/theme.css';
 @import '../styles/typography.css';
 @import '../styles/animations.css';
+@import '../styles/stage.css';
+@import '../styles/ascii.css';
+@import '../styles/fx.css';
+
+/* Explicit content sources: automatic detection would scan every text file in
+   the repository (including planning documents at the repo root, whose prose
+   contains class-like tokens that Tailwind would faithfully emit as CSS). */
+@source '../**/*.{ts,tsx,md,mdx}';
 
 html,
 body {

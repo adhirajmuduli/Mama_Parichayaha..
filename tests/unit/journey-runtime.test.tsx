@@ -1,156 +1,247 @@
-import { render } from '@testing-library/react'
-import { act } from 'react'
-import { describe, expect, it, vi } from 'vitest'
+import { act, cleanup, render } from '@testing-library/react'
+import { useEffect } from 'react'
+import { afterEach, describe, expect, it } from 'vitest'
 
 import {
   JourneyRuntimeProvider,
   useJourneyRuntime,
-  type JourneyRuntimeApi,
-} from '@/lib/journeyRuntime'
+  type SettleInfo,
+} from '@/runtime/journeyRuntime'
+import { useNarrativeStore } from '@/runtime/stores/narrative'
 
-if (!globalThis.requestAnimationFrame) {
-  globalThis.requestAnimationFrame = ((callback: FrameRequestCallback) =>
-    setTimeout(() => callback(performance.now()), 16) as unknown) as typeof requestAnimationFrame
-}
+import { journeyChapterIds } from '@/content/data/journey'
 
-if (!globalThis.cancelAnimationFrame) {
-  globalThis.cancelAnimationFrame = ((handle: number) =>
-    clearTimeout(handle as unknown as ReturnType<typeof setTimeout>)) as typeof cancelAnimationFrame
-}
+/**
+ * Journey runtime contract (new_plan.md §13 P3): settle semantics, pause
+ * freezing, synchronous jumps and atomic store publications — the behaviors
+ * whose absence broke the legacy controller.
+ */
 
-function Harness({ onReady }: { onReady?: ((api: JourneyRuntimeApi) => void) | undefined }) {
+const chapterIds = [...journeyChapterIds]
+
+let runtime: ReturnType<typeof useJourneyRuntime> | null = null
+let settleInfos: SettleInfo[] = []
+
+function Probe() {
   const api = useJourneyRuntime()
 
-  onReady?.(api)
+  runtime = api
 
-  return <p data-testid="journey-child">ready</p>
+  useEffect(() => {
+    return api.subscribeSettle((info) => {
+      settleInfos.push(info)
+    })
+  }, [api])
+
+  return null
 }
 
-function renderHarness(onReady?: (api: JourneyRuntimeApi) => void) {
-  return render(
-    <JourneyRuntimeProvider>
-      <Harness onReady={onReady} />
+function renderRuntime() {
+  settleInfos = []
+
+  render(
+    <JourneyRuntimeProvider chapterIds={chapterIds}>
+      <Probe />
     </JourneyRuntimeProvider>,
   )
 }
 
+async function waitForSettle(atIndex: number, timeoutMs = 6000) {
+  const startedAt = Date.now()
+
+  while (Date.now() - startedAt < timeoutMs) {
+    const settled = useNarrativeStore.getState()
+
+    if (settled.settledIndex === atIndex && settled.travelMode === 'dwell') {
+      return
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 100))
+  }
+
+  throw new Error(`Journey never settled at index ${atIndex}.`)
+}
+
 describe('journey runtime', () => {
-  it('starts at the Origins dwell center without moving', () => {
-    let api: JourneyRuntimeApi | null = null
-
-    renderHarness((nextApi) => {
-      api = nextApi
-    })
-
-    expect(api).not.toBeNull()
-    expect(api!.inputUnits.get()).toBe(25)
-    expect(api!.renderUnits.get()).toBe(25)
-    expect(api!.isMoving()).toBe(false)
-    expect(api!.isPaused()).toBe(false)
+  afterEach(() => {
+    // Unmount the provider: its effects release scheduler subscriptions and
+    // frame listeners, keeping tests isolated even when assertions fail.
+    cleanup()
   })
 
-  it('moves the input immediately and lets the spring follow without React rerenders', async () => {
-    let api: JourneyRuntimeApi | null = null
+  it('publishes the initial landing chapter without any input', async () => {
+    renderRuntime()
 
-    renderHarness((nextApi) => {
-      api = nextApi
-    })
+    await waitForSettle(0)
 
-    act(() => {
-      api!.nudge(10)
-    })
-
-    expect(api!.inputUnits.get()).toBe(35)
-    expect(api!.getLastInputDirection()).toBe(1)
-
-    await vi.waitFor(
-      () => {
-        const position = api!.renderUnits.get()
-        expect(Math.abs(position - 35)).toBeLessThan(0.5)
-      },
-      { timeout: 5_000, interval: 32 },
-    )
-  }, 10_000)
-
-  it('ignores travel input while paused', () => {
-    let api: JourneyRuntimeApi | null = null
-
-    renderHarness((nextApi) => {
-      api = nextApi
-    })
-
-    act(() => {
-      api!.setPaused(true)
-      api!.nudge(12)
-      api!.navigateTo(75)
-    })
-
-    expect(api!.inputUnits.get()).toBe(25)
-
-    act(() => {
-      api!.setPaused(false)
-      api!.navigateTo(75)
-    })
-
-    expect(api!.inputUnits.get()).toBe(75)
-    expect(api!.getLastInputDirection()).toBe(1)
+    expect(useNarrativeStore.getState().settledChapterId).toBe('origins')
+    // Window at rest = settled ± neighbors.
+    expect(useNarrativeStore.getState().visibleChapterIds).toEqual([
+      'origins',
+      'interests',
+      'contact',
+    ])
   })
 
-  it('records negative direction for backward navigation', () => {
-    let api: JourneyRuntimeApi | null = null
-
-    renderHarness((nextApi) => {
-      api = nextApi
-    })
+  it('navigates and settles at the requested chapter with decoded direction', async () => {
+    renderRuntime()
 
     act(() => {
-      api!.nudge(-4)
+      runtime?.navigateToIndex(2)
     })
 
-    expect(api!.inputUnits.get()).toBe(21)
-    expect(api!.getLastInputDirection()).toBe(-1)
+    await waitForSettle(2)
+
+    const state = useNarrativeStore.getState()
+    expect(state.settledChapterId).toBe('research')
+    expect(state.direction).toBe(1)
+    expect(state.loopCount).toBe(0)
+    expect(settleInfos.length).toBeGreaterThan(0)
+    expect(settleInfos.at(-1)?.chapterId).toBe('research')
   })
 
-  it('snaps both values with jumpTo and reports a resting state', () => {
-    let api: JourneyRuntimeApi | null = null
+  it('wraps across the seam forward (contact → origins, loop +1)', async () => {
+    renderRuntime()
 
-    renderHarness((nextApi) => {
-      api = nextApi
+    // Start at contact on loop 0 (units 325) so the wrap crosses the seam
+    // FORWARD rather than resolving to the backward ordinal (-1).
+    act(() => {
+      runtime?.jumpToUnits(325)
     })
 
     act(() => {
-      api!.markMoving()
-      api!.jumpTo(225)
+      runtime?.navigateToIndex(0)
     })
+    await waitForSettle(0)
 
-    expect(api!.inputUnits.get()).toBe(225)
-    expect(api!.renderUnits.get()).toBe(225)
-    expect(api!.isMoving()).toBe(false)
+    const state = useNarrativeStore.getState()
+    expect(state.settledChapterId).toBe('origins')
+    expect(state.loopCount).toBe(1)
+    expect(state.direction).toBe(1)
   })
 
-  it('notifies settle subscribers only after the spring comes to rest', async () => {
-    let api: JourneyRuntimeApi | null = null
+  it('resolves nearest ordinals when navigating backward across the seam', async () => {
+    renderRuntime()
 
-    renderHarness((nextApi) => {
-      api = nextApi
+    // From origins, chapter 6 is nearest via the BACKWARD ordinal (-1):
+    // one step back instead of six steps forward.
+    act(() => {
+      runtime?.navigateToIndex(6)
     })
+    await waitForSettle(6)
 
-    const onSettle = vi.fn()
-    const unsubscribe = api!.subscribeSettle(onSettle)
+    const state = useNarrativeStore.getState()
+    expect(state.settledChapterId).toBe('contact')
+    expect(state.loopCount).toBe(-1)
+  })
+
+  it('publishes the visible pair during a transition', async () => {
+    renderRuntime()
+
+    await waitForSettle(0)
 
     act(() => {
-      api!.navigateTo(30)
+      runtime?.navigateToIndex(1)
     })
 
-    await vi.waitFor(
-      () => {
-        expect(onSettle).toHaveBeenCalled()
-        expect(Math.abs(api!.renderUnits.get() - 30)).toBeLessThan(0.02)
-        expect(api!.isMoving()).toBe(false)
-      },
-      { timeout: 6_000, interval: 48 },
-    )
+    // During the flight the pair must be published before the settle.
+    const startedAt = Date.now()
+    let sawPair = false
 
-    unsubscribe()
-  }, 12_000)
+    while (Date.now() - startedAt < 6000) {
+      if (useNarrativeStore.getState().travelMode === 'transition') {
+        sawPair = true
+        break
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 40))
+    }
+
+    expect(sawPair).toBe(true)
+
+    await waitForSettle(1)
+
+    const state = useNarrativeStore.getState()
+    // At rest the window is settled ± neighbors (ordered next-then-previous).
+    expect(state.visibleChapterIds).toEqual(['interests', 'research', 'origins'])
+    expect(state.travelMode).toBe('dwell')
+  })
+
+  it('freezes on pause and does not resume an in-flight spring on unpause', async () => {
+    renderRuntime()
+
+    await waitForSettle(0)
+
+    act(() => {
+      runtime?.setPaused(true)
+    })
+
+    expect(runtime?.isPaused()).toBe(true)
+
+    const unitsAtPause = runtime?.getUnits() ?? 0
+
+    act(() => {
+      runtime?.nudge(30)
+    })
+
+    await new Promise((resolve) => setTimeout(resolve, 250))
+
+    expect(runtime?.getUnits()).toBe(unitsAtPause)
+    expect(runtime?.isMoving()).toBe(false)
+
+    act(() => {
+      runtime?.setPaused(false)
+    })
+
+    // Nudge a full slot backward so the settle lands on a dwell center
+    // (contact, ordinal -1) rather than inside the seam.
+    act(() => {
+      runtime?.nudge(-50)
+    })
+
+    expect(runtime?.isMoving()).toBe(true)
+
+    await waitForSettle(6)
+    expect(useNarrativeStore.getState().settledChapterId).toBe('contact')
+    expect(useNarrativeStore.getState().loopCount).toBe(-1)
+  })
+
+  it('jumps instantly (reduced motion) and publishes settle synchronously', async () => {
+    renderRuntime()
+
+    await waitForSettle(0)
+
+    act(() => {
+      runtime?.jumpToIndex(3)
+    })
+
+    expect(runtime?.isMoving()).toBe(false)
+    expect(useNarrativeStore.getState().settledChapterId).toBe('computation')
+    expect(settleInfos.at(-1)?.chapterId).toBe('computation')
+    expect(runtime?.getUnits()).toBe(3 * 50 + 25)
+  })
+
+  it('exposes the injected topology and frame records with current truth', async () => {
+    renderRuntime()
+
+    await waitForSettle(0)
+
+    const topology = runtime?.getTopology()
+    expect(topology?.count).toBe(7)
+    expect(topology?.idByIndex(0)).toBe('origins')
+
+    let observedUnits = -1
+    const unsubscribe = runtime?.subscribeFrame((frame) => {
+      observedUnits = frame.units
+    })
+
+    act(() => {
+      runtime?.jumpToUnits(175)
+    })
+
+    expect(observedUnits).toBe(175)
+    unsubscribe?.()
+
+    expect(runtime?.chapterCount()).toBe(7)
+  })
 })

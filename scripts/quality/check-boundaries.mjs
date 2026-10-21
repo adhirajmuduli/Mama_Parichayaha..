@@ -38,7 +38,8 @@ const REACT_THREE = /^@react-three\//
 const POSTPROCESSING = /^postprocessing(\/|$)/
 const REACTIVE = /^react(-dom)?$|^motion(\/|$)|^zustand(\/|$)/
 
-const IMPORT_PATTERN = /(?:^|\n)\s*(?:import\s[\s\S]*?from|export\s[\s\S]*?from|import)\s*['"]([^'"]+)['"]/g
+const IMPORT_PATTERN =
+  /(?:^|\n)\s*(?:import\s[\s\S]*?from|export\s[\s\S]*?from|import)\s*['"]([^'"]+)['"]/g
 
 async function listSourceFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true })
@@ -57,7 +58,10 @@ async function listSourceFiles(directory) {
 }
 
 function toRepositoryPath(absolutePath) {
-  return absolutePath.slice(rootDirectory.length + 1).split(sep).join(posix.sep)
+  return absolutePath
+    .slice(rootDirectory.length + 1)
+    .split(sep)
+    .join(posix.sep)
 }
 
 function isWithin(repositoryPath, directory) {
@@ -125,7 +129,12 @@ async function auditFile(absolutePath) {
         isWithin(repositoryPath, 'src/components/sections')) &&
       (isThreeCore || isReactThree || /^@\/stores\//.test(specifier))
     ) {
-      addViolation(repositoryPath, line, specifier, 'legacy: narrative content must stay render-free')
+      addViolation(
+        repositoryPath,
+        line,
+        specifier,
+        'legacy: narrative content must stay render-free',
+      )
       continue
     }
 
@@ -139,25 +148,45 @@ async function auditFile(absolutePath) {
       isWithin(repositoryPath, 'src/content')
 
     if (isNewTree && (isReactThree || isPostprocessing)) {
-      addViolation(repositoryPath, line, specifier, 'new tree: @react-three/* and postprocessing are banned')
+      addViolation(
+        repositoryPath,
+        line,
+        specifier,
+        'new tree: @react-three/* and postprocessing are banned',
+      )
       continue
     }
 
     if (isNewTree && isThreeCore && !isWithin(repositoryPath, 'src/ui/fx/lanyard')) {
-      addViolation(repositoryPath, line, specifier, 'three may only be imported inside ui/fx/lanyard (R11)')
+      addViolation(
+        repositoryPath,
+        line,
+        specifier,
+        'three may only be imported inside ui/fx/lanyard (R11)',
+      )
       continue
     }
 
     if (isWithin(repositoryPath, 'src/journey')) {
       if (isReactive) {
-        addViolation(repositoryPath, line, specifier, 'journey/ must stay pure (no react/motion/zustand)')
+        addViolation(
+          repositoryPath,
+          line,
+          specifier,
+          'journey/ must stay pure (no react/motion/zustand)',
+        )
         continue
       }
       if (importsContentSchemas) {
         addViolation(repositoryPath, line, specifier, 'journey/ must not import content internals')
         continue
       }
-      if (target !== null && (isWithin(target, 'src/runtime') || isWithin(target, 'src/ui') || isWithin(target, 'src/exhibits'))) {
+      if (
+        target !== null &&
+        (isWithin(target, 'src/runtime') ||
+          isWithin(target, 'src/ui') ||
+          isWithin(target, 'src/exhibits'))
+      ) {
         addViolation(repositoryPath, line, specifier, 'journey/ may not import runtime/ui/exhibits')
         continue
       }
@@ -169,31 +198,56 @@ async function auditFile(absolutePath) {
         isWithin(repositoryPath, 'src/ui')) &&
       importsContentSchemas
     ) {
-      addViolation(repositoryPath, line, specifier, 'client layers may not import content schemas/data (projection only)')
+      addViolation(
+        repositoryPath,
+        line,
+        specifier,
+        'client layers may not import content schemas/data (projection only)',
+      )
       continue
     }
 
     if (isWithin(repositoryPath, 'src/runtime')) {
       if (target !== null && (isWithin(target, 'src/ui') || isWithin(target, 'src/exhibits'))) {
-        addViolation(repositoryPath, line, specifier, 'runtime/ may not import ui/exhibits (dependency direction)')
+        addViolation(
+          repositoryPath,
+          line,
+          specifier,
+          'runtime/ may not import ui/exhibits (dependency direction)',
+        )
         continue
       }
     }
 
     if (isWithin(repositoryPath, 'src/exhibits')) {
       if (target !== null && isWithin(target, 'src/ui/stage')) {
-        addViolation(repositoryPath, line, specifier, 'exhibits/ may not import ui/stage (avoid cycles)')
+        addViolation(
+          repositoryPath,
+          line,
+          specifier,
+          'exhibits/ may not import ui/stage (avoid cycles)',
+        )
         continue
       }
     }
 
     if (repositoryPath === 'src/content/projection.ts' && isClientModule) {
-      addViolation(repositoryPath, 1, 'use client', 'content/projection must stay server-shared (no directive)')
+      addViolation(
+        repositoryPath,
+        1,
+        'use client',
+        'content/projection must stay server-shared (no directive)',
+      )
     }
   }
 
   if (isWithin(repositoryPath, 'src/journey') && isClientModule) {
-    addViolation(repositoryPath, 1, 'use client', 'journey/ must stay framework-free (no directive)')
+    addViolation(
+      repositoryPath,
+      1,
+      'use client',
+      'journey/ must stay framework-free (no directive)',
+    )
   }
 }
 

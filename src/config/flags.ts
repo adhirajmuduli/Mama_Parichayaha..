@@ -6,12 +6,9 @@
  *                  sources land; placeholder slots render statically either way.
  * - `dust`       — optional canvas2D background dust. Off by default.
  * - `cursorBlob` — light spring cursor blob (immersive mode, fine pointers).
- * - `lanyard`    — the react-bits Lanyard island in the origins slot (lazy
- *                  three.js chunk; the ONLY sanctioned three import, R11).
+ * - `lanyard`    — the Lanyard island in the origins slot (lazy three.js
+ *                  chunk; the ONLY sanctioned three import, R11).
  * - `diagnostics`— dev overlay + `window.__JOURNEY__` snapshot hook.
- * - `legacyScene`— TEMPORARY (P0–P6): keeps the retired WebGL scene mounted for
- *                  local comparison while the rewrite lands. Deleted with the
- *                  legacy wave in P6; nothing else may read it.
  *
  * Overrides: NEXT_PUBLIC_FEATURE_<NAME> ('true'|'false'; also '1'/'0'/'on'/'off').
  * Invalid values fall back to the documented default. Flags are frozen at
@@ -33,12 +30,10 @@ export interface FeatureFlags {
   readonly dust: boolean
   /** Light spring cursor blob (immersive mode, fine pointer, not reduced motion). */
   readonly cursorBlob: boolean
-  /** Lanyard 3D island in the origins slot (lazy chunk, desktop-class devices). */
+  /** Lanyard island in the origins slot (lazy chunk, desktop-class devices). */
   readonly lanyard: boolean
   /** Diagnostics overlay + window snapshot hook (default: development only). */
   readonly diagnostics: boolean
-  /** TEMPORARY P0–P6 gate for the retired WebGL scene. Never read elsewhere. */
-  readonly legacyScene: boolean
 }
 
 export const FEATURES: FeatureFlags = Object.freeze({
@@ -47,5 +42,4 @@ export const FEATURES: FeatureFlags = Object.freeze({
   cursorBlob: resolve(process.env.NEXT_PUBLIC_FEATURE_CURSOR_BLOB, true),
   lanyard: resolve(process.env.NEXT_PUBLIC_FEATURE_LANYARD, true),
   diagnostics: resolve(process.env.NEXT_PUBLIC_FEATURE_DIAGNOSTICS, diagnosticsDefault),
-  legacyScene: resolve(process.env.NEXT_PUBLIC_FEATURE_LEGACY_SCENE, false),
 })

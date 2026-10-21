@@ -3,7 +3,7 @@ import { extname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const rootDirectory = resolve(fileURLToPath(new URL('..', import.meta.url)))
-const sourceRoots = ['src/content', 'src/lib/siteMetadata.ts']
+const sourceRoots = ['src/content', 'src/config']
 const sourceExtensions = new Set(['.ts', '.tsx'])
 const urlPattern = /https:\/\/[^\s'"`<>)]+/gu
 const errors = []

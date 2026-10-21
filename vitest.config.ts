@@ -29,12 +29,16 @@ export default defineConfig({
       exclude: [
         'src/test/**',
         '**/*.d.ts',
-        'src/lib/contact/config.ts',
-        'src/lib/contact/delivery.ts',
-        'src/lib/contact/rateLimit.ts',
-        'src/lib/contact/turnstile.ts',
+        'src/runtime/diagnostics/**',
+        'src/lib/contact/**',
       ],
-      include: ['src/hooks/**/*.{ts,tsx}', 'src/lib/**/*.{ts,tsx}'],
+      include: [
+        'src/journey/**/*.{ts,tsx}',
+        'src/runtime/**/*.{ts,tsx}',
+        'src/exhibits/**/*.{ts,tsx}',
+        'src/content/projection.ts',
+        'src/content/validate.ts',
+      ],
       provider: 'v8',
       reporter: ['text', 'json-summary', 'lcov'],
       thresholds: {

@@ -12,7 +12,7 @@
 
 import { readPublicString } from './env'
 
-import { siteContent } from '@/content/site'
+import { siteContent } from '@/content'
 
 const defaultSiteOrigin = 'https://adhirajmuduli.netlify.app'
 
