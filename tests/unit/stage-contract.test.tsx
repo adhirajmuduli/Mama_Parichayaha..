@@ -87,7 +87,7 @@ describe('immersive stage', () => {
     expect(privacyLink?.getAttribute('href')).toBe('/privacy')
   })
 
-  it('renders ascii placeholder panels with labeled figures', () => {
+  it('renders ascii panels with labeled figures and honest source markers', async () => {
     renderStage()
 
     const panels = document.querySelectorAll('.ascii-panel')
@@ -99,12 +99,50 @@ describe('immersive stage', () => {
       expect(panel.querySelector('pre')?.textContent?.length ?? 0).toBeGreaterThan(0)
     })
 
-    // Placeholder era: every panel declares itself and ships disabled
-    // controls with the availability message contract.
-    const placeholderPanels = Array.from(panels).filter(
-      (panel) => panel.getAttribute('data-placeholder') === 'true',
-    )
-    expect(placeholderPanels.length).toBe(panels.length)
+    // Mock era: chapters with animated exhibit metadata resolve real (mock)
+    // sources — placeholder=false + data-mock=true; decorative panels (no
+    // exhibit metadata) stay placeholder=true.
+    await waitFor(() => {
+      const animatedPanels = Array.from(panels).filter(
+        (panel) =>
+          panel.closest('.stage-card')?.querySelector('[data-animation-controls]') !== null,
+      )
+
+      const withExhibits = content.chapters.filter((chapter) => chapter.exhibit?.animated)
+
+      // The adapter load is async; every exhibit-bearing panel eventually
+      // reports a non-placeholder, mock-marked source.
+      const resolved = animatedPanels.filter((panel) => {
+        const section = panel.closest('.stage-card')
+        const chapterId = section?.id ?? ''
+        const chapter = content.chapters.find((entry) => entry.id === chapterId)
+
+        return chapter?.exhibit?.animated
+      })
+
+      expect(resolved.length).toBe(
+        withExhibits.filter((chapter) => chapter.visual.kind === 'ascii').length,
+      )
+
+      resolved.forEach((panel) => {
+        expect(panel.getAttribute('data-placeholder')).toBe('false')
+        expect(panel.getAttribute('data-mock')).toBe('true')
+      })
+    })
+
+    // Decorative panels (publications/contact) keep the placeholder art.
+    const decorativePanels = Array.from(panels).filter((panel) => {
+      const chapterId = panel.closest('.stage-card')?.id ?? ''
+      const chapter = content.chapters.find((entry) => entry.id === chapterId)
+
+      return !chapter?.exhibit
+    })
+
+    expect(decorativePanels.length).toBeGreaterThan(0)
+    decorativePanels.forEach((panel) => {
+      expect(panel.getAttribute('data-placeholder')).toBe('true')
+      expect(panel.getAttribute('data-mock')).toBe('false')
+    })
 
     const controlGroups = document.querySelectorAll('[data-animation-controls]')
     expect(controlGroups.length).toBeGreaterThan(0)
@@ -113,14 +151,8 @@ describe('immersive stage', () => {
       const label = group.getAttribute('aria-label') ?? ''
       expect(label.endsWith('animation controls')).toBe(true)
 
-      const status = group.querySelector('[role="status"]')?.textContent ?? ''
-      expect(status).toContain('content remains fully available')
-
       const buttons = group.querySelectorAll('button')
       expect(buttons.length).toBe(2)
-      buttons.forEach((button) => {
-        expect(button.hasAttribute('disabled')).toBe(true)
-      })
     })
   })
 

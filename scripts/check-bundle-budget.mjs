@@ -72,14 +72,18 @@ const lanyardEntry = Object.entries(loadableManifest).find(([entry]) =>
 )
 
 if (!lanyardEntry) {
-  throw new Error('The Lanyard island is not exposed as a lazy chunk (expected a next/dynamic entry).')
+  throw new Error(
+    'The Lanyard island is not exposed as a lazy chunk (expected a next/dynamic entry).',
+  )
 }
 
 const lanyardFiles = lanyardEntry[1].files
 const lanyardFileSet = new Set(lanyardFiles.map((file) => file.replaceAll('\\', '/')))
 const lanyardGzipBytes = await totalGzipSize(lanyardFiles)
 
-console.log(`Lanyard lazy chunk JavaScript: ${lanyardGzipBytes} B gzip (${lanyardFiles.length} file(s))`)
+console.log(
+  `Lanyard lazy chunk JavaScript: ${lanyardGzipBytes} B gzip (${lanyardFiles.length} file(s))`,
+)
 
 // --- Rule 4: lanyard chunk budget -------------------------------------------
 if (lanyardGzipBytes > lanyardChunkBudget) {

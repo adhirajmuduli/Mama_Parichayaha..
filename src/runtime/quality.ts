@@ -32,7 +32,7 @@ export interface QualityProfile {
   dust: number
 }
 
-export const QUALITY_TIERS: Record<QualityTier, QualityProfile> = Object.freeze({
+const QUALITY_TIERS: Record<QualityTier, QualityProfile> = Object.freeze({
   low: Object.freeze({ tier: 'low', fpsCap: 12, dust: 0 }),
   medium: Object.freeze({ tier: 'medium', fpsCap: 18, dust: 24 }),
   high: Object.freeze({ tier: 'high', fpsCap: 24, dust: 48 }),
@@ -60,7 +60,7 @@ function tierAbove(tier: QualityTier): QualityTier | null {
   return index < TIER_ORDER.length - 1 ? (TIER_ORDER[index + 1] as QualityTier) : null
 }
 
-export function initialTier(capabilities: CapabilitySnapshot): QualityTier {
+function initialTier(capabilities: CapabilitySnapshot): QualityTier {
   if (capabilities.coarsePointer || capabilities.saveData || capabilities.deviceMemory < 4) {
     return 'low'
   }
@@ -176,7 +176,7 @@ export function getQualityProfile(): QualityProfile {
   return governor.profile
 }
 
-export function subscribeQuality(listener: () => void): () => void {
+function subscribeQuality(listener: () => void): () => void {
   ensureAttached()
   listeners.add(listener)
 

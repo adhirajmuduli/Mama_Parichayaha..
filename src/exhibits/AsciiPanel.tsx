@@ -97,6 +97,8 @@ export function AsciiPanel({
       data-aspect={aspect}
       // No exhibit metadata means decorative placeholder art by definition.
       data-placeholder={resolved ? (resolved.placeholder ? 'true' : 'false') : 'true'}
+      // Mock-era preview animations identify themselves for the P9b swap.
+      data-mock={resolved?.source.id.startsWith('mock:') ? 'true' : 'false'}
       style={{ '--panel-accent': accent } as CSSProperties}
       role="img"
       aria-label={description}

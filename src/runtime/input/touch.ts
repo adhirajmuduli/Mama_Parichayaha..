@@ -9,11 +9,11 @@
 import { SLOT_UNITS } from '@/journey/timeline'
 
 /** Reference drag length (px) that equals one full chapter slot. */
-export const TOUCH_REFERENCE_PX = 350
+const TOUCH_REFERENCE_PX = 350
 /** On small viewports, one slot equals half the viewport height instead. */
-export const TOUCH_VIEWPORT_FRACTION = 0.5
+const TOUCH_VIEWPORT_FRACTION = 0.5
 /** Vertical intent locks after this many pixels of travel. */
-export const TOUCH_INTENT_THRESHOLD_PX = 12
+const TOUCH_INTENT_THRESHOLD_PX = 12
 
 export function touchUnitsPerPixel(viewportHeight: number): number {
   return SLOT_UNITS / Math.min(TOUCH_REFERENCE_PX, viewportHeight * TOUCH_VIEWPORT_FRACTION)

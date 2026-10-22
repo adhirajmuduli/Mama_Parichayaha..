@@ -1,56 +1,57 @@
 /**
- * ASCII exhibit metadata (new_plan.md §10) — placeholder era.
+ * ASCII exhibit metadata (new_plan.md §10).
  *
- * `animated` stays false and `sourceKey` stays 'placeholder' until the
- * owner-supplied animation sources are integrated (P9b); the player, controls
- * and layout are final from day one. Descriptions are written for the
- * *intended* animation so aria labels stay stable across the swap.
+ * Mock era (2026-10-22): the five exhibit chapters point at the owner-
+ * sanctioned interim preview animations (`animated: true` + their id as the
+ * `sourceKey`); they run through the full production pipeline. P9b swaps
+ * this data to the owner's real sources — `animated` stays true, the
+ * `sourceKey` changes, nothing else moves.
  */
 
 export const exhibits = [
   {
     id: 'dna',
     chapter: 'origins',
-    sourceKey: 'placeholder',
+    sourceKey: 'dna',
     label: 'DNA',
     description: 'ASCII rendering of a DNA double helix turning against a dark field.',
     fps: 12,
-    animated: false,
+    animated: true,
   },
   {
     id: 'bacteriophage',
     chapter: 'interests',
-    sourceKey: 'placeholder',
+    sourceKey: 'bacteriophage',
     label: 'Bacteriophage',
     description: 'ASCII rendering of a bacteriophage capsid and tail assembly.',
     fps: 12,
-    animated: false,
+    animated: true,
   },
   {
     id: 'hemoglobin',
     chapter: 'research',
-    sourceKey: 'placeholder',
+    sourceKey: 'hemoglobin',
     label: 'Hemoglobin',
     description: 'ASCII ribbon rendering of the hemoglobin tertiary structure.',
     fps: 12,
-    animated: false,
+    animated: true,
   },
   {
     id: 'brain',
     chapter: 'computation',
-    sourceKey: 'placeholder',
+    sourceKey: 'brain',
     label: 'Brain',
     description: 'ASCII point-cloud rendering of brain anatomy.',
     fps: 12,
-    animated: false,
+    animated: true,
   },
   {
     id: 'earth',
     chapter: 'future',
-    sourceKey: 'placeholder',
+    sourceKey: 'earth',
     label: 'Earth',
     description: 'ASCII globe rendering with drifting cloud bands.',
     fps: 12,
-    animated: false,
+    animated: true,
   },
 ] as const

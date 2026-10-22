@@ -7,7 +7,7 @@ import { z } from 'zod'
 
 import { ClaimSourceSchema, publicUrlSchema } from './common.schema'
 
-export const ProjectSchema = z
+const ProjectSchema = z
   .object({
     description: z.string().trim().min(1).max(200),
     href: publicUrlSchema,

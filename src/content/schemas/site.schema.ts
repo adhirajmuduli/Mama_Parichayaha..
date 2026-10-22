@@ -15,7 +15,7 @@ const CreditLinkSchema = z
   })
   .strict()
 
-export const PublicProfileSchema = z
+const PublicProfileSchema = z
   .object({
     external: z.boolean(),
     href: z.union([publicUrlSchema, z.string().regex(/^mailto:[^\s@]+@[^\s@]+\.[^\s@]+$/)]),
@@ -37,7 +37,7 @@ export const PublicProfileSchema = z
     }
   })
 
-export const ModelCreditSchema = z
+const ModelCreditSchema = z
   .object({
     assetId: z.enum([
       'dna-alt',

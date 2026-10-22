@@ -10,7 +10,7 @@ import { z } from 'zod'
 
 import { slugSchema } from './common.schema'
 
-export const ExhibitSchema = z
+const ExhibitSchema = z
   .object({
     /** Matches an adapter key in exhibits/sources (placeholder for now). */
     sourceKey: slugSchema.default('placeholder'),

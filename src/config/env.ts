@@ -26,8 +26,3 @@ export function readPublicString(value: string | undefined): string | undefined 
   const trimmed = value?.trim()
   return trimmed ? trimmed : undefined
 }
-
-/** Public Turnstile site key (safe for browsers; undefined renders the offline notice). */
-export const turnstileSiteKey: string | undefined = readPublicString(
-  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
-)

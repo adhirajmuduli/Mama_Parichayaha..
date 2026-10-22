@@ -20,7 +20,7 @@
     "unit": "vitest run",
     "coverage": "vitest run --coverage",
     "contact:security": "vitest run tests/unit/contact-contract.test.ts tests/unit/contact-security.test.ts",
-    "e2e": "npm run build && playwright test tests/e2e/contact.spec.ts tests/e2e/accessibility.spec.ts tests/e2e/seo.spec.ts --workers=1",
+    "e2e": "npm run build && playwright test tests/e2e/boot.spec.ts tests/e2e/journey.spec.ts tests/e2e/exhibits.spec.ts tests/e2e/hygiene.spec.ts tests/e2e/performance.spec.ts tests/e2e/contact.spec.ts tests/e2e/accessibility.spec.ts tests/e2e/seo.spec.ts --workers=1",
     "accessibility": "npm run e2e -- tests/e2e/accessibility.spec.ts",
     "test:performance": "npm run build && playwright test tests/e2e/performance.spec.ts --project=desktop --workers=1",
     "bundle": "npm run build && node scripts/check-bundle-budget.mjs",
@@ -36,16 +36,10 @@
     "asset:optimize": "node scripts/optimize-scene-asset.mjs"
   },
   "dependencies": {
-    "@react-three/drei": "^10.0.4",
-    "@react-three/fiber": "^9.1.2",
-    "@react-three/postprocessing": "^3.0.4",
-    "clsx": "^2.1.1",
     "motion": "12.42.0",
     "next": "15.5.24",
-    "postprocessing": "^6.37.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tailwind-merge": "^3.6.0",
     "three": "^0.176.0",
     "zod": "4.4.3",
     "zustand": "5.0.14"

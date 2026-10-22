@@ -19,7 +19,13 @@
  *     and journey drags never fight over the same pointer.
  */
 
-import { useEffect, useMemo, useRef, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
+} from 'react'
 
 import type { ClientProject } from '@/types/experience'
 import { subscribeTick } from '@/runtime/scheduler'

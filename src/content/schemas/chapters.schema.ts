@@ -57,7 +57,7 @@ const RotatingCopySchema = z
   })
   .strict()
 
-export const ChapterSchema = z
+const ChapterSchema = z
   .object({
     actions: z.array(ContentActionSchema).max(3),
     description: z.string().trim().min(1).max(600),

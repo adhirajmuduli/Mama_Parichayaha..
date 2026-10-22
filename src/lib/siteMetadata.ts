@@ -5,4 +5,4 @@
  * legacy wave (new_plan.md §8).
  */
 
-export { getStructuredData, siteDescription, siteName, siteUrl, siteUrlFor } from '@/config/site'
+export { getStructuredData, siteName, siteUrlFor } from '@/config/site'

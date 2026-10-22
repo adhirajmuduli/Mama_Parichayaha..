@@ -26,12 +26,7 @@ export default defineConfig({
     restoreMocks: true,
     setupFiles: ['./src/test/setup.ts'],
     coverage: {
-      exclude: [
-        'src/test/**',
-        '**/*.d.ts',
-        'src/runtime/diagnostics/**',
-        'src/lib/contact/**',
-      ],
+      exclude: ['src/test/**', '**/*.d.ts', 'src/runtime/diagnostics/**', 'src/lib/contact/**'],
       include: [
         'src/journey/**/*.{ts,tsx}',
         'src/runtime/**/*.{ts,tsx}',

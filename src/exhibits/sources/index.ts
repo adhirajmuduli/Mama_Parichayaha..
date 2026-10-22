@@ -10,7 +10,9 @@
 
 import type { AsciiExhibitSource } from '../types'
 
-export async function loadPlaceholderSource(exhibitId: string): Promise<AsciiExhibitSource> {
+import { mockSourceFor } from './mockModels'
+
+async function loadPlaceholderSource(exhibitId: string): Promise<AsciiExhibitSource> {
   const { createPlaceholderSource } = await import('./placeholder-source')
 
   return createPlaceholderSource(exhibitId)
@@ -19,12 +21,20 @@ export async function loadPlaceholderSource(exhibitId: string): Promise<AsciiExh
 export type AsciiSourceLoader = () => Promise<AsciiExhibitSource>
 
 /**
- * Adapter table. Keys are authored in `content/data/exhibits.ts`
- * (`sourceKey`); unknown keys resolve to the placeholder with a diagnostics
- * note — never a thrown error.
+ * Adapter table (module-local until P9b: owner animation modules register
+ * new keys here when they land). Current keys resolve to the owner-sanctioned
+ * mock preview animations; the placeholder stays the fallback for unknown
+ * keys, missing files and error paths — never a thrown error.
  */
-export const asciiSourceLoaders: Record<string, AsciiSourceLoader> = {
+const asciiSourceLoaders: Record<string, AsciiSourceLoader> = {
   placeholder: () => loadPlaceholderSource('placeholder'),
+
+  dna: async () => mockSourceFor('dna') ?? loadPlaceholderSource('dna'),
+  bacteriophage: async () =>
+    mockSourceFor('bacteriophage') ?? loadPlaceholderSource('bacteriophage'),
+  hemoglobin: async () => mockSourceFor('hemoglobin') ?? loadPlaceholderSource('hemoglobin'),
+  brain: async () => mockSourceFor('brain') ?? loadPlaceholderSource('brain'),
+  earth: async () => mockSourceFor('earth') ?? loadPlaceholderSource('earth'),
 }
 
 /**

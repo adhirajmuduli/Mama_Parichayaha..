@@ -27,8 +27,7 @@ export function AnimationControls({ exhibit, chapterId, playback }: AnimationCon
   const availability = useExhibitsStore((state) => state.availability[exhibit.id] ?? 'placeholder')
   const dispatchCommand = useExhibitsStore((state) => state.dispatchCommand)
 
-  const unavailable =
-    playback === 'static' || playback === 'idle' || availability === 'error'
+  const unavailable = playback === 'static' || playback === 'idle' || availability === 'error'
 
   const playing = playback === 'playing'
 

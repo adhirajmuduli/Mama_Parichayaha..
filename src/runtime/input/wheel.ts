@@ -9,11 +9,11 @@
 import { SLOT_UNITS } from '@/journey/timeline'
 
 /** Pixels of wheel travel that equal one full chapter slot (50 units). */
-export const WHEEL_PIXELS_PER_SLOT = 500
+const WHEEL_PIXELS_PER_SLOT = 500
 /** Per-event clamp: fast trackpad bursts must not teleport the journey. */
 export const WHEEL_EVENT_CLAMP_PX = 80
 /** Legacy line-mode multiplier (Firefox deltaMode 1). */
-export const LINE_MODE_PIXELS = 16
+const LINE_MODE_PIXELS = 16
 
 /** Units traveled per pixel of (clamped) wheel delta. */
 export const UNITS_PER_WHEEL_PX = SLOT_UNITS / WHEEL_PIXELS_PER_SLOT

@@ -2,8 +2,10 @@
  * The single feature-flag surface for the product (new_plan.md §7.1).
  *
  * Semantics:
- * - `exhibits`   — animated ASCII playback. Off until the owner's animation
- *                  sources land; placeholder slots render statically either way.
+ * - `exhibits`   — animated ASCII playback. ON in the mock era: the five
+ *                  exhibit chapters run owner-sanctioned interim preview
+ *                  animations through the full pipeline until the real
+ *                  models land (P9b).
  * - `dust`       — optional canvas2D background dust. Off by default.
  * - `cursorBlob` — light spring cursor blob (immersive mode, fine pointers).
  * - `lanyard`    — the Lanyard island in the origins slot (lazy three.js
@@ -24,7 +26,7 @@ function resolve(override: string | undefined, fallback: boolean): boolean {
 }
 
 export interface FeatureFlags {
-  /** Animated ASCII playback (owner-supplied sources; placeholder until then). */
+  /** Animated ASCII playback (mock-era preview animations; P9b swaps the art). */
   readonly exhibits: boolean
   /** Optional canvas2D dust background (default off; measure before enabling). */
   readonly dust: boolean
@@ -37,7 +39,7 @@ export interface FeatureFlags {
 }
 
 export const FEATURES: FeatureFlags = Object.freeze({
-  exhibits: resolve(process.env.NEXT_PUBLIC_FEATURE_EXHIBITS, false),
+  exhibits: resolve(process.env.NEXT_PUBLIC_FEATURE_EXHIBITS, true),
   dust: resolve(process.env.NEXT_PUBLIC_FEATURE_DUST, false),
   cursorBlob: resolve(process.env.NEXT_PUBLIC_FEATURE_CURSOR_BLOB, true),
   lanyard: resolve(process.env.NEXT_PUBLIC_FEATURE_LANYARD, true),

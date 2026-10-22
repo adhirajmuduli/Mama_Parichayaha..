@@ -14,7 +14,7 @@
  * React, Motion, stores, or content.
  */
 
-import type { JourneyDirection, JourneySample, TransitionJourneySample } from './types'
+import type { JourneyDirection, JourneySample } from './types'
 
 // ---------------------------------------------------------------------------
 // Unit geometry constants (count-independent)
@@ -22,7 +22,7 @@ import type { JourneyDirection, JourneySample, TransitionJourneySample } from '.
 
 export const ENTRY_UNITS = 5
 export const DWELL_UNITS = 40
-export const EXIT_UNITS = 5
+const EXIT_UNITS = 5
 export const SLOT_UNITS = 50
 export const TRANSITION_UNITS = EXIT_UNITS + ENTRY_UNITS
 
@@ -33,8 +33,8 @@ export const DWELL_CENTER_OFFSET = ENTRY_UNITS + DWELL_UNITS / 2
 // Magnetic-settling constants (count-independent; consumed by the runtime)
 // ---------------------------------------------------------------------------
 
-export const MAGNETIC_VELOCITY_THRESHOLD = 18
-export const MAGNETIC_HYSTERESIS_UNITS = 6
+const MAGNETIC_VELOCITY_THRESHOLD = 18
+const MAGNETIC_HYSTERESIS_UNITS = 6
 export const SETTLE_POSITION_EPSILON = 0.02
 export const SETTLE_VELOCITY_EPSILON = 0.02
 
@@ -62,7 +62,7 @@ export function smootherstep01(t: number): number {
   return clamped * clamped * clamped * (clamped * (clamped * 6 - 15) + 10)
 }
 
-export function assertValidCount(chapterCount: number): void {
+function assertValidCount(chapterCount: number): void {
   if (!Number.isInteger(chapterCount) || chapterCount < 3 || chapterCount > 12) {
     throw new Error(
       `Journey timeline requires an integer chapter count in [3, 12]; received ${chapterCount}.`,
@@ -221,14 +221,4 @@ export function getMagneticTarget(
 /** sin² motion intensity: 0 at dwell, peaking mid-transition. */
 export function getTravelPulse(sample: JourneySample): number {
   return sample.mode === 'transition' ? Math.sin(Math.PI * sample.transitionT) ** 2 : 0
-}
-
-/** Where a transition sits on the canonical [0, 1) ring (undirected). */
-export function getCanonicalRouteT(sample: TransitionJourneySample, chapterCount: number): number {
-  assertValidCount(chapterCount)
-
-  return positiveModulo(
-    (sample.segmentFromOrdinal + smootherstep01(sample.routeCanonicalT)) / chapterCount,
-    1,
-  )
 }

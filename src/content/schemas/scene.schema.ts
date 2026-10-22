@@ -11,9 +11,9 @@ import { z } from 'zod'
 
 import { hexColorSchema, slugSchema } from './common.schema'
 
-export const chapterVisualKinds = ['ascii', 'spiral', 'lanyard'] as const
+const chapterVisualKinds = ['ascii', 'spiral', 'lanyard'] as const
 
-export const SceneEntrySchema = z
+const SceneEntrySchema = z
   .object({
     /** Chapter id this presentation belongs to. */
     id: slugSchema,

@@ -38,8 +38,13 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'], contextOptions: { reducedMotion: 'reduce' } },
     },
     {
-      name: 'no-webgl',
-      use: { ...devices['Desktop Chrome'], launchOptions: { args: ['--disable-webgl'] } },
+      // JS disabled: the SSR semantic document IS the product for these
+      // visitors — no immersive boot, no client runtime (new_plan.md §12.1).
+      name: 'no-js',
+      use: {
+        ...devices['Desktop Chrome'],
+        contextOptions: { javaScriptEnabled: false },
+      },
     },
   ],
   webServer: {

@@ -47,7 +47,6 @@ const nextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   images: { remotePatterns: [] },
-  experimental: { optimizePackageImports: ['@react-three/drei', '@react-three/fiber'] },
   async headers() {
     return [
       { source: '/:path*', headers: securityHeaders },

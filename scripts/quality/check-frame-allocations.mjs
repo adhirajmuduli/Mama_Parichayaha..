@@ -188,5 +188,7 @@ if (allViolations.length > 0) {
 
   process.exitCode = 1
 } else {
-  console.log(`Frame-allocation check passed (${TICK_PATH_MODULES.length} tick-path modules audited).`)
+  console.log(
+    `Frame-allocation check passed (${TICK_PATH_MODULES.length} tick-path modules audited).`,
+  )
 }

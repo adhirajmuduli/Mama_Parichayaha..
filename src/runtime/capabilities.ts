@@ -136,7 +136,7 @@ function attachMediaListeners(): void {
 }
 
 /** Current snapshot; measures on first client call. */
-export function readCapabilities(): CapabilitySnapshot {
+function readCapabilities(): CapabilitySnapshot {
   if (!measured && typeof window !== 'undefined') {
     measured = true
     snapshot = Object.freeze(measure())
@@ -145,7 +145,7 @@ export function readCapabilities(): CapabilitySnapshot {
   return snapshot
 }
 
-export function subscribeCapabilities(listener: () => void): () => void {
+function subscribeCapabilities(listener: () => void): () => void {
   if (listeners.size === 0) {
     attachMediaListeners()
   }
