@@ -68,9 +68,7 @@ test('serves the complete semantic document without JavaScript', async ({ page }
   await expect(contact.getByRole('link', { name: 'Credits' })).toHaveAttribute('href', '/credits')
 
   // Publications region keeps its accessible name (seo/legacy contract).
-  await expect(
-    page.getByRole('region', { name: 'No publications or talks listed' }),
-  ).toBeVisible()
+  await expect(page.getByRole('region', { name: 'No publications or talks listed' })).toBeVisible()
 })
 
 test('boots the immersive stage without console errors', async ({ page }, testInfo) => {
@@ -115,7 +113,8 @@ test('marks the landing chapter on the rail', async ({ page }, testInfo) => {
     timeout: 15_000,
   })
 
-  await expect(
-    page.locator('.progress-rail__link[aria-current="step"]'),
-  ).toHaveAttribute('href', '#origins')
+  await expect(page.locator('.progress-rail__link[aria-current="step"]')).toHaveAttribute(
+    'href',
+    '#origins',
+  )
 })

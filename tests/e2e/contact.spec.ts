@@ -1,4 +1,6 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type TestInfo } from '@playwright/test'
+
+const isScripted = (testInfo: TestInfo) => testInfo.project.name !== 'no-js'
 
 test('renders the accessible contact form and privacy boundary without exposing server credentials', async ({
   page,
@@ -23,7 +25,11 @@ test('renders the accessible contact form and privacy boundary without exposing 
 
 test('guides offline visitors to reconnect before attempting a contact submission', async ({
   page,
-}) => {
+}, testInfo) => {
+  // The offline notice is a client-side listener; without JavaScript there
+  // is no listener to verify.
+  test.skip(!isScripted(testInfo), 'the offline boundary requires JavaScript')
+
   await page.goto('/contact')
   await page.context().setOffline(true)
   await page.evaluate(() => window.dispatchEvent(new Event('offline')))

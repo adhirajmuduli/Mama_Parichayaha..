@@ -6,14 +6,15 @@
  * kind falls back to the ASCII placeholder panel when its component or
  * capability gate is unavailable.
  *
- * Wiring (P6): spiral chapters render ProjectSpiral (scheduler-bound,
- * quality-capped, reduced-motion static fan); lanyard chapters render the
- * static portrait fallback until the lazy three.js island is integrated;
- * ascii chapters render the full AsciiPanel engine. This file remains the
- * ONLY dispatch point.
+ * Wiring: spiral chapters render ProjectSpiral (scheduler-bound, effect-
+ * gated on `active`); lanyard chapters mount the lazy three.js island ONCE
+ * per session (capability gates evaluated post-hydration — a stable root:
+ * the island never unmounts on chapter travel, it self-parks via its own
+ * IntersectionObserver when the card hides); ascii chapters run the full
+ * AsciiPanel engine. This file remains the ONLY dispatch point.
  */
 
-import type { CSSProperties } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 
 import type { ClientChapter, ClientProject } from '@/types/experience'
 
@@ -49,6 +50,25 @@ export function VisualSlot({
   const capabilities = useCapabilities()
   const quality = useQualityProfile()
   const kind = chapter.visual.kind
+
+  // Stable-root lanyard: eligibility settles once, post-hydration (the
+  // SSR/first render always shows the fallback — no mismatch), and the
+  // island then stays mounted for the session. Chapter travel only toggles
+  // visibility; the island's IntersectionObserver parks its rAF when the
+  // card hides. Re-initializing three.js per visit was a P7 finding.
+  const [lanyardMounted, setLanyardMounted] = useState(false)
+
+  useEffect(() => {
+    if (
+      kind === 'lanyard' &&
+      FEATURES.lanyard &&
+      !capabilities.coarsePointer &&
+      !capabilities.reducedMotion &&
+      supportsWebGL()
+    ) {
+      setLanyardMounted(true)
+    }
+  }, [kind, capabilities.coarsePointer, capabilities.reducedMotion])
 
   if (kind === 'spiral') {
     // Degenerate data (validate.ts forbids it, but the slot never breaks):
@@ -89,21 +109,13 @@ export function VisualSlot({
     )
   }
 
-  const lanyardEligible =
-    kind === 'lanyard' &&
-    FEATURES.lanyard &&
-    !capabilities.coarsePointer &&
-    !capabilities.reducedMotion &&
-    supportsWebGL() &&
-    active
-
   return (
     <div
       className="stage-card__visual-slot"
       data-visual-kind={kind}
       data-visual-active={active ? 'true' : 'false'}
     >
-      {lanyardEligible ? (
+      {lanyardMounted ? (
         <LanyardIsland
           chapter={chapter}
           portrait={portrait}

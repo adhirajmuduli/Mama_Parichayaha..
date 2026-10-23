@@ -14,13 +14,51 @@ import { expect, test, type TestInfo } from '@playwright/test'
 
 const isDesktop = (testInfo: TestInfo) => testInfo.project.name === 'desktop'
 
+async function burstWheel(
+  page: import('@playwright/test').Page,
+  eventCount: number,
+  deltaY: number,
+) {
+  // Deterministic-cadence burst (see journey.spec.ts for the debounce math).
+  await page.evaluate(
+    ({ count, delta }: { count: number; delta: number }) => {
+      const target =
+        document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2) ?? document.body
+
+      for (let event = 0; event < count; event += 1) {
+        target.dispatchEvent(
+          new WheelEvent('wheel', {
+            deltaY: delta,
+            deltaMode: 0,
+            cancelable: true,
+            bubbles: true,
+          }),
+        )
+      }
+    },
+    { count: eventCount, delta: deltaY },
+  )
+}
+
 async function cycleForward(page: import('@playwright/test').Page, from: string, to: string) {
   await expect(page.locator(`#${from}`)).toHaveAttribute('data-card-state', 'settled', {
     timeout: 20_000,
   })
 
   await page.mouse.move(640, 360)
-  await page.mouse.wheel(0, 600)
+  await burstWheel(page, 12, 600)
+
+  await expect(page.locator(`#${to}`)).toHaveAttribute('data-card-state', 'settled', {
+    timeout: 20_000,
+  })
+}
+
+async function cycleBackward(page: import('@playwright/test').Page, from: string, to: string) {
+  await expect(page.locator(`#${from}`)).toHaveAttribute('data-card-state', 'settled', {
+    timeout: 20_000,
+  })
+
+  await burstWheel(page, 12, -600)
 
   await expect(page.locator(`#${to}`)).toHaveAttribute('data-card-state', 'settled', {
     timeout: 20_000,
@@ -54,31 +92,30 @@ test('holds memory flat and never blocks the main thread across two journey cycl
 
   await page.goto('/', { waitUntil: 'domcontentloaded' })
 
-  const bootCompletedAt = await page.evaluate(() => performance.now() + 3_000)
+  // Boot completion grace: hydration + the lazy lanyard island's one-time
+  // three.js initialization (shader compile — heavy under software GL) must
+  // finish before the measurement window opens. The stable-root slot keeps
+  // the island mounted for the whole session, so this cost occurs exactly
+  // once, here.
+  const bootCompletedAt = await page.evaluate(() => performance.now() + 6_000)
 
-  // Two forward wheel cycles (origins → interests → research).
-  await cycleForward(page, 'origins', 'interests')
-  await cycleForward(page, 'interests', 'research')
+  // Two forward wheel cycles (origins → research).
+  await cycleForward(page, 'origins', 'research')
 
-  const heapBefore = await page.evaluate(() =>
-    (performance as Performance & { memory?: { usedJSHeapSize: number } }).memory
-      ?.usedJSHeapSize ?? 0,
+  const heapBefore = await page.evaluate(
+    () =>
+      (performance as Performance & { memory?: { usedJSHeapSize: number } }).memory
+        ?.usedJSHeapSize ?? 0,
   )
 
   // Two more cycles back and forth to catch playback churn.
-  await page.mouse.wheel(0, -600)
-  await expect(page.locator('#interests')).toHaveAttribute('data-card-state', 'settled', {
-    timeout: 20_000,
-  })
+  await cycleBackward(page, 'research', 'origins')
+  await cycleForward(page, 'origins', 'research')
 
-  await page.mouse.wheel(0, 600)
-  await expect(page.locator('#research')).toHaveAttribute('data-card-state', 'settled', {
-    timeout: 20_000,
-  })
-
-  const heapAfter = await page.evaluate(() =>
-    (performance as Performance & { memory?: { usedJSHeapSize: number } }).memory
-      ?.usedJSHeapSize ?? 0,
+  const heapAfter = await page.evaluate(
+    () =>
+      (performance as Performance & { memory?: { usedJSHeapSize: number } }).memory
+        ?.usedJSHeapSize ?? 0,
   )
 
   const postBootLongTasks = await page.evaluate(

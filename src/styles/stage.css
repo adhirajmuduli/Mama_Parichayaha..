@@ -333,6 +333,8 @@ html[data-experience='immersive'] .stage-card .stage-card__surface {
   right: max(1.5rem, env(safe-area-inset-right));
   transform: translateY(-50%);
   z-index: 30;
+  /* The rail is informative chrome: never intercept card or panel input. */
+  pointer-events: none;
 }
 
 .progress-rail__list {
@@ -341,6 +343,8 @@ html[data-experience='immersive'] .stage-card .stage-card__surface {
   list-style: none;
   display: grid;
   gap: 0.65rem;
+  /* Only the actual links receive input. */
+  pointer-events: auto;
 }
 
 .progress-rail__link {
@@ -449,6 +453,8 @@ html[data-experience='document'] .progress-rail {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   white-space: nowrap;
+  /* Decorative hint: never intercept the sheet beneath it. */
+  pointer-events: none;
 }
 
 .progress-rail__cue-arrow {

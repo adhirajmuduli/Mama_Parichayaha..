@@ -52,6 +52,12 @@ export function AsciiFramePlayer({
     const frame = frameRef.current
     if (!frame) return
 
+    // Per-source grid bookkeeping: the placeholder→owner-source upgrade (or
+    // any source swap) legitimately changes the grid, so the drift
+    // reference resets with every source change.
+    gridRef.current = null
+    warnedRef.current = false
+
     const effectiveFps = Math.max(0, Math.min(source.fps, fpsCap))
     const frameIntervalMs = effectiveFps > 0 ? 1000 / effectiveFps : 0
 

@@ -19,12 +19,13 @@ test('serves canonical metadata, structured data, and public discovery routes', 
   const entries = JSON.parse(structuredData ?? '[]') as Array<{ '@type': string }>
   expect(entries.map((entry) => entry['@type'])).toEqual(['Person', 'WebSite'])
 
-  const contact = page.getByRole('region', { name: 'Get in touch' })
-  await expect(contact.getByRole('link', { name: 'Privacy details' })).toHaveAttribute(
-    'href',
-    '/privacy',
-  )
-  await expect(contact.getByRole('link', { name: 'Credits' })).toHaveAttribute('href', '/credits')
+  // In immersive mode only the settled chapter is a11y-visible, so these
+  // are DOM-presence assertions (server-rendered anchors); the no-js boot
+  // spec covers their visible document-mode behavior.
+  const privacyLink = page.locator('#contact a[href="/privacy"]')
+
+  await expect(privacyLink).toHaveText('Privacy details')
+  await expect(page.locator('#contact a[href="/credits"]')).toHaveText('Credits')
 })
 
 test('serves privacy, credits, robots, sitemap, manifest, and social-image routes', async ({

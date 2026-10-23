@@ -59,8 +59,11 @@
   color: var(--site-muted);
 }
 
-/* Idle panels cost nothing: no paint, no containment tree. */
-.ascii-panel[data-ascii-state='idle'] {
+/* Idle panels cost nothing — but ONLY in the immersive stage. The document
+   mode (no-JS/SEO baseline) renders SSR HTML whose playback state is "idle"
+   by construction (the narrative store is empty before hydration); hiding
+   there would blank every no-JS visitor's art. */
+html[data-experience='immersive'] .ascii-panel[data-ascii-state='idle'] {
   visibility: hidden;
   content-visibility: hidden;
 }

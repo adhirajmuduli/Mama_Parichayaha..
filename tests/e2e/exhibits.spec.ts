@@ -16,7 +16,9 @@ async function waitForSettled(page: import('@playwright/test').Page, chapterId: 
   })
 }
 
-test('renders labeled panels with mock sources and working controls', async ({ page }, testInfo) => {
+test('renders labeled panels with mock sources and working controls', async ({
+  page,
+}, testInfo) => {
   test.skip(!isScripted(testInfo), 'the exhibit engine requires JavaScript')
   test.skip(isReducedMotion(testInfo), 'reduced motion renders static panels; see its own test')
 
@@ -61,7 +63,9 @@ test('renders labeled panels with mock sources and working controls', async ({ p
   lines.forEach((line) => expect(line.length).toBeGreaterThan(0))
 })
 
-test('renders static panels with explained controls under reduced motion', async ({ page }, testInfo) => {
+test('renders static panels with explained controls under reduced motion', async ({
+  page,
+}, testInfo) => {
   test.skip(!isReducedMotion(testInfo), 'reduced-motion playback is project-gated')
 
   await page.goto('/', { waitUntil: 'domcontentloaded' })
@@ -89,26 +93,35 @@ test('caps the active window at two panels', async ({ page }, testInfo) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   await waitForSettled(page, 'origins')
 
-  // Travel with a wheel burst; at rest and in flight, no more than two
-  // panels may be in the active state.
+  // At rest and in flight, no more than two panels may be active.
   await page.mouse.move(640, 360)
 
   const activeCounts: number[] = []
 
   const sample = () =>
-    page.locator('.ascii-panel[data-ascii-state="active"]').count().then((count) => {
-      activeCounts.push(count)
-    })
+    page
+      .locator('.ascii-panel[data-ascii-state="active"]')
+      .count()
+      .then((count) => {
+        activeCounts.push(count)
+      })
 
   await sample()
 
-  for (let event = 0; event < 8; event += 1) {
-    await page.mouse.wheel(0, 600)
-    await page.waitForTimeout(16)
-    await sample()
-  }
+  // Deterministic-cadence burst (see journey.spec.ts): one magnetic fling.
+  await page.evaluate(() => {
+    const target =
+      document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2) ?? document.body
 
-  await waitForSettled(page, 'interests')
+    for (let event = 0; event < 12; event += 1) {
+      target.dispatchEvent(
+        new WheelEvent('wheel', { deltaY: 600, deltaMode: 0, cancelable: true, bubbles: true }),
+      )
+    }
+  })
+
+  await sample()
+  await waitForSettled(page, 'research')
   await sample()
 
   expect(Math.max(...activeCounts)).toBeLessThanOrEqual(2)
@@ -129,7 +142,9 @@ test('mounts the lanyard island on capable desktops', async ({ page }, testInfo)
   await expect(slot.locator('figure')).toHaveAttribute('role', 'img')
 })
 
-test('falls back to the static portrait card on mobile and reduced motion', async ({ page }, testInfo) => {
+test('falls back to the static portrait card on mobile and reduced motion', async ({
+  page,
+}, testInfo) => {
   test.skip(!isScripted(testInfo), 'fallbacks are rendered client-side')
   test.skip(isDesktop(testInfo), 'desktop mounts the island; see its own test')
 
