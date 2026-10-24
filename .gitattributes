@@ -1,2 +1,2 @@
 * text=auto eol=lf
-public/models/**/*.glb filter=lfs diff=lfs merge=lfs -text
+assets/models/source/*.glb filter=lfs diff=lfs merge=lfs -text

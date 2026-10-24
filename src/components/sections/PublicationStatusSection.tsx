@@ -1,4 +1,4 @@
-import { GlassCard } from '@/components/glass-card/GlassCard'
+import { GlassCard } from '@/ui/surfaces/GlassCard'
 
 import type { ClientContent } from '@/types/experience'
 
@@ -6,7 +6,7 @@ export interface PublicationStatusSectionProps {
   publications: ClientContent['publications']
 }
 
-/** Props-driven since P5 (see ContactSection for the zod boundary note). */
+/** Props-driven since P5; restyled in P10 onto the new surfaces. */
 export default function PublicationStatusSection({ publications }: PublicationStatusSectionProps) {
   const headingId = `publications-heading`
 
@@ -17,7 +17,7 @@ export default function PublicationStatusSection({ publications }: PublicationSt
       className="relative z-10 flex scroll-mt-24 items-center px-6 py-10 sm:px-12"
     >
       <article className="mx-auto max-w-4xl">
-        <GlassCard className="max-w-2xl" glow="#A08B6F">
+        <GlassCard accent="#A08B6F" className="max-w-2xl p-6 sm:p-8">
           <p className="mb-3 text-sm uppercase tracking-[0.3em] text-violet-200">
             {publications.eyebrow}
           </p>

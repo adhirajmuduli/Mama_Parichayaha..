@@ -51,15 +51,18 @@ export function VisualSlot({
   const quality = useQualityProfile()
   const kind = chapter.visual.kind
 
-  // Stable-root lanyard: eligibility settles once, post-hydration (the
-  // SSR/first render always shows the fallback — no mismatch), and the
-  // island then stays mounted for the session. Chapter travel only toggles
-  // visibility; the island's IntersectionObserver parks its rAF when the
-  // card hides. Re-initializing three.js per visit was a P7 finding.
+  // Stable-root lanyard: eligibility settles once the capabilities are
+  // MEASURED (the unmeasured defaults are hydration placeholders — a P7
+  // finding had the island latch onto them and mount on touch devices),
+  // then the island stays mounted for the session. Chapter travel only
+  // toggles visibility; the island's IntersectionObserver parks its rAF
+  // when the card hides. Re-initializing three.js per visit was another
+  // P7 finding.
   const [lanyardMounted, setLanyardMounted] = useState(false)
 
   useEffect(() => {
     if (
+      capabilities.measured &&
       kind === 'lanyard' &&
       FEATURES.lanyard &&
       !capabilities.coarsePointer &&
@@ -68,7 +71,7 @@ export function VisualSlot({
     ) {
       setLanyardMounted(true)
     }
-  }, [kind, capabilities.coarsePointer, capabilities.reducedMotion])
+  }, [kind, capabilities, capabilities.measured])
 
   if (kind === 'spiral') {
     // Degenerate data (validate.ts forbids it, but the slot never breaks):

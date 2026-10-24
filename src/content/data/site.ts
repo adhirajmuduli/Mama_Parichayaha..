@@ -30,7 +30,7 @@ export const siteContent = {
     eyebrow: 'Credits',
     title: 'Model and scientific-source attribution',
     description:
-      'The interactive molecular models used by this portfolio retain their required source and license attribution.',
+      'Molecular models from prior explorations of this portfolio are archived with their required source and license attribution.',
     components:
       'Interactive component adaptations from React Bits and Magic UI (both MIT), ported as owned source with local modifications.',
     models: [

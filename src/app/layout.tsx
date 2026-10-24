@@ -1,13 +1,33 @@
 import type { Metadata, Viewport } from 'next'
+import localFont from 'next/font/local'
 
 import { getStructuredData, siteDescription, siteName, siteUrl } from '@/config/site'
 import Providers from './providers'
 
 import './globals.css'
-import '@/components/glass-card/glass-card.css'
+
+/**
+ * Self-hosted JetBrains Mono (SIL OFL 1.1; license alongside the file).
+ * Metric-stable monospace is load-bearing: the ASCII exhibit grids and the
+ * mono identity depend on consistent ch/em metrics (new_plan.md R13). The
+ * variable latin subset serves weights 100-800; the system stack stays as
+ * the pre-load fallback.
+ */
+const jetbrainsMono = localFont({
+  src: [
+    {
+      path: './fonts/jetbrains-mono-latin.woff2',
+      weight: '100 800',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-site-local',
+  display: 'swap',
+  fallback: ['Consolas', 'Monaco', 'Courier New', 'monospace'],
+})
 
 export const viewport: Viewport = {
-  themeColor: '#FDFCF8',
+  themeColor: '#05070D',
 }
 
 export const metadata: Metadata = {
@@ -83,7 +103,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
   const structuredData = getStructuredData()
 
   return (
-    <html lang="en" suppressHydrationWarning className="font-sans" data-experience="document">
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`font-sans ${jetbrainsMono.variable}`}
+      data-experience="document"
+    >
       <body>
         <script dangerouslySetInnerHTML={{ __html: BOOT_SCRIPT }} />
         <script

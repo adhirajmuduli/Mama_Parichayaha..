@@ -27,13 +27,9 @@
     "bundle:analyze": "node scripts/build-bundle.mjs",
     "knip": "node scripts/run-knip.mjs",
     "security": "npm audit --omit=dev --audit-level=high",
-    "asset:inspect": "npm run asset:audit && gltf-transform inspect public/models/dna_for_site.glb",
-    "quality": "npm run format:check && npm run lint && npm run typecheck && npm run boundaries && npm run content:check && npm run frame-alloc && npm run links:check && npm run unit && npm run knip && npm run asset:inspect && npm run bundle",
+    "quality": "npm run format:check && npm run lint && npm run typecheck && npm run boundaries && npm run content:check && npm run frame-alloc && npm run links:check && npm run unit && npm run knip && npm run bundle",
     "lighthouse:ci": "npx --yes @lhci/cli@0.15.1 autorun",
-    "licenses:inventory": "node scripts/license-inventory.mjs",
-    "asset:verify": "node scripts/verify-model-assets.mjs",
-    "asset:audit": "npm run asset:verify && node scripts/audit-scene-assets.mjs",
-    "asset:optimize": "node scripts/optimize-scene-asset.mjs"
+    "licenses:inventory": "node scripts/license-inventory.mjs"
   },
   "dependencies": {
     "motion": "12.42.0",
@@ -47,7 +43,6 @@
   "devDependencies": {
     "@axe-core/playwright": "4.12.1",
     "@eslint/eslintrc": "^3",
-    "@gltf-transform/cli": "^4.4.1",
     "@next/bundle-analyzer": "15.5.24",
     "@playwright/test": "1.61.1",
     "@tailwindcss/postcss": "^4.1.5",

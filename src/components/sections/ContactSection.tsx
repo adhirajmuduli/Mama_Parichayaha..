@@ -1,4 +1,4 @@
-import { GlassCard, GlassLink } from '@/components/glass-card/GlassCard'
+import { GlassCard, GlassLink } from '@/ui/surfaces/GlassCard'
 
 import type { ClientContent, ClientPublicProfile } from '@/types/experience'
 
@@ -13,6 +13,7 @@ export interface ContactSectionProps {
  * Props-driven since P5: the server page passes projected (provenance-free)
  * content — importing `@/content` here would pull zod into the client graph
  * via the content index (boundaries: client layers consume projection only).
+ * Restyled in P10 onto the new surfaces + stage tokens.
  */
 export default function ContactSection({ contact, publicProfiles }: ContactSectionProps) {
   const headingId = `${contact.id}-heading`
@@ -25,7 +26,7 @@ export default function ContactSection({ contact, publicProfiles }: ContactSecti
       className="relative z-10 flex scroll-mt-24 items-center px-6 py-20 sm:px-12"
     >
       <article className="mx-auto w-full max-w-5xl">
-        <GlassCard glow="#C17A3A" className="p-0">
+        <GlassCard accent="#C17A3A" className="p-6 sm:p-10">
           <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
             <div>
               <p className="mb-3 text-sm uppercase tracking-[0.3em] text-violet-200">

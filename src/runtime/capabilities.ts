@@ -13,6 +13,8 @@
 import { useSyncExternalStore } from 'react'
 
 export interface CapabilitySnapshot {
+  /** False until the first client-side measurement completes. */
+  measured: boolean
   reducedMotion: boolean
   coarsePointer: boolean
   saveData: boolean
@@ -23,6 +25,7 @@ export interface CapabilitySnapshot {
 }
 
 const DEFAULT_SNAPSHOT: CapabilitySnapshot = Object.freeze({
+  measured: false,
   reducedMotion: false,
   coarsePointer: false,
   saveData: false,
@@ -81,6 +84,7 @@ function readViewportClass(): CapabilitySnapshot['viewportClass'] {
 
 function measure(): CapabilitySnapshot {
   return {
+    measured: true,
     reducedMotion: readReducedMotion(),
     coarsePointer: readCoarsePointer(),
     saveData: readSaveData(),
@@ -92,6 +96,7 @@ function measure(): CapabilitySnapshot {
 
 function refresh(): void {
   const next = measure()
+  const firstMeasurement = !snapshot.measured
   const changed =
     next.reducedMotion !== snapshot.reducedMotion ||
     next.coarsePointer !== snapshot.coarsePointer ||
@@ -100,7 +105,10 @@ function refresh(): void {
     next.cores !== snapshot.cores ||
     next.viewportClass !== snapshot.viewportClass
 
-  if (!changed) return
+  // The first measurement ALWAYS publishes: unmeasured defaults are a
+  // hydration placeholder, not evidence — consumers (e.g. the lanyard
+  // mount gate) must never latch decisions on them.
+  if (!firstMeasurement && !changed) return
 
   snapshot = Object.freeze(next)
   notify()
@@ -148,6 +156,10 @@ function readCapabilities(): CapabilitySnapshot {
 function subscribeCapabilities(listener: () => void): () => void {
   if (listeners.size === 0) {
     attachMediaListeners()
+
+    // First subscription performs the first measurement and ALWAYS
+    // publishes (see refresh()): unmeasured defaults are placeholders.
+    refresh()
   }
 
   listeners.add(listener)

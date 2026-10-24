@@ -71,8 +71,12 @@ export function ChapterCard({
       className="stage-card"
       data-card-state={cardState}
       data-card-side={chapter.cardSide}
-      aria-hidden={cardState === 'idle' ? 'true' : undefined}
-      inert={cardState === 'idle' ? true : undefined}
+      // Hiding is an IMMERSIVE-stage concern. The SSR document (no JS) has
+      // an empty narrative store, so every card renders "idle" there —
+      // gating on immersive keeps the semantic document fully readable
+      // for no-JS visitors and screen readers (R3).
+      aria-hidden={immersive && cardState === 'idle' ? 'true' : undefined}
+      inert={immersive && cardState === 'idle' ? true : undefined}
     >
       <div className="stage-card__split">
         <div

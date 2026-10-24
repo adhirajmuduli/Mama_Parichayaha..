@@ -28,8 +28,19 @@ const checks = [
   { path: '/robots.txt', contentType: 'text/plain' },
   { path: '/sitemap.xml', contentType: 'application/xml' },
   { path: '/opengraph-image', contentType: 'image/png' },
-  { path: '/models/dna_for_site.glb', contentType: 'model/gltf-binary', cacheControl: 'max-age=' },
 ]
+
+// GLB model checks exist only while a model pipeline serves runtime
+// derivatives (SMOKE_EXPECT_MODELS=true). Since the ASCII-era archive moved
+// sources out of public/, the default deployment serves none — and the
+// smoke must prove the routes it actually ships.
+if (process.env.SMOKE_EXPECT_MODELS === 'true') {
+  checks.push({
+    path: '/models/dna_for_site.glb',
+    contentType: 'model/gltf-binary',
+    cacheControl: 'max-age=',
+  })
+}
 
 async function assertCheck({ path, contentType, cacheControl }) {
   const response = await fetch(new URL(path, baseUrl), { redirect: 'error' })

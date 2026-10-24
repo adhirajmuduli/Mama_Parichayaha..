@@ -5,6 +5,7 @@
 @import '../styles/stage.css';
 @import '../styles/ascii.css';
 @import '../styles/fx.css';
+@import '../ui/surfaces/surfaces.css';
 
 /* Explicit content sources: automatic detection would scan every text file in
    the repository (including planning documents at the repo root, whose prose

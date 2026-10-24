@@ -1,0 +1,87 @@
+/*
+ * Surfaces (new_plan.md §12.6): restrained glass panel + pill controls on
+ * the stage tokens. One capped blur; gated by coarse pointer and reduced
+ * transparency; no pointer tracking.
+ */
+
+.surface-glass {
+  position: relative;
+  border: 1px solid color-mix(in oklab, var(--site-foreground) 14%, transparent);
+  border-radius: 1.25rem;
+  background: color-mix(in oklab, var(--site-panel-opaque) 60%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(135%);
+  backdrop-filter: blur(14px) saturate(135%);
+  box-shadow:
+    0 1px 0 color-mix(in oklab, var(--site-foreground) 8%, transparent) inset,
+    0 18px 48px rgba(8, 6, 18, 0.35);
+}
+
+.surface-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 60% 40% at 12% 0%,
+    color-mix(in srgb, var(--surface-accent, var(--site-accent)) 14%, transparent),
+    transparent 70%
+  );
+}
+
+@media (pointer: coarse) {
+  .surface-glass {
+    background: color-mix(in oklab, var(--site-panel-opaque) 95%, transparent);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .surface-glass {
+    background: var(--site-panel-opaque);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+.surface-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.05rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid color-mix(in oklab, var(--site-foreground) 22%, transparent);
+  color: var(--site-foreground);
+  background: color-mix(in oklab, var(--site-panel-opaque) 55%, transparent);
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.surface-pill--filled {
+  background: color-mix(in oklab, var(--site-accent) 26%, transparent);
+  border-color: color-mix(in oklab, var(--site-accent) 55%, transparent);
+}
+
+.surface-pill:hover,
+.surface-pill:focus-visible {
+  background: color-mix(in oklab, var(--site-accent) 20%, transparent);
+  border-color: var(--site-accent);
+}
+
+.surface-pill:focus-visible {
+  outline: 2px solid var(--site-focus);
+  outline-offset: 2px;
+}
+
+.surface-pill:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

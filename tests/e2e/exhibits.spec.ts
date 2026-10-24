@@ -76,7 +76,8 @@ test('renders static panels with explained controls under reduced motion', async
 
   const controls = page.getByRole('group', { name: 'Bacteriophage animation controls' })
 
-  await expect(controls.getByRole('button', { name: /animation/ })).toBeDisabled()
+  await expect(controls.getByRole('button', { name: 'Play animation' })).toBeDisabled()
+  await expect(controls.getByRole('button', { name: 'Restart animation' })).toBeDisabled()
   await expect(controls.getByRole('status')).toContainText(
     'interests content remains fully available',
   )

@@ -32,20 +32,10 @@
         "animationCount": 0,
         "animations": [],
         "geometryBounds": {
-          "min": [
-            -10576.8281,
-            -10576.8281,
-            -10576.8281
-          ],
-          "max": [
-            14027.3945,
-            14027.3945,
-            14027.3945
-          ]
+          "min": [-10576.8281, -10576.8281, -10576.8281],
+          "max": [14027.3945, 14027.3945, 14027.3945]
         },
-        "extensionsRequired": [
-          "KHR_draco_mesh_compression"
-        ]
+        "extensionsRequired": ["KHR_draco_mesh_compression"]
       },
       "intakeStatus": "ok"
     },
@@ -68,16 +58,8 @@
         "animationCount": 0,
         "animations": [],
         "geometryBounds": {
-          "min": [
-            -47.8406,
-            -47.8406,
-            -47.8406
-          ],
-          "max": [
-            33.8356,
-            33.8356,
-            33.8356
-          ]
+          "min": [-47.8406, -47.8406, -47.8406],
+          "max": [33.8356, 33.8356, 33.8356]
         },
         "extensionsRequired": []
       },
@@ -102,16 +84,8 @@
         "animationCount": 0,
         "animations": [],
         "geometryBounds": {
-          "min": [
-            -90.9286,
-            -90.9286,
-            -90.9286
-          ],
-          "max": [
-            313.6449,
-            313.6449,
-            313.6449
-          ]
+          "min": [-90.9286, -90.9286, -90.9286],
+          "max": [313.6449, 313.6449, 313.6449]
         },
         "extensionsRequired": []
       },
@@ -142,16 +116,8 @@
           }
         ],
         "geometryBounds": {
-          "min": [
-            -5,
-            -5,
-            -5
-          ],
-          "max": [
-            5,
-            5,
-            5
-          ]
+          "min": [-5, -5, -5],
+          "max": [5, 5, 5]
         },
         "extensionsRequired": []
       },
@@ -176,20 +142,10 @@
         "animationCount": 0,
         "animations": [],
         "geometryBounds": {
-          "min": [
-            -22.8041,
-            -22.8041,
-            -22.8041
-          ],
-          "max": [
-            23.5115,
-            23.5115,
-            23.5115
-          ]
+          "min": [-22.8041, -22.8041, -22.8041],
+          "max": [23.5115, 23.5115, 23.5115]
         },
-        "extensionsRequired": [
-          "KHR_draco_mesh_compression"
-        ]
+        "extensionsRequired": ["KHR_draco_mesh_compression"]
       },
       "intakeStatus": "ok"
     }

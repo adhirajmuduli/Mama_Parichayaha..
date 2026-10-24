@@ -96,8 +96,9 @@ test('holds memory flat and never blocks the main thread across two journey cycl
   // three.js initialization (shader compile — heavy under software GL) must
   // finish before the measurement window opens. The stable-root slot keeps
   // the island mounted for the whole session, so this cost occurs exactly
-  // once, here.
-  const bootCompletedAt = await page.evaluate(() => performance.now() + 6_000)
+  // once, here. Generous for cold CI machines (first-test cold-start
+  // contention was observed at 6s on a cold standalone server).
+  const bootCompletedAt = await page.evaluate(() => performance.now() + 10_000)
 
   // Two forward wheel cycles (origins → research).
   await cycleForward(page, 'origins', 'research')
