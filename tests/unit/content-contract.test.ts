@@ -75,10 +75,12 @@ describe('client projection', () => {
     })
   })
 
-  it('carries at least one project for the spiral slot with gradient identity (R15, P11)', () => {
-    const spiralChapters = content.chapters.filter((chapter) => chapter.visual.kind === 'spiral')
-
-    expect(spiralChapters.length).toBeGreaterThan(0)
+  it('keeps all chapters on the artwork slot while preserving project link data', () => {
+    expect(content.chapters).toHaveLength(7)
+    content.chapters.forEach((chapter) => {
+      expect(chapter.visual.kind).toBe('ascii')
+      expect(chapter.exhibit).not.toBeNull()
+    })
     expect(content.projects.length).toBeGreaterThanOrEqual(1)
 
     content.projects.forEach((project) => {

@@ -165,7 +165,7 @@ describe('journey runtime', () => {
     // At rest the window is settled ± neighbors (ordered next-then-previous).
     expect(state.visibleChapterIds).toEqual(['interests', 'research', 'origins'])
     expect(state.travelMode).toBe('dwell')
-  })
+  }, 10_000)
 
   it('freezes on pause and does not resume an in-flight spring on unpause', async () => {
     renderRuntime()

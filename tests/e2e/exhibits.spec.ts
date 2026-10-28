@@ -1,10 +1,9 @@
 import { expect, test, type TestInfo } from '@playwright/test'
 
 /**
- * Exhibit contract (new_plan.md §10, §12.7, P11): labeled panels, automatic
- * playback (the redundant pause/restart controls are gone), reduced-motion
- * static frames, the full-bleed spiral with real repository tiles, the
- * lanyard fallbacks, and the ≤2-active-window discipline.
+ * Exhibit contract: labeled multicolor artworks, automatic playback,
+ * reduced-motion static frames, preserved project links, and the
+ * ≤2-active-window discipline.
  */
 
 const isScripted = (testInfo: TestInfo) => testInfo.project.name !== 'no-js'
@@ -17,9 +16,7 @@ async function waitForSettled(page: import('@playwright/test').Page, chapterId: 
   })
 }
 
-test('renders labeled panels with mock sources and automatic playback', async ({
-  page,
-}, testInfo) => {
+test('renders labeled colored artwork with automatic playback', async ({ page }, testInfo) => {
   test.skip(!isScripted(testInfo), 'the exhibit engine requires JavaScript')
   test.skip(isReducedMotion(testInfo), 'reduced motion renders static panels; see its own test')
 
@@ -33,7 +30,8 @@ test('renders labeled panels with mock sources and automatic playback', async ({
 
   await expect(panel).toHaveAttribute('role', 'img')
   await expect(panel).toHaveAttribute('data-placeholder', 'false')
-  await expect(panel).toHaveAttribute('data-mock', 'true')
+  await expect(panel).toHaveAttribute('data-mock', 'false')
+  await expect(panel.locator('pre')).toHaveAttribute('data-art-colored', 'true')
   await expect(panel).not.toHaveAttribute('data-ascii-state', 'idle')
 
   // P11: no user controls anywhere — playback is automatic.
@@ -102,8 +100,13 @@ test('caps the active window at two panels', async ({ page }, testInfo) => {
 
   // Deterministic-cadence burst (see journey.spec.ts): one clamped fling.
   await page.evaluate(() => {
+    // Stage host, not the viewport center: the center can sit inside a card
+    // scroll region (the copy claims the wheel — correct arbitration), which
+    // would stall this travel-semantics check.
     const target =
-      document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2) ?? document.body
+      document.querySelector('.stage-root') ??
+      document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2) ??
+      document.body
 
     for (let event = 0; event < 4; event += 1) {
       target.dispatchEvent(
@@ -119,37 +122,68 @@ test('caps the active window at two panels', async ({ page }, testInfo) => {
   expect(Math.max(...activeCounts)).toBeLessThanOrEqual(2)
 })
 
-test('mounts the lanyard island on capable desktops', async ({ page }, testInfo) => {
-  test.skip(!isDesktop(testInfo), 'the lanyard island is a desktop-pointer surface')
+test('renders the cellular artwork in the origins chapter', async ({ page }, testInfo) => {
+  test.skip(!isDesktop(testInfo), 'the authored color-canvas check runs on desktop')
 
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   await waitForSettled(page, 'origins')
 
-  // The lazy three.js chunk loads only for the origins slot.
-  await expect(page.locator('[data-lanyard]')).toBeAttached({ timeout: 20_000 })
-
-  const slot = page.locator('#origins .stage-card__visual-slot')
-
-  await expect(slot).toHaveAttribute('data-visual-kind', 'lanyard')
-  await expect(slot.locator('figure')).toHaveAttribute('role', 'img')
+  const panel = page.locator('#origins .ascii-panel')
+  await expect(panel).toHaveAttribute('role', 'img')
+  await expect(panel).toHaveAttribute('data-placeholder', 'false')
+  await expect(panel.locator('pre')).toHaveAttribute('data-art-colored', 'true')
+  await expect(panel.locator('canvas')).toBeVisible()
 })
 
-test('falls back to the static portrait card on mobile and reduced motion', async ({
-  page,
-}, testInfo) => {
-  test.skip(!isScripted(testInfo), 'fallbacks are rendered client-side')
-  test.skip(isDesktop(testInfo), 'desktop mounts the island; see its own test')
+test('renders a distinct colored artwork in every chapter', async ({ page }, testInfo) => {
+  test.skip(!isDesktop(testInfo), 'the full artwork journey is checked on desktop')
+
+  const chapterIds = [
+    'origins',
+    'interests',
+    'research',
+    'computation',
+    'future',
+    'publications',
+    'contact',
+  ]
 
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   await waitForSettled(page, 'origins')
 
-  await expect(page.locator('[data-lanyard]')).toHaveCount(0)
-  await expect(page.locator('#origins .lanyard-fallback')).toBeVisible()
+  for (let index = 0; index < chapterIds.length; index += 1) {
+    const chapterId = chapterIds[index]
+    if (!chapterId) continue
+
+    if (index > 0) await page.keyboard.press('ArrowDown')
+    await waitForSettled(page, chapterId)
+
+    const panel = page.locator(`#${chapterId} .ascii-panel`)
+    await expect(panel).toHaveAttribute('data-placeholder', 'false')
+    await expect(panel.locator('pre')).toHaveAttribute('data-art-colored', 'true')
+
+    const colors = await panel.locator('canvas').evaluate((canvas) => {
+      const element = canvas as HTMLCanvasElement
+      const context = element.getContext('2d')
+      if (!context || element.width === 0 || element.height === 0) return 0
+
+      const pixels = context.getImageData(0, 0, element.width, element.height).data
+      const observed = new Set<string>()
+      for (let offset = 0; offset < pixels.length; offset += 4) {
+        if (pixels[offset + 3] !== 0) {
+          observed.add(`${pixels[offset]},${pixels[offset + 1]},${pixels[offset + 2]}`)
+        }
+      }
+      return observed.size
+    })
+
+    expect(colors).toBeGreaterThan(3)
+  }
 })
 
-test('renders the full-bleed spiral with real repository tiles', async ({ page }, testInfo) => {
+test('renders the protein foldscape and preserves project links', async ({ page }, testInfo) => {
   test.skip(!isScripted(testInfo), 'the spiral requires the runtime')
-  test.skip(isReducedMotion(testInfo), 'reduced motion renders the static fan; see below')
+  test.skip(isReducedMotion(testInfo), 'reduced-motion artwork is checked separately')
 
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   await waitForSettled(page, 'origins')
@@ -157,38 +191,17 @@ test('renders the full-bleed spiral with real repository tiles', async ({ page }
   await page.keyboard.press('3')
   await waitForSettled(page, 'research')
 
-  const spiralStage = page.locator('#research .spiral-stage')
+  const panel = page.locator('#research .ascii-panel')
+  await expect(panel).toHaveAttribute('data-placeholder', 'false')
+  await expect(panel.locator('pre')).toHaveAttribute('data-art-colored', 'true')
 
-  await expect(spiralStage).toBeAttached()
-
-  const animatedTiles = spiralStage.locator('.spiral__tile')
-
-  expect(await animatedTiles.count()).toBeGreaterThan(0)
-
-  const first = animatedTiles.first()
-
-  await expect(first).toHaveAttribute('href', /github\.com/)
-
-  const gradientVars = await first.evaluate((node) => {
-    const anchor = node as HTMLAnchorElement
-
-    return {
-      from: anchor.style.getPropertyValue('--tile-gradient-from'),
-      to: anchor.style.getPropertyValue('--tile-gradient-to'),
-    }
-  })
-
-  expect(gradientVars.from).toMatch(/^#/)
-  expect(gradientVars.to).toMatch(/^#/)
-
-  // The screen-reader list mirrors every tile link.
-  const srLinks = spiralStage.locator('.spiral__sr-list a')
-
-  expect(await srLinks.count()).toBe(await animatedTiles.count())
+  const projectLinks = page.locator('#research .stage-card__projects a')
+  expect(await projectLinks.count()).toBeGreaterThan(0)
+  await expect(projectLinks.first()).toHaveAttribute('href', /github\.com/)
 })
 
-test('renders the static spiral fan under reduced motion', async ({ page }, testInfo) => {
-  test.skip(!isReducedMotion(testInfo), 'the static fan is project-gated')
+test('renders a static protein artwork under reduced motion', async ({ page }, testInfo) => {
+  test.skip(!isReducedMotion(testInfo), 'reduced-motion playback is project-gated')
 
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   await waitForSettled(page, 'origins')
@@ -196,12 +209,10 @@ test('renders the static spiral fan under reduced motion', async ({ page }, test
   await page.keyboard.press('3')
   await waitForSettled(page, 'research')
 
-  await expect(page.locator('#research .spiral-stage')).toHaveAttribute(
-    'data-spiral-state',
-    'static',
-  )
-
-  const tiles = page.locator('#research .spiral__tile')
-
-  expect(await tiles.count()).toBeGreaterThan(0)
+  const panel = page.locator('#research .ascii-panel')
+  await expect(panel).toHaveAttribute('data-placeholder', 'false')
+  const first = await panel.locator('pre').textContent()
+  await page.waitForTimeout(600)
+  expect(await panel.locator('pre').textContent()).toBe(first)
+  expect(first?.length ?? 0).toBeGreaterThan(0)
 })

@@ -1,10 +1,11 @@
 # System map
 
 The portfolio is a DOM-first immersive stage. One continuous "journey" value
-drives everything; a chapter's ASCII exhibit, the spiral of project tiles and
-the lanyard island are slots hung on that value. No app-level WebGL exists
-anywhere: three.js is confined to a single lazy chunk (the lanyard island),
-asserted by `scripts/check-bundle-budget.mjs` at build time.
+drives seven chapter-specific, recurring multicolor ASCII artworks. Each
+chapter uses its own palette and procedural glyph composition. Research
+project links remain available in the chapter copy. The older project spiral
+and lanyard components remain in the codebase but are not part of the current
+chapter mapping.
 
 ```
 server                          client (browser)
@@ -18,8 +19,8 @@ content/projection.ts   ──▶     ├─ runtime/journeyRuntime (spring + se
                                 ├─ ui/stage (deck, cards, rail, slots)
                                 ├─ ui/background (palette cross-fade)
                                 ├─ exhibits/ (AsciiPanel + player + registry)
-                                ├─ ui/fx (RotatingText, BlobCursor, spiral)
-                                └─ ui/fx/lanyard (lazy three.js island)
+                                ├─ ui/fx (RotatingText, BlobCursor)
+                                └─ arts/ (seven lazy procedural art sources)
 ```
 
 ## Layers (import direction points down)
@@ -31,19 +32,21 @@ content/projection.ts   ──▶     ├─ runtime/journeyRuntime (spring + se
 | L2 journey | `journey/`         | `types/`                                    | pure math; count-parameterized (N=3..12)   |
 | L3 types   | `types/`           | —                                           | shared vocabulary (JourneyFrame etc.)      |
 | L4 runtime | `runtime/`         | journey, types, config                      | scheduler, spring, stores, input, quality  |
-| L5 ui      | `ui/`, `exhibits/` | runtime, journey, types, content/projection | DOM stage; ASCII engine; fx                |
-| L6 lanyard | `ui/fx/lanyard/`   | three (the ONLY three import, R11)          | lazy chunk; self-parking rAF               |
+| L5 ui      | `ui/`, `exhibits/` | runtime, journey, types, content/projection | DOM stage; colored ASCII player; fx         |
+| L6 arts    | `arts/`            | exhibit source contract                    | lazy, fixed-grid procedural art            |
+| L7 legacy  | `ui/fx/lanyard/`   | three                                        | retained optional component; not chapter-wired |
 
 Enforced by `scripts/quality/check-boundaries.mjs` (also bans
 `@react-three/*` + `postprocessing` everywhere).
 
 ## The one-loop rule
 
-`runtime/scheduler.ts` is the product's single rAF loop. ASCII players, the
-spiral and the settle watcher subscribe to it; passive observers (quality
-governor, diagnostics) never keep it alive. At rest the site executes **zero**
-animation frames. The lanyard island is the sanctioned exception (§11.1): its
-own rAF parks when the card rests, leaves the viewport, or the tab hides.
+`runtime/scheduler.ts` is the product's shared rAF loop. Active ASCII players
+and the settle watcher subscribe to it; passive observers (quality governor,
+diagnostics) never keep it alive. At rest the application scheduler executes
+**zero** animation frames. Colored artwork glyphs are drawn to a canvas from a
+fixed-grid source; the HTML text frame remains available to SSR and no-JS
+visitors.
 
 ## Frame data discipline
 
@@ -65,17 +68,16 @@ and publishes atomically.
 - Chapter count is data (`content/data/journey.ts`); every system derives
   from N. `journey/invariants.ts` sweeps N=3..12.
 
-## Visual slots (R15)
+## Visual slots
 
 | kind    | renders              | active when                    | fallback                        |
 | ------- | -------------------- | ------------------------------ | ------------------------------- |
-| ascii   | AsciiPanel + player  | always                         | placeholder art (deterministic) |
-| spiral  | ProjectSpiral        | research settled/transitioning | ascii placeholder panel         |
-| lanyard | lazy three.js island | measured fine-pointer + WebGL  | static portrait card            |
+| ascii   | AsciiPanel + player  | chapter is visible              | deterministic text placeholder  |
 
-The lanyard mounts **once per session** (capability-gated after measurement)
-and never unmounts on chapter travel — a P7 finding: per-visit remounts
-re-compiled three.js and blew the long-task budget.
+All seven chapter entries currently use the ASCII slot. Research project
+links are rendered in its semantic copy surface rather than the retired
+full-bleed spiral. The optional lanyard and spiral components are retained but
+not wired by the current scene data.
 
 ## Modes
 

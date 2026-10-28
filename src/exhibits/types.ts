@@ -11,10 +11,19 @@ export interface AsciiGrid {
   cols: number
 }
 
+export interface AsciiColoredFrame {
+  /** Fixed-grid printable ASCII text, with rows separated by newlines. */
+  text: string
+  /** One palette index per grid cell, including spaces. */
+  colorIndices: ArrayLike<number>
+}
+
 export interface AsciiExhibitSource {
   id: string
   /** Nominal authored frame rate; the player caps it per quality tier. */
   fps: number
+  /** Per-source ink colors used by `renderColored`. */
+  palette?: readonly string[]
   /** Optional precomputed frame set; the player indexes it modulo length. */
   frames?: readonly string[]
   /**
@@ -23,6 +32,8 @@ export interface AsciiExhibitSource {
    * deterministic: same inputs, same frame. Ignored when `frames` is set.
    */
   render?: (index: number, elapsedMs: number) => string
+  /** Colored generative frame. Takes precedence over `render` when present. */
+  renderColored?: (index: number, elapsedMs: number) => AsciiColoredFrame
   /** Declared grid when stable; inferred from frame 0 otherwise. */
   grid?: AsciiGrid
   meta?: {
@@ -43,7 +54,8 @@ export function describeSourceGrid(source: AsciiExhibitSource): AsciiGrid {
     return source.grid
   }
 
-  const frame = source.frames?.[0] ?? source.render?.(0, 0) ?? ''
+  const frame =
+    source.frames?.[0] ?? source.renderColored?.(0, 0).text ?? source.render?.(0, 0) ?? ''
   const rows = frame ? frame.split('\n').length : 0
   const cols = frame.split('\n').reduce((width, line) => Math.max(width, line.length), 0)
 
@@ -66,6 +78,10 @@ export function readSourceFrame(
 
   if (source.render) {
     return source.render(index, elapsedMs)
+  }
+
+  if (source.renderColored) {
+    return source.renderColored(index, elapsedMs).text
   }
 
   return null

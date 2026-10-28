@@ -59,6 +59,9 @@ const PERSPECTIVE = 1000
 const CARDS_PER_TURN = 7
 const CENTER_SCALE = 1.15
 const EDGE_FADE = 0.34
+// Upper bound of the depth scale (see depthScale below). The layout uses it
+// to reserve room for the closest tile, which is the largest one.
+const MAX_DEPTH_SCALE = 1.45
 
 export function ProjectSpiral({
   projects,
@@ -72,6 +75,7 @@ export function ProjectSpiral({
   className = '',
 }: ProjectSpiralProps) {
   const rootRef = useRef<HTMLDivElement | null>(null)
+  const helixRef = useRef<HTMLDivElement | null>(null)
   const cardRefs = useRef<Array<HTMLAnchorElement | null>>([])
   const progressRef = useRef(0)
   const targetProgressRef = useRef(0)
@@ -95,18 +99,33 @@ export function ProjectSpiral({
 
   useEffect(() => {
     const root = rootRef.current
+    const helix = helixRef.current
 
-    if (!root || tiles.length === 0 || reducedMotion || !active) return
+    if (!root || !helix || tiles.length === 0 || reducedMotion || !active) return
 
-    let bounds = root.getBoundingClientRect()
+    let bounds = helix.getBoundingClientRect()
     let tickAccumulatorMs = 0
     const effectiveFps = Math.max(1, fpsCap)
     const frameIntervalMs = 1000 / effectiveFps
 
-    const resizeObserver = new ResizeObserver(() => {
-      bounds = root.getBoundingClientRect()
-    })
-    resizeObserver.observe(root)
+    // The tile size follows the band the helix owns: a 200px card is half a
+    // phone screen wide, so narrow viewports get a smaller card (and the CSS
+    // custom properties follow, keeping DOM and math in sync).
+    const measure = () => {
+      bounds = helix.getBoundingClientRect()
+
+      const width = Math.max(bounds.width, 1)
+      const cardWidth = Math.min(CARD_WIDTH, Math.max(120, width * 0.38))
+      const cardHeight = (cardWidth * CARD_HEIGHT) / CARD_WIDTH
+
+      root.style.setProperty('--spiral-width', `${Math.round(cardWidth)}px`)
+      root.style.setProperty('--spiral-height', `${Math.round(cardHeight)}px`)
+    }
+
+    measure()
+
+    const resizeObserver = new ResizeObserver(measure)
+    resizeObserver.observe(helix)
 
     const unsubscribeTick = subscribeTick((deltaMs) => {
       // fpsCap: skip whole ticks when behind — the helix positions are
@@ -133,8 +152,30 @@ export function ProjectSpiral({
       const half = count / 2
       const width = Math.max(bounds.width, 1)
       const height = Math.max(bounds.height, 1)
-      const fit = Math.min(1, width / (CARD_WIDTH * 2.4), height / (CARD_HEIGHT * 2.1))
-      const responsiveRadius = Math.min(RADIUS, Math.max(90, width * 0.3)) * fit
+      const cardWidth = Math.min(CARD_WIDTH, Math.max(120, width * 0.38))
+      const cardHeight = (cardWidth * CARD_HEIGHT) / CARD_WIDTH
+      const fit = Math.min(1, width / (cardWidth * 2.4), height / (cardHeight * 2.1))
+
+      // The radius may not push the closest tile past the band edge: the
+      // depth scale grows the front card, so the room it needs is reserved
+      // before the radius is chosen.
+      const depthScaleFor = (radius: number) =>
+        clamp(PERSPECTIVE / Math.max(PERSPECTIVE - radius, 1), 0.72, MAX_DEPTH_SCALE)
+      const tileHalfWidth = (cardWidth * CENTER_SCALE * depthScaleFor(RADIUS * fit)) / 2
+      const maxRadius = Math.max(36, width / 2 - tileHalfWidth)
+      const responsiveRadius = Math.min(RADIUS, Math.max(90, width * 0.3), maxRadius) * fit
+
+      // The cascade must stay INSIDE the band it owns. On short bands the
+      // vertical spread is compressed instead of spilling over the chapter
+      // copy (the spiral is a section, never a backdrop behind the words).
+      const depthScale = depthScaleFor(responsiveRadius)
+      const tileHalfHeight = (cardHeight * CENTER_SCALE * depthScale) / 2
+      const verticalSpread = Math.max(half, 1) * VERTICAL_SPACING * fit
+      const verticalFit = clamp(
+        (height / 2 - tileHalfHeight) / Math.max(verticalSpread, 1),
+        0.25,
+        1,
+      )
       const fadeStart = clamp(1 - EDGE_FADE, 0, 0.98)
       const turnSize = Math.max(CARDS_PER_TURN, 1)
 
@@ -150,14 +191,18 @@ export function ProjectSpiral({
         const angleRadians = (angle * Math.PI) / 180
         const x = Math.sin(angleRadians) * responsiveRadius
         const z = Math.cos(angleRadians) * responsiveRadius
-        const depthScale = clamp(PERSPECTIVE / Math.max(PERSPECTIVE - z, 1), 0.72, 1.45)
-        const visualScale = scale * depthScale
+        const tileDepthScale = clamp(
+          PERSPECTIVE / Math.max(PERSPECTIVE - z, 1),
+          0.72,
+          MAX_DEPTH_SCALE,
+        )
+        const visualScale = scale * tileDepthScale
         const depth = (z / Math.max(responsiveRadius, 1) + 1) / 2
         // No per-tile blur: eight animated blur layers were the most
         // expensive paint on this chapter. The opacity ramp carries the depth
         // read on its own.
 
-        card.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${offset * VERTICAL_SPACING * fit}px, 0) scale(${visualScale})`
+        card.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${offset * VERTICAL_SPACING * fit * verticalFit}px, 0) scale(${visualScale})`
         card.style.opacity = opacity.toFixed(3)
         card.style.filter = 'none'
         card.style.zIndex = String(Math.round(depth * 100000) + index)
@@ -251,7 +296,7 @@ export function ProjectSpiral({
         ))}
       </ul>
 
-      <div className="spiral-stage__helix" aria-hidden="true">
+      <div className="spiral-stage__helix" aria-hidden="true" ref={helixRef}>
         {tiles.map(({ project, key }, index) => (
           <a
             key={key}

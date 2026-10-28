@@ -120,9 +120,12 @@ html[data-experience='document'] .spiral-stage__helix {
   }
 }
 
+/* Narrow screens: the copy owns the top band (see stage.css), the cascade
+   owns everything below it. The helix never starts before the copy ends, so
+   the spiral can never be painted over the words. */
 @media (max-width: 55.99rem) {
   .spiral-stage:not(.spiral-stage--static) .spiral-stage__helix {
-    top: 66%;
+    top: 46%;
   }
 }
 

@@ -1,8 +1,13 @@
 # ADR 0009: Testing-Phase Real-Asset Policy
 
-- Status: Proposed
+- Status: Superseded by ADR 0010 (ASCII exhibit medium)
 - Date: 2026-08-25
-- Supersedes: the provenance-gated asset posture recorded in `docs/assets/model-provenance.md` and the procedural-exhibit interim decision in `action_plan.md` (D3a)
+- Supersedes: the provenance-gated asset posture recorded in `docs/assets/model-provenance.md` and the procedural-exhibit interim decision in `docs/history/action_plan.md` (D3a)
+
+> Superseded on 2026-10-18. The testing-phase real-GLB policy no longer
+> applies: the exhibit medium is ASCII text, the model pipeline is gone, and
+> the binaries are archived sources rather than runtime assets. The runtime
+> mapping in this record is historical. See ADR 0010.
 
 ## Context
 

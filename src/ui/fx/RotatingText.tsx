@@ -5,7 +5,7 @@
  * variant and re-tooled for our tokens. Upstream semantics preserved:
  * grapheme-aware segmentation (Intl.Segmenter), staggered per-character
  * springs, sr-only mirror of the current phrase. Attribution:
- * docs/assets/fx-attributions.md (pending P11).
+ * docs/assets/fx-attributions.md.
  *
  * HYDRATION SAFETY (a P7 finding): the rendered MARKUP must be identical
  * server-side and on the first client render — motion's useReducedMotion()

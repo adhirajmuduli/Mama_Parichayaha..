@@ -26,9 +26,83 @@ export interface AsciiFramePlayerProps {
   /** 'playing' runs the loop; anything else renders one static frame. */
   playing: boolean
   frameRef: RefObject<HTMLPreElement | null>
+  textRef?: RefObject<HTMLSpanElement | null>
+  canvasRef?: RefObject<HTMLCanvasElement | null>
 }
 
-export function AsciiFramePlayer({ source, fpsCap, playing, frameRef }: AsciiFramePlayerProps) {
+function drawColoredFrame(
+  frame: NonNullable<ReturnType<NonNullable<AsciiExhibitSource['renderColored']>>>,
+  source: AsciiExhibitSource,
+  pre: HTMLPreElement,
+  canvas: HTMLCanvasElement,
+): boolean {
+  const context = canvas.getContext('2d')
+  const palette = source.palette
+  if (!context || !palette || palette.length === 0 || !source.grid) return false
+
+  const pixelRatio = Math.min(window.devicePixelRatio || 1, 2)
+  const width = pre.clientWidth
+  const height = pre.clientHeight
+  const canvasWidth = Math.round(width * pixelRatio)
+  const canvasHeight = Math.round(height * pixelRatio)
+  if (canvas.width !== canvasWidth) canvas.width = canvasWidth
+  if (canvas.height !== canvasHeight) canvas.height = canvasHeight
+
+  const style = window.getComputedStyle(pre)
+  const fontSize = Number.parseFloat(style.fontSize)
+  const lineHeight = Number.parseFloat(style.lineHeight)
+  const paddingLeft = Number.parseFloat(style.paddingLeft)
+  const paddingTop = Number.parseFloat(style.paddingTop)
+
+  context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
+  context.clearRect(0, 0, width, height)
+  context.font = style.font
+  context.textBaseline = 'top'
+  context.textAlign = 'left'
+  const cellWidth = context.measureText('M').width
+  const lines = frame.text.split('\n')
+
+  for (let row = 0; row < source.grid.rows; row += 1) {
+    const text = lines[row] ?? ''
+    let col = 0
+
+    while (col < source.grid.cols) {
+      const cellIndex = row * source.grid.cols + col
+      const colorIndex = frame.colorIndices[cellIndex] ?? 0
+      let end = col + 1
+
+      while (
+        end < source.grid.cols &&
+        (frame.colorIndices[row * source.grid.cols + end] ?? 0) === colorIndex
+      ) {
+        end += 1
+      }
+
+      const run = text.slice(col, end)
+      if (run.trim()) {
+        context.fillStyle = palette[colorIndex] ?? palette[0] ?? '#ffffff'
+        context.fillText(
+          run,
+          paddingLeft + col * cellWidth,
+          paddingTop + row * (Number.isFinite(lineHeight) ? lineHeight : fontSize * 1.15),
+        )
+      }
+      col = end
+    }
+  }
+
+  pre.dataset.artColored = 'true'
+  return true
+}
+
+export function AsciiFramePlayer({
+  source,
+  fpsCap,
+  playing,
+  frameRef,
+  textRef,
+  canvasRef,
+}: AsciiFramePlayerProps) {
   const elapsedRef = useRef(0)
   const renderedIndexRef = useRef(-1)
   const gridRef = useRef<{ rows: number; cols: number } | null>(null)
@@ -55,7 +129,8 @@ export function AsciiFramePlayer({ source, fpsCap, playing, frameRef }: AsciiFra
       // elapsed time advances, so its render must run every tick.
       if (source.frames && index === renderedIndexRef.current) return
 
-      const next = readSourceFrame(source, index, elapsedRef.current)
+      const colored = source.renderColored?.(index, elapsedRef.current)
+      const next = colored?.text ?? readSourceFrame(source, index, elapsedRef.current)
 
       if (next === null) return
 
@@ -80,7 +155,18 @@ export function AsciiFramePlayer({ source, fpsCap, playing, frameRef }: AsciiFra
       }
 
       renderedIndexRef.current = index
-      frame.textContent = next
+
+      if (
+        colored &&
+        canvasRef?.current &&
+        drawColoredFrame(colored, source, frame, canvasRef.current)
+      ) {
+        if (textRef?.current) textRef.current.textContent = next
+      } else if (textRef?.current) {
+        textRef.current.textContent = next
+      } else {
+        frame.textContent = next
+      }
     }
 
     // Static or paused: exactly one write, then no scheduler work.
@@ -102,7 +188,7 @@ export function AsciiFramePlayer({ source, fpsCap, playing, frameRef }: AsciiFra
     return () => {
       unsubscribe()
     }
-  }, [source, fpsCap, playing, frameRef])
+  }, [source, fpsCap, playing, frameRef, textRef, canvasRef])
 
   return null
 }

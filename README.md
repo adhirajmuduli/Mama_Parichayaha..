@@ -1,337 +1,104 @@
-# Adhiraj Muduli — Interactive Biological Sciences Portfolio
+# Adhiraj Muduli — Biological Sciences Portfolio
 
-A cinematic scientific portfolio built using modern web graphics and immersive UI systems.
+An immersive, accessible portfolio presenting Adhiraj Muduli's interests in
+biological sciences, molecular systems, computational biology, and scientific
+visualization.
 
-This project combines:
+The experience is built as a semantic DOM stage: seven chapters form a cyclic
+journey controlled by wheel, touch, and keyboard input. Each chapter now has
+its own recurring, procedural ASCII artwork, rendered in a distinct color
+palette. Research project links remain in the chapter copy. The page remains a
+readable document without JavaScript; the immersive presentation is a
+progressive enhancement.
 
-- React Three Fiber (R3F)
-- Next.js
-- Three.js
-- Framer Motion
-- GLSL-inspired visual systems
-- Scroll-driven cinematic choreography
+## Current exhibit status
 
-to create an interactive biological-sciences-themed web experience.
+Seven authored artworks are available under `src/arts/`: Emergent Cell,
+Molecular Systems Observatory, Protein Foldscape, Inference Field, Systems
+Attractor Chamber, Evidence Constellation, and Signal Exchange. They use
+fixed-grid ASCII glyphs, deterministic continuous motion, and scene-specific
+multicolor palettes. A semantic text frame is server-rendered; after
+hydration, the same grid is drawn in color on a canvas. See
+[`docs/architecture/ascii-contract.md`](docs/architecture/ascii-contract.md)
+for the source contract and
+[`docs/adr/0010-ascii-exhibit-medium.md`](docs/adr/0010-ascii-exhibit-medium.md)
+for the decision to use ASCII rather than a site-wide 3D model pipeline.
 
----
+The existing optional lanyard and project-spiral components are not part of
+the current chapter art presentation. Three.js is not used to render these
+artworks.
 
-# Vision
+## Stack
 
-The goal of this project is not merely to create a personal portfolio, but to build an atmospheric computational-biology interface where:
+- Next.js 15, React 19, and TypeScript
+- CSS-first Tailwind CSS v4
+- `motion` for UI motion
+- Zustand for discrete runtime state
+- Zod for server-side authored-content validation
+- Seven procedurally animated multicolor ASCII exhibit sources
+- Server-rendered text fallback with hydrated colored-glyph canvas
 
-- molecular structures exist within a persistent 3D world,
-- scientific models evolve through narrative scrolling,
-- interaction design feels cinematic and spatial,
-- biological aesthetics merge with modern web graphics.
+## Run locally
 
-The site is designed around:
+Requirements: Node.js `>=22.17.0 <23` and npm `>=10.9.2 <12`.
 
-- dark biotech visual language,
-- volumetric depth,
-- molecular motion systems,
-- holographic interaction cues,
-- continuous environmental storytelling.
-
----
-
-# Core Features
-
-## Persistent 3D World
-
-A fixed global WebGL scene remains active throughout scrolling.
-
-The user moves through sections while the molecular environment evolves semantically.
-
----
-
-## Scroll-Driven Narrative Choreography
-
-Objects reposition and reframe according to page sections.
-
-Examples:
-
-- DNA dominates the hero section,
-- bacteriophages emerge during interests,
-- proteins become emphasized during projects.
-
----
-
-## Interactive Biological Models
-
-Supports:
-
-- animated `.glb` / `.gltf` assets,
-- static scientific meshes,
-- hoverable and rotatable molecular objects,
-- future shader-driven scientific rendering.
-
----
-
-## Cinematic Rendering Pipeline
-
-Includes:
-
-- bloom,
-- atmospheric fog,
-- floating particle systems,
-- dynamic lighting,
-- camera drift,
-- layered composition.
-
----
-
-## Premium Interaction Design
-
-Microinteraction systems include:
-
-- magnetic buttons,
-- cursor glow field,
-- motion-based reveals,
-- cinematic easing,
-- inertial motion systems.
-
----
-
-# Tech Stack
-
-## Framework
-
-- Next.js 15
-- React 19
-- TypeScript
-
----
-
-## 3D / Rendering
-
-- Three.js
-- React Three Fiber
-- @react-three/drei
-- @react-three/postprocessing
-
----
-
-## Motion
-
-- Framer Motion
-
----
-
-## Styling
-
-- Tailwind CSS v4
-
----
-
-# Project Structure
-
-```bash
-src/
-│
-├── app/
-│   ├── layout.tsx
-│   ├── page.tsx
-│   ├── globals.css
-│   └── providers.tsx
-│
-├── components/
-│   │
-│   ├── scene/
-│   │   ├── Experience.tsx
-│   │   └── Lighting.tsx
-│   │
-│   ├── models/
-│   │   ├── DNA.tsx
-│   │   ├── Phage.tsx
-│   │   ├── PhageSystem.tsx
-│   │   └── ProteinShowcase.tsx
-│   │
-│   ├── sections/
-│   │   ├── HeroSection.tsx
-│   │   ├── InterestsSection.tsx
-│   │   └── ProjectsSection.tsx
-│   │
-│   ├── effects/
-│   │   ├── Particles.tsx
-│   │   └── PostProcessing.tsx
-│   │
-│   ├── motion/
-│   │   ├── CameraRig.tsx
-│   │   ├── FadeReveal.tsx
-│   │   ├── SceneController.tsx
-│   │   ├── SectionLighting.tsx
-│   │   └── WorldAtmosphere.tsx
-│   │
-│   └── ui/
-│       ├── BlurCard.tsx
-│       ├── CursorGlow.tsx
-│       └── MagneticButton.tsx
-│
-├── hooks/
-│   ├── useScrollProgress.ts
-│   └── useSectionState.ts
-│
-└── lib/
-```
-
----
-
-# Installation
-
-## Clone Repository
-
-```bash
-git clone <repo-url>
-cd <repo-name>
-```
-
----
-
-## Install Dependencies
-
-```bash
-npm install
-```
-
----
-
-## Run Development Server
-
-```bash
+```powershell
+npm ci
 npm run dev
 ```
 
-Then open:
+Open `http://localhost:3000`.
 
-```bash
-http://localhost:3000
+To select an explicit port, pass Next.js arguments after the npm separator:
+
+```powershell
+npm run dev -- --port 3100
 ```
 
----
+## Environment
 
-# Model Workflow
+Copy `.env.example` to `.env.local` for local configuration. Contact delivery
+requires server-side Resend, Upstash, and Turnstile configuration. Keep real
+credentials out of source control. The `NEXT_PUBLIC_FEATURE_*` values control
+optional client features; see `.env.example` for their defaults.
 
-## Recommended Export Format
+## Verification
 
-Use:
+```powershell
+npm run typecheck
+npm run lint
+npm run content:check
+npm run unit
+npm run build
+node scripts/check-bundle-budget.mjs
+```
 
-- `.glb`
-- `.gltf`
+`npm run quality` runs the aggregate format, lint, type, architecture,
+content, frame-allocation, link, unit, dependency, and bundle checks.
+`npm run e2e` builds the app and runs the Playwright browser matrix for
+desktop, mobile, reduced motion, and JavaScript-disabled document mode.
 
-from:
+## Architecture
 
-- Spline
-- Blender
-- Cinema4D
-- Maya
-- scientific visualization tools
+- [`docs/architecture/system-map.md`](docs/architecture/system-map.md) —
+  runtime data flow, layers, and scheduler ownership.
+- [`docs/architecture/ascii-contract.md`](docs/architecture/ascii-contract.md)
+  — exhibit authoring and rendering contract.
+- [`docs/adr/0010-ascii-exhibit-medium.md`](docs/adr/0010-ascii-exhibit-medium.md)
+  — ASCII exhibit decision.
+- [`docs/adr/0011-dom-only-architecture.md`](docs/adr/0011-dom-only-architecture.md)
+  — DOM stage and constrained Three.js exception.
+- [`docs/current-state-assessment.md`](docs/current-state-assessment.md) —
+  recovery baseline and latest verified checks.
 
----
+## Deployment
 
-## Recommended Optimization
+The Next.js configuration emits a standalone deployment. Use the repository's
+`npm run start:standalone` and `npm run deploy:smoke` scripts to prepare/run
+the standalone server and verify a deployment. See
+[`docs/deployment.md`](docs/deployment.md) for deployment requirements and
+security headers.
 
-Before production deployment:
+## Author
 
-- compress meshes,
-- reduce unnecessary geometry,
-- optimize texture sizes,
-- use Draco compression where applicable.
-
----
-
-# Current Rendering Philosophy
-
-The visual direction prioritizes:
-
-- restrained cinematic lighting,
-- atmospheric depth,
-- spatial continuity,
-- biological ambience,
-- minimal UI clutter,
-- scientific elegance.
-
-The rendering approach intentionally avoids:
-
-- oversaturated neon cyberpunk,
-- excessive bloom,
-- hyper-aggressive particle density,
-- game-like visual noise.
-
----
-
-# Planned Systems
-
-## Material Systems
-
-Future work includes:
-
-- fresnel shaders,
-- iridescent protein materials,
-- holographic biological surfaces,
-- transmission materials,
-- scientific edge-lighting systems.
-
----
-
-## Advanced Interaction
-
-Planned interaction systems:
-
-- reactive particles,
-- molecular hover states,
-- focus transitions,
-- interactive protein inspection,
-- semantic camera events.
-
----
-
-## Scientific Extensions
-
-Potential future integrations:
-
-- AlphaFold structure rendering,
-- PDB ingestion,
-- molecular trajectory playback,
-- protein interaction visualization,
-- graph-based biological systems.
-
----
-
-# Performance Notes
-
-The project architecture is designed around:
-
-- persistent GPU rendering,
-- reusable scene systems,
-- semantic state choreography,
-- batched particles,
-- modular scene composition.
-
-Target:
-
-- desktop-first cinematic rendering,
-- graceful degradation for mobile.
-
----
-
-# Author
-
-Adhiraj Muduli
-Undergraduate — Biological Sciences
-
-Interests include:
-
-- computational biology,
-- molecular systems,
-- scientific visualization,
-- AI-assisted biological research,
-- interactive scientific interfaces.
-
----
-
-# License
-
-MIT License
-
-This project may be modified and adapted for educational, research, and portfolio purposes.
-"# Mama_Parichayaha.."
+Adhiraj Muduli — Biological Sciences undergraduate.

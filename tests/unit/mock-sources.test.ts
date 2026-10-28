@@ -8,6 +8,7 @@ import {
   hemoglobinMockSource,
   mockSourceFor,
 } from '@/exhibits/sources/mockModels'
+import { getSourceLoader } from '@/exhibits/sources'
 import { exhibits } from '@/content/data/exhibits'
 import { describeSourceGrid, readSourceFrame, type AsciiExhibitSource } from '@/exhibits/types'
 
@@ -98,12 +99,13 @@ describe('mock exhibit sources', () => {
     })
   })
 
-  it('exposes every authored exhibit id through the resolver', () => {
-    exhibits.forEach((exhibit) => {
-      const source = mockSourceFor(exhibit.sourceKey)
+  it('exposes every exhibit through its source loader', async () => {
+    const sources = await Promise.all(
+      exhibits.map((exhibit) => getSourceLoader(exhibit.sourceKey, exhibit.id)()),
+    )
 
-      expect(source).toBeDefined()
-      expect(source?.id).toBe(`mock:${exhibit.sourceKey}`)
+    sources.forEach((source, index) => {
+      expect(source.id).toBe(`art:${exhibits[index]?.sourceKey}`)
     })
   })
 })

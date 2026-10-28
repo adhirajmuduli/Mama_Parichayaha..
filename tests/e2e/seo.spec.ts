@@ -20,10 +20,7 @@ test('serves canonical metadata, structured data, and public discovery routes', 
 
   await expect(page).toHaveTitle('Adhiraj Muduli | Biological Sciences')
   // Next normalizes the root canonical without a trailing slash.
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
-    'href',
-    `${expectedOrigin}`,
-  )
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${expectedOrigin}`)
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
     'content',
     new RegExp(

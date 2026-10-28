@@ -22,8 +22,16 @@ async function burstWheel(
   // Deterministic-cadence burst (see journey.spec.ts for the debounce math).
   await page.evaluate(
     ({ count, delta }: { count: number; delta: number }) => {
+      // Dispatch at the stage host, exactly like journey.spec.ts: the
+      // coordinator's wheel listener lives there and the host is never
+      // inside a card scroll region. The viewport center sits inside the
+      // contact card's copy, which legitimately claims the wheel (scroll
+      // arbitration) — correct product behavior, wrong for a journey-cycle
+      // measurement.
       const target =
-        document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2) ?? document.body
+        document.querySelector('.stage-root') ??
+        document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2) ??
+        document.body
 
       for (let event = 0; event < count; event += 1) {
         target.dispatchEvent(

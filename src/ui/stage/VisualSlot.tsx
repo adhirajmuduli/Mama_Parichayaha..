@@ -62,16 +62,14 @@ export function VisualSlot({
   const [lanyardMounted, setLanyardMounted] = useState(false)
 
   useEffect(() => {
-    if (
-      !(
-        capabilities.measured &&
-        kind === 'lanyard' &&
-        FEATURES.lanyard &&
-        !capabilities.coarsePointer &&
-        !capabilities.reducedMotion &&
-        supportsWebGL()
-      )
-    ) {
+    if (!(
+      capabilities.measured &&
+      kind === 'lanyard' &&
+      FEATURES.lanyard &&
+      !capabilities.coarsePointer &&
+      !capabilities.reducedMotion &&
+      supportsWebGL()
+    )) {
       return
     }
 

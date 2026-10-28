@@ -7,14 +7,22 @@ The single interface owner-supplied animation code must implement
 export interface AsciiExhibitSource {
   id: string
   fps: number // authored rate; capped by tier
+  palette?: readonly string[] // source-specific glyph colors
   frames?: readonly string[] // precomputed set (optional)
   render?: (index: number, elapsedMs: number) => string // generative (optional)
+  renderColored?: (index: number, elapsedMs: number) => {
+    text: string
+    colorIndices: ArrayLike<number>
+  } // colored generative grid (optional)
   grid?: { rows: number; cols: number } // stable grid (recommended)
   meta?: { label?: string; description?: string }
 }
 ```
 
-One of `frames` or `render` is required. Register adapters in
+One of `frames`, `render`, or `renderColored` is required. Colored sources
+provide one palette index per fixed-grid cell. The server and no-JavaScript
+experience use the ASCII `text`; after hydration the player draws those glyphs
+in the source palette on a canvas. Register adapters in
 `src/exhibits/sources/index.ts` under the authored `sourceKey`
 (`content/data/exhibits.ts`), and set `animated: true` there.
 
@@ -28,27 +36,34 @@ One of `frames` or `render` is required. Register adapters in
    declared column count.
 3. **Budget**: ≤ 80 cols × 40 rows; fps 1..30 (the quality tier caps further:
    low 12 / medium 18 / high 24).
-4. **Printable ASCII** + box-drawing characters only. The panel renders with
-   ligatures/kerning disabled and `white-space: pre`.
+4. **Printable ASCII** only. The panel renders with ligatures/kerning
+   disabled and `white-space: pre`; color is metadata, not terminal escape
+   sequences or Unicode decoration.
 5. **Pure**: no side effects; may be dynamically imported.
 
 ## Reference implementations
 
-- `sources/placeholder.ts` — deterministic single-frame placeholder art
-  (boxed title + seeded dot field).
-- `sources/mockModels.ts` — five animated previews (owner-sanctioned interim
-  models): rotating double helix (depth-sorted strands + rungs),
-  bacteriophage (pulsing capsid, breathing sheath, swaying fibers),
-  hemoglobin (four waving shaded ribbons), brain (rotating 3D point cloud
-  via the published perspective/ramp technique), earth (rotating wireframe
-  globe with drifting clouds). Each is allocation-conscious: module-scope
-  scratch buffers, one string join per frame.
+- `src/arts/origins.ts` — rippling cellular membrane, organelles, transport
+  gate, and fluorescent tracer.
+- `src/arts/interests.ts` — ligand/receptor interaction and branching signal
+  cascade.
+- `src/arts/research.ts` — moving protein conformational ensemble and
+  transient contacts; explicitly not a claim about a specific structure.
+- `src/arts/computation.ts` — sequence-like input, confidence field, and
+  abstract model reconstruction.
+- `src/arts/future.ts` — pulsing systems network and emergent attractor.
+- `src/arts/publications.ts` — abstract evidence panels without invented
+  titles, citations, or publication claims.
+- `src/arts/contact.ts` — signal traveling through a network to an open
+  endpoint.
+- `src/arts/shared.ts` — fixed-grid raster primitives and the common source
+  adapter. Each chapter selects its own palette.
 
 ## Runtime behavior (what your source plugs into)
 
-- The player (`AsciiFramePlayer`) subscribes to the shared scheduler; at most
-  one `textContent` write per tick; frame skipping when behind; restart
-  resets the clock.
+- The player (`AsciiFramePlayer`) subscribes to the shared scheduler; frame
+  skipping when behind; restart resets the clock. Colored glyphs draw to a
+  canvas, while a text frame remains available for SSR and no-JavaScript use.
 - Playback state machine: `idle` (chapter outside visible window) →
   `playing` ⇄ `paused` (user) → `static` (reduced motion, fpsCap 0, or
   feature off). Published to the exhibits store; the controls render the
@@ -62,7 +77,8 @@ One of `frames` or `render` is required. Register adapters in
 
 ## Contract tests
 
-`tests/unit/mock-sources.test.ts` pins every rule above per source
+`tests/unit/artworks.test.ts` pins the authored artwork grid, determinism,
+color richness, printable output, and animation. `tests/unit/mock-sources.test.ts`
+retains compatibility coverage for the retired interim previews.
 (exact-grid on 40 consecutive frames, determinism, printable output, motion
-over time, ink density). Owner sources should satisfy the same suite — copy
-it and point it at the new adapters.
+over time, ink density).

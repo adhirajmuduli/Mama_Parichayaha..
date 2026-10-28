@@ -1,16 +1,8 @@
 'use client'
 
-/**
- * Placeholder + owner-supplied source adapters (new_plan.md §10.1).
- *
- * The table maps `sourceKey` → dynamic loader. P5/P6 ship only the
- * placeholder; owner animation modules (P9b) land here as new keys — the
- * registry, player, controls and layout never change.
- */
+/** Lazy loaders for the authored procedural artwork modules. */
 
 import type { AsciiExhibitSource } from '../types'
-
-import { mockSourceFor } from './mockModels'
 
 async function loadPlaceholderSource(exhibitId: string): Promise<AsciiExhibitSource> {
   const { createPlaceholderSource } = await import('./placeholder-source')
@@ -20,27 +12,19 @@ async function loadPlaceholderSource(exhibitId: string): Promise<AsciiExhibitSou
 
 export type AsciiSourceLoader = () => Promise<AsciiExhibitSource>
 
-/**
- * Adapter table (module-local until P9b: owner animation modules register
- * new keys here when they land). Current keys resolve to the owner-sanctioned
- * mock preview animations; the placeholder stays the fallback for unknown
- * keys, missing files and error paths — never a thrown error.
- */
 const asciiSourceLoaders: Record<string, AsciiSourceLoader> = {
   placeholder: () => loadPlaceholderSource('placeholder'),
-
-  dna: async () => mockSourceFor('dna') ?? loadPlaceholderSource('dna'),
-  bacteriophage: async () =>
-    mockSourceFor('bacteriophage') ?? loadPlaceholderSource('bacteriophage'),
-  hemoglobin: async () => mockSourceFor('hemoglobin') ?? loadPlaceholderSource('hemoglobin'),
-  brain: async () => mockSourceFor('brain') ?? loadPlaceholderSource('brain'),
-  earth: async () => mockSourceFor('earth') ?? loadPlaceholderSource('earth'),
+  origins: () => import('@/arts/origins').then((module) => module.originsArtwork),
+  interests: () => import('@/arts/interests').then((module) => module.interestsArtwork),
+  research: () => import('@/arts/research').then((module) => module.researchArtwork),
+  computation: () => import('@/arts/computation').then((module) => module.computationArtwork),
+  future: () => import('@/arts/future').then((module) => module.futureArtwork),
+  publications: () => import('@/arts/publications').then((module) => module.publicationsArtwork),
+  contact: () => import('@/arts/contact').then((module) => module.contactArtwork),
 }
 
 /**
- * Resolves an exhibit's animated source for its source key. Owner adapters
- * register here in P9b; keys absent from the table intentionally fall back
- * (for example the still-missing alternate DNA intake).
+ * Unknown keys intentionally fall back to the deterministic placeholder.
  */
 export function getSourceLoader(sourceKey: string, exhibitId: string): AsciiSourceLoader {
   const loader = asciiSourceLoaders[sourceKey]

@@ -1,7 +1,11 @@
 # ADR 0005: Model budget exception and tier policy
 
-- Status: Superseded by ADR 0006
+- Status: Superseded by ADR 0006, then by ADR 0010 (ASCII exhibit medium)
 - Date: 2026-07-17
+
+> Superseded on 2026-10-18. The GLB budget no longer applies: there is no
+> model pipeline and no served GLB. The binaries are archived under
+> `assets/models/source/` for provenance only. See ADR 0010.
 
 ## Context
 

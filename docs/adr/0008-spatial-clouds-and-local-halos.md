@@ -1,8 +1,13 @@
 # ADR 0008: Spatial Clouds and Local Model Halos
 
-- Status: Proposed
+- Status: Superseded by ADR 0010 (ASCII exhibit medium) and ADR 0011 (DOM-only architecture)
 - Date: 2026-08-25
 - Supersedes: the pointer-reactive atmosphere behavior and dominant cursor-orb treatment described in ADR 0003 and the Phase 7 atmosphere implementation notes
+
+> Superseded on 2026-10-18. There are no models to halo and no camera corridor
+> to fill: the stage is DOM, the atmosphere is a CSS plasma layer, and the
+> cursor treatment is the light custom blob (ADR 0011). The pointer-reactive
+> fog and per-model halos are not carried forward. See ADR 0010 and ADR 0011.
 
 ## Context
 

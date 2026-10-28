@@ -112,7 +112,9 @@ export function ChapterCard({
                       {item.href ? (
                         <a
                           href={item.href}
-                          {...(item.external ? { target: '_blank', rel: 'noreferrer noopener' } : {})}
+                          {...(item.external
+                            ? { target: '_blank', rel: 'noreferrer noopener' }
+                            : {})}
                         >
                           {item.title}
                         </a>
@@ -126,6 +128,22 @@ export function ChapterCard({
                       ) : null}
                     </p>
                     <p className="stage-card__item-description">{item.description}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {chapter.id === 'research' ? (
+            <div className="stage-card__projects">
+              <p className="stage-card__detail-title">Selected computational projects</p>
+              <ul>
+                {projects.map((project) => (
+                  <li key={project.href}>
+                    <a href={project.href} target="_blank" rel="noreferrer noopener">
+                      <span>{project.title}</span>
+                      <span>{project.description}</span>
+                    </a>
                   </li>
                 ))}
               </ul>

@@ -1493,7 +1493,9 @@ const Lanyard = ({
 
       const restedLongEnough = now - activeSince > STILL_PARK_MS
       const resting =
-        !sim.grab && current.breeze === 0 && (stillFrames >= STILL_FRAMES || (restedLongEnough && slow))
+        !sim.grab &&
+        current.breeze === 0 &&
+        (stillFrames >= STILL_FRAMES || (restedLongEnough && slow))
 
       if (visible && !resting) raf = requestAnimationFrame(tick)
     }

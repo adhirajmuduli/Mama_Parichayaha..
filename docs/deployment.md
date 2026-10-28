@@ -23,7 +23,9 @@ Set `ENABLE_HSTS=true` only after the final HTTPS domain and subdomain policy ar
 
 ## HTTP policy
 
-Every response receives CSP, framing, MIME-sniffing, referrer, permission, cross-origin, DNS-prefetch, and cross-domain-policy protections. Next static chunks are immutable for one year. Model paths use a bounded one-day browser/seven-day CDN cache because deployed model filenames are not content-hashed; do not mark them immutable until filenames carry a content digest. API responses are `no-store`.
+Every response receives CSP, framing, MIME-sniffing, referrer, permission, cross-origin, DNS-prefetch, and cross-domain-policy protections. Next static chunks are immutable for one year. API responses are `no-store`.
+
+The deployment serves no 3D model binaries: the exhibits are ASCII text and the archived GLB sources live outside `public/` (`assets/models/source/`), so there is no unhashed, long-lived asset path to cache — and no `/models/*` rule exists in `next.config.js` any more. If a model-serving pipeline is ever reintroduced, it must re-add an explicit bounded cache rule (one day in the browser, seven days on the CDN) rather than marking unhashed filenames immutable.
 
 The CSP permits only same-origin application resources plus the Cloudflare Turnstile frame/script/connect origins. Any new external resource must be added deliberately to both CSP and the privacy disclosure.
 
@@ -38,7 +40,7 @@ $env:SMOKE_EXPECT_CONTACT='true' # only after contact configuration is live
 corepack npm run deploy:smoke
 ```
 
-The check verifies HTTPS, security headers, health, icon, manifest, robots, sitemap, social image, deployed DNA model, content types, and cache headers. Browser checks remain the evidence for desktop/mobile WebGL, no-WebGL fallback, contact interaction, and visual rendering; run the existing Playwright suite against the deployment before promotion. The CV route is intentionally not smoke-required until the owner supplies the real CV PDF.
+The check verifies HTTPS, security headers, health, icon, manifest, robots, sitemap, social image, content types, and cache headers. Browser checks remain the evidence for desktop/mobile rendering, the reduced-motion and no-JS variants, contact interaction, and the lanyard island (WebGL); run the existing Playwright suite against the deployment before promotion. The CV route is intentionally not smoke-required until the owner supplies the real CV PDF. Model checks are opt-in (`SMOKE_EXPECT_MODELS=true`) and stay off while the deployment serves no model binaries.
 
 ## Promotion, preview, and rollback
 
@@ -52,4 +54,4 @@ The check verifies HTTPS, security headers, health, icon, manifest, robots, site
 
 No third-party browser monitoring is enabled by default. The current privacy disclosure is therefore accurate: no analytics or error tracker receives visitor data. Server contact outcomes are structured operational logs containing only request ID, outcome category, and latency.
 
-Before adding an external monitoring provider, select it explicitly and update the privacy page, CSP, retention policy, sampling rate, and redaction contract. Any client report must exclude names, email addresses, free-text messages, raw IP addresses, URLs containing user input, and model binary data.
+Before adding an external monitoring provider, select it explicitly and update the privacy page, CSP, retention policy, sampling rate, and redaction contract. Any client report must exclude names, email addresses, free-text messages, raw IP addresses, and URLs containing user input.

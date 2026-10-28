@@ -1,7 +1,11 @@
 # ADR 0006: Active DNA Asset Budget Exception
 
-- Status: Accepted
+- Status: Superseded by ADR 0010 (ASCII exhibit medium)
 - Date: 2026-07-19
+
+> Superseded on 2026-10-18. The DNA GLB is no longer loaded, served or budgeted;
+> it is an archived source under `assets/models/source/`. The origins slot
+> renders the ASCII exhibit. See ADR 0010.
 
 ## Context
 

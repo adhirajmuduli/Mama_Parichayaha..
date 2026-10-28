@@ -1,56 +1,78 @@
 /**
  * ASCII exhibit metadata (new_plan.md §10).
  *
- * Mock era (2026-10-22): the five exhibit chapters point at the owner-
- * sanctioned interim preview animations (`animated: true` + their id as the
- * `sourceKey`); they run through the full production pipeline. P9b swaps
- * this data to the owner's real sources — `animated` stays true, the
- * `sourceKey` changes, nothing else moves.
+ * Seven authored procedural ASCII artworks; each source is lazy-loaded by
+ * the exhibit registry and carries its own multicolor palette.
  */
 
 export const exhibits = [
   {
-    id: 'dna',
+    id: 'cell-landscape',
     chapter: 'origins',
-    sourceKey: 'dna',
-    label: 'DNA',
-    description: 'ASCII rendering of a DNA double helix turning against a dark field.',
+    sourceKey: 'origins',
+    label: 'Emergent cell',
+    description:
+      'A recurring cellular landscape with a rippling membrane, organelles, a gated transport channel, and a moving fluorescent tracer.',
     fps: 12,
     animated: true,
   },
   {
-    id: 'bacteriophage',
+    id: 'molecular-observatory',
     chapter: 'interests',
-    sourceKey: 'bacteriophage',
-    label: 'Bacteriophage',
-    description: 'ASCII rendering of a bacteriophage capsid and tail assembly.',
+    sourceKey: 'interests',
+    label: 'Molecular systems observatory',
+    description:
+      'A ligand approaches a membrane receptor as a branching, pulsing signal cascade travels through a molecular systems landscape.',
     fps: 12,
     animated: true,
   },
   {
-    id: 'hemoglobin',
+    id: 'protein-foldscape',
     chapter: 'research',
-    sourceKey: 'hemoglobin',
-    label: 'Hemoglobin',
-    description: 'ASCII ribbon rendering of the hemoglobin tertiary structure.',
+    sourceKey: 'research',
+    label: 'Protein foldscape',
+    description:
+      'A changing conformational ensemble links a flexible backbone, transient contacts, and an abstract energy basin; it does not depict a single experimentally determined structure.',
     fps: 12,
     animated: true,
   },
   {
-    id: 'brain',
+    id: 'inference-field',
     chapter: 'computation',
-    sourceKey: 'brain',
-    label: 'Brain',
-    description: 'ASCII point-cloud rendering of brain anatomy.',
+    sourceKey: 'computation',
+    label: 'Inference field',
+    description:
+      'An abstract recurring visualization moves from sequence-like input through a shifting confidence field toward a reconstructed model; it represents a workflow, not a scientific result.',
     fps: 12,
     animated: true,
   },
   {
-    id: 'earth',
+    id: 'attractor-chamber',
     chapter: 'future',
-    sourceKey: 'earth',
-    label: 'Earth',
-    description: 'ASCII globe rendering with drifting cloud bands.',
+    sourceKey: 'future',
+    label: 'Systems attractor chamber',
+    description:
+      'A changing regulatory network routes recurrent signals between coupled nodes, showing an abstract systems-biology landscape rather than a specific measured pathway.',
+    fps: 12,
+    animated: true,
+  },
+  {
+    id: 'evidence-constellation',
+    chapter: 'publications',
+    sourceKey: 'publications',
+    label: 'Evidence constellation',
+    description:
+      'An abstract archive of figure-like panels and evidence signals; intentionally no paper titles, citations, or publication claims are represented.',
+    fps: 12,
+    animated: true,
+  },
+  {
+    id: 'signal-exchange',
+    chapter: 'contact',
+    sourceKey: 'contact',
+    label: 'Signal exchange',
+    description:
+      'A recurring signal routes through a connected field toward an open endpoint, accompanying the portfolio’s actual contact paths without simulating a sent message.',
     fps: 12,
     animated: true,
   },

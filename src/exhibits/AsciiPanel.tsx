@@ -43,6 +43,8 @@ export function AsciiPanel({
   caption,
 }: AsciiPanelProps) {
   const frameRef = useRef<HTMLPreElement | null>(null)
+  const textRef = useRef<HTMLSpanElement | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const quality = useQualityProfile()
 
   const resolved = useExhibitSource(exhibit)
@@ -93,7 +95,8 @@ export function AsciiPanel({
       aria-label={description}
     >
       <pre className="ascii-panel__frame" aria-hidden="true" ref={frameRef}>
-        {initialFrame}
+        <canvas className="ascii-panel__color-layer" ref={canvasRef} />
+        <span ref={textRef}>{initialFrame}</span>
       </pre>
 
       {source ? (
@@ -102,6 +105,8 @@ export function AsciiPanel({
           fpsCap={quality.fpsCap}
           playing={playbackState.playback === 'playing'}
           frameRef={frameRef}
+          textRef={textRef}
+          canvasRef={canvasRef}
         />
       ) : null}
 

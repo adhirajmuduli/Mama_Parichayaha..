@@ -40,7 +40,9 @@ html[data-experience='immersive'] .stage-root {
    not attached card states yet — the FIRST chapter is shown in its settled
    composition so the visitor lands on the hero instead of a stacked document
    that scrolls as seven separate sections. The stage stays fixed either way. */
-html[data-experience='immersive'] .stage-root:not([data-hydrated='true']) .stage-card:first-of-type {
+html[data-experience='immersive']
+  .stage-root:not([data-hydrated='true'])
+  .stage-card:first-of-type {
   visibility: visible;
   content-visibility: visible;
   position: absolute;
@@ -166,26 +168,6 @@ html[data-experience='immersive'] .stage-card[data-card-state='settled'] {
   }
 }
 
-/* Mobile: the visual panel is a backdrop; the card is a bottom sheet. */
-@media (max-width: 55.99rem) {
-  html[data-experience='immersive'] .stage-card[data-card-state='settled'],
-  html[data-experience='immersive'] .stage-card[data-card-state='outgoing'],
-  html[data-experience='immersive'] .stage-card[data-card-state='incoming'] {
-    align-items: end;
-    padding: 0;
-  }
-
-  .stage-card__split {
-    grid-template-rows: minmax(0, 1fr) auto;
-    height: 100%;
-    max-height: 100%;
-  }
-
-  .stage-card__visual-slot {
-    min-height: 0;
-  }
-}
-
 /* The surface is a scrollable content measure — boxed in document mode for
    readability, OPEN in immersive (no border, no panel, no glass): the text
    floats on the plasma with the vignette providing contrast. */
@@ -200,6 +182,51 @@ html[data-experience='immersive'] .stage-card[data-card-state='settled'] {
   background: color-mix(in oklab, var(--site-panel-opaque) 55%, transparent);
 }
 
+.stage-card__projects {
+  margin-top: 1.25rem;
+}
+
+.stage-card__projects > ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0.65rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stage-card__projects a {
+  display: grid;
+  gap: 0.2rem;
+  height: 100%;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid color-mix(in oklab, var(--card-accent) 24%, transparent);
+  border-radius: 0.65rem;
+  text-decoration: none;
+  background: color-mix(in oklab, var(--site-panel-opaque) 52%, transparent);
+}
+
+.stage-card__projects a:hover,
+.stage-card__projects a:focus-visible {
+  border-color: color-mix(in oklab, var(--card-accent) 65%, transparent);
+}
+
+.stage-card__projects a span:first-child {
+  color: var(--site-foreground);
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+.stage-card__projects a span:last-child {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--site-muted);
+  font-size: 0.62rem;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 html[data-experience='immersive'] .stage-card .stage-card__surface {
   border: 0;
   border-radius: 0;
@@ -211,6 +238,36 @@ html[data-experience='immersive'] .stage-card .stage-card__surface {
   /* Above the full-bleed spiral layer (z-index 10) inside the deck's
      stacking context: the copy is never painted over by helix tiles. */
   z-index: 12;
+}
+
+/* Mobile: the copy owns the TOP band and the visual owns the band below it.
+   The copy is a bounded scroll region (long chapters scroll inside the
+   card, never the page), so the composition always fits one viewport — no
+   section ever scrolls out of the frame. This block sits AFTER the immersive
+   surface rule above, because both share the same specificity: the copy band
+   must win over the desktop `max-height: 82svh`. */
+@media (max-width: 55.99rem) {
+  html[data-experience='immersive'] .stage-card[data-card-state='settled'],
+  html[data-experience='immersive'] .stage-card[data-card-state='outgoing'],
+  html[data-experience='immersive'] .stage-card[data-card-state='incoming'] {
+    align-items: end;
+    padding: 0;
+  }
+
+  html[data-experience='immersive'] .stage-card__split {
+    grid-template-rows: auto minmax(0, 1fr);
+    align-items: stretch;
+    height: 100%;
+    max-height: 100%;
+  }
+
+  html[data-experience='immersive'] .stage-card .stage-card__surface {
+    max-height: 44svh;
+  }
+
+  .stage-card__visual-slot {
+    min-height: 0;
+  }
 }
 
 /* Solo (spiral) chapters: the copy sits over open plasma with the helix
@@ -236,8 +293,7 @@ html[data-experience='immersive'] .stage-card .stage-card__surface {
 /* Keyboard focus lands on the card's scroll region after a chapter jump.
    A quiet accent rule instead of the global hard box around the whole copy. */
 html[data-experience='immersive'] .stage-card__surface:focus-visible {
-  outline: 1px solid
-    color-mix(in oklab, var(--card-accent, var(--site-accent)) 45%, transparent);
+  outline: 1px solid color-mix(in oklab, var(--card-accent, var(--site-accent)) 45%, transparent);
   outline-offset: 0.65rem;
   border-radius: 0.5rem;
 }
@@ -265,30 +321,18 @@ html[data-experience='immersive'] .stage-card[data-card-state='settled'] .stage-
   opacity: 1;
 }
 
-html[data-experience='immersive']
-  .stage-card[data-card-state='outgoing']
-  .stage-card__surface,
-html[data-experience='immersive']
-  .stage-card[data-card-state='outgoing']
-  .stage-card__visual-slot {
+html[data-experience='immersive'] .stage-card[data-card-state='outgoing'] .stage-card__surface,
+html[data-experience='immersive'] .stage-card[data-card-state='outgoing'] .stage-card__visual-slot {
   transform: translateY(calc(var(--card-exit-shift, -1) * 2.75rem));
 }
 
-html[data-experience='immersive']
-  .stage-card[data-card-state='incoming']
-  .stage-card__surface,
-html[data-experience='immersive']
-  .stage-card[data-card-state='incoming']
-  .stage-card__visual-slot {
+html[data-experience='immersive'] .stage-card[data-card-state='incoming'] .stage-card__surface,
+html[data-experience='immersive'] .stage-card[data-card-state='incoming'] .stage-card__visual-slot {
   transform: translateY(2.75rem);
 }
 
-html[data-experience='immersive']
-  .stage-card[data-card-state='settled']
-  .stage-card__surface,
-html[data-experience='immersive']
-  .stage-card[data-card-state='settled']
-  .stage-card__visual-slot {
+html[data-experience='immersive'] .stage-card[data-card-state='settled'] .stage-card__surface,
+html[data-experience='immersive'] .stage-card[data-card-state='settled'] .stage-card__visual-slot {
   transform: translateY(0);
 }
 
