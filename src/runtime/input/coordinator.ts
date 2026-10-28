@@ -58,13 +58,21 @@ export function useJourneyInput({ runtime, enabled, hostRef }: JourneyInputOptio
 
   const restUnitsRef = useRef(runtime.getUnits())
 
-  // Track the last settle so magnetic targets hold their hysteresis anchor.
+  // Track the last settle so magnetic targets hold their hysteresis anchor,
+  // and mirror every settle into the URL hash (P11): the journey stays
+  // deep-linkable without a rail — replaceState, never pushState, so the
+  // back button leaves the site instead of stepping through 50-unit hops.
   useEffect(() => {
     if (!enabled) return
 
     return runtime.subscribeSettle((info) => {
       restUnitsRef.current = runtime.getUnits()
-      void info
+
+      const targetHash = `#${info.chapterId}`
+
+      if (window.location.hash !== targetHash) {
+        window.history.replaceState(null, '', targetHash)
+      }
     })
   }, [runtime, enabled])
 
@@ -110,13 +118,21 @@ export function useJourneyInput({ runtime, enabled, hostRef }: JourneyInputOptio
         restUnitsRef.current,
       )
 
+      // P11 gesture clamp: one chapter per gesture, maximum. A violent
+      // wheel burst could otherwise fling several slots in a single release
+      // (the magnetic hysteresis commits past the next center), which read
+      // as sections blurring past. Continuous scrolling still flows
+      // chapter-by-chapter because restUnits advances with each settle.
+      const rest = restUnitsRef.current
+      const clamped = Math.max(rest - SLOT_UNITS, Math.min(rest + SLOT_UNITS, target))
+
       if (reducedMotionRef.current) {
-        runtime.jumpToUnits(target)
+        runtime.jumpToUnits(clamped)
         useNarrativeStore.getState().requestKeyboardFocus()
         return
       }
 
-      runtime.navigateToUnits(target)
+      runtime.navigateToUnits(clamped)
     }
 
     const scheduleMagneticSettle = (velocity?: number) => {

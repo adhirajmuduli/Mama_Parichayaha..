@@ -16,20 +16,20 @@ async function waitForSettled(page: import('@playwright/test').Page, chapterId: 
 }
 
 /**
- * Wheel travel semantics (the magnetic contract, tests/unit/journey-domain):
- * events are clamped to 80px = 8 units; events spaced FARTHER apart than the
- * 100ms magnetic debounce settle back to the nearest center (isolated clicks
- * never accumulate — the designed feel), while a burst inside one debounce
- * window accumulates and flings to the next center past the input:
+ * Wheel travel semantics (the magnetic contract + P11 gesture clamp):
+ * events are clamped to 80px = 8 units; a burst inside one 100ms debounce
+ * window accumulates and the magnetic settle commits — but the P11 clamp
+ * caps every gesture at ONE chapter (rest ± 50 units). Isolated events
+ * spaced beyond the debounce settle back to the nearest center.
  *
- *   12 rapid forward events → input 121 → fling commits to research (125),
- *    4 rapid backward events → input  -7 → fling commits to contact (-25).
+ *   4-event forward burst  → input 57  → commits to interests (75),
+ *   4-event backward burst → input −7  → commits to contact (−25).
  *
- * `page.mouse.wheel` roundtrips are trace/pipeline-latency dependent and can
- * exceed the 100ms debounce per event, so multi-event bursts dispatch
- * synthetic WheelEvents at the real target with a deterministic cadence —
- * the identical listener → clamp → nudge → debounce → magnetic → spring
- * path. One real-input test covers the browser pipeline itself.
+ * `page.mouse.wheel` roundtrips are trace/pipeline-latency dependent, so
+ * multi-event bursts dispatch synthetic WheelEvents at the real target
+ * with a deterministic cadence — the identical listener → clamp → nudge →
+ * debounce → magnetic → spring path. One real-input test covers the
+ * browser pipeline itself.
  */
 async function wheelBurst(
   page: import('@playwright/test').Page,
@@ -38,8 +38,15 @@ async function wheelBurst(
 ) {
   await page.evaluate(
     ({ count, delta }: { count: number; delta: number }) => {
+      // Dispatch at the stage host: the coordinator's wheel listener lives
+      // there, and the host is never inside a card scroll region. Dispatching
+      // at the viewport center instead lets tall cards (contact) claim the
+      // wheel — correct product behavior (arbitration), wrong for
+      // travel-semantics tests.
       const target =
-        document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2) ?? document.body
+        document.querySelector('.stage-root') ??
+        document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2) ??
+        document.body
 
       for (let event = 0; event < count; event += 1) {
         target.dispatchEvent(
@@ -56,7 +63,7 @@ async function wheelBurst(
   )
 }
 
-test('travels forward by wheel and settles past the next chapter', async ({ page }, testInfo) => {
+test('travels forward by wheel and settles at the next chapter', async ({ page }, testInfo) => {
   test.skip(!isScripted(testInfo), 'journey input requires JavaScript')
   test.skip(isReducedMotion(testInfo), 'reduced motion jumps instantly; see its own test')
 
@@ -64,13 +71,15 @@ test('travels forward by wheel and settles past the next chapter', async ({ page
   await waitForSettled(page, 'origins')
 
   await page.mouse.move(640, 360)
-  await wheelBurst(page, 12, 600)
+  await wheelBurst(page, 4, 600)
 
+  // P11 clamp: one chapter per gesture, however violent the burst.
+  await waitForSettled(page, 'interests')
+  await expect(page).toHaveURL(/#interests$/)
+
+  // A second burst advances exactly one more chapter.
+  await wheelBurst(page, 4, 600)
   await waitForSettled(page, 'research')
-  await expect(page.locator('.progress-rail__link[aria-current="step"]')).toHaveAttribute(
-    'href',
-    '#research',
-  )
 })
 
 test('travels backward by wheel across the seam', async ({ page }, testInfo) => {
@@ -102,26 +111,6 @@ test('bounces an isolated real wheel click back to the nearest center', async ({
   await page.mouse.wheel(0, 600)
 
   await waitForSettled(page, 'origins')
-  await expect(page.locator('.progress-rail__link[aria-current="step"]')).toHaveAttribute(
-    'href',
-    '#origins',
-  )
-})
-
-test('navigates through the rail with history updates', async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== 'desktop', 'the labeled rail is a desktop surface')
-
-  await page.goto('/', { waitUntil: 'domcontentloaded' })
-  await waitForSettled(page, 'origins')
-
-  await page.locator('a[href="#research"]').click()
-
-  await waitForSettled(page, 'research')
-  await expect(page).toHaveURL(/#research$/)
-  await expect(page.locator('.progress-rail__link[aria-current="step"]')).toHaveAttribute(
-    'href',
-    '#research',
-  )
 })
 
 test('maps keyboard intents with focus handoff', async ({ page }, testInfo) => {
@@ -183,9 +172,9 @@ test('keeps the visible window tight while traveling', async ({ page }, testInfo
   await expect(page.locator('[data-card-state="incoming"]')).toHaveCount(0)
 
   await page.mouse.move(640, 360)
-  await wheelBurst(page, 12, 600)
+  await wheelBurst(page, 4, 600)
 
-  await waitForSettled(page, 'research')
+  await waitForSettled(page, 'interests')
 
   await expect(page.locator('[data-card-state="settled"]')).toHaveCount(1)
   await expect(page.locator('[data-card-state="outgoing"]')).toHaveCount(0)

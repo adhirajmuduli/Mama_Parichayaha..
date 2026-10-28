@@ -79,6 +79,14 @@ export function buildClientContent(content: ValidatedContent): ClientContent {
             clientItem.status = item.status
           }
 
+          if (item.href !== undefined) {
+            clientItem.href = item.href
+          }
+
+          if (item.external !== undefined) {
+            clientItem.external = item.external
+          }
+
           return clientItem
         }),
       },
@@ -105,6 +113,7 @@ export function buildClientContent(content: ValidatedContent): ClientContent {
     description: project.description,
     href: project.href,
     external: true,
+    gradient: [...project.gradient] as [string, string],
   }))
 
   const clientProfiles: ClientPublicProfile[] = site.publicProfiles.map((publicProfile) => ({

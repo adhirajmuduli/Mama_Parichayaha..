@@ -95,7 +95,7 @@ function StageBody({ content }: { content: ClientContent }) {
     <>
       <StageBackground chapters={content.chapters} />
       <StageDocument content={content} immersive={immersive} hostRef={hostRef} />
-      <ProgressRail content={content} immersive={immersive} />
+      <ProgressRail content={content} />
       <BlobCursor />
       {FEATURES.diagnostics ? <DiagnosticsOverlay /> : null}
     </>

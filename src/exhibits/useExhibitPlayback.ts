@@ -1,19 +1,20 @@
 'use client'
 
 /**
- * Exhibit playback gating (new_plan.md §10.4 state machine, §7.5) — derives
- * per-exhibit playback from capability, quality, focus and visibility inputs
- * and publishes discrete state to the exhibits store.
+ * Exhibit playback gating (new_plan.md §10.4, P11) — derives per-exhibit
+ * playback from capability, quality, focus and visibility inputs and
+ * publishes discrete state to the exhibits store.
  *
- * static: no animation possible (reduced motion, fpsCap 0, unanimated source).
- * playing: visible window + nothing suspending.
- * paused: user paused (persists while the chapter stays visible).
- * idle: chapter outside the visible window.
+ * P11 simplification: with the user controls removed as redundant,
+ * playback is automatic:
+ *   static — no animation possible (reduced motion, fpsCap 0, unanimated
+ *            source, save-data, or the feature flag off);
+ *   playing — chapter visible + animatable;
+ *   idle — chapter outside the visible window.
  */
 
 import { useEffect, useState } from 'react'
 
-import type { ExhibitPlayback } from '@/types/experience'
 import { FEATURES } from '@/config/flags'
 import { useCapabilities } from '@/runtime/capabilities'
 import { useQualityProfile } from '@/runtime/quality'
@@ -28,13 +29,7 @@ export interface ExhibitPlaybackInputs {
 }
 
 export interface ExhibitPlaybackState {
-  playback: ExhibitPlayback
-  /** User pause persisted across chapter visits for this exhibit. */
-  userPaused: boolean
-  setUserPaused(next: boolean): void
-  /** True when a restart was just requested (consumed by the player). */
-  restartToken: number
-  requestRestart(): void
+  playback: 'idle' | 'playing' | 'static'
 }
 
 export function useExhibitPlayback({
@@ -44,13 +39,11 @@ export function useExhibitPlayback({
 }: ExhibitPlaybackInputs): ExhibitPlaybackState {
   const capabilities = useCapabilities()
   const quality = useQualityProfile()
-  const [userPaused, setUserPaused] = useState(false)
-  const [restartToken, setRestartToken] = useState(0)
   const [documentHidden, setDocumentHidden] = useState(false)
   const applyPlayback = useExhibitsStore((state) => state.applyPlayback)
 
   // Track tab visibility locally; the scheduler already stops, but playback
-  // state must reflect suspension too (controls + diagnostics read it).
+  // state must reflect suspension too (diagnostics read it).
   useEffect(() => {
     const sync = () => {
       setDocumentHidden(document.visibilityState === 'hidden')
@@ -69,32 +62,19 @@ export function useExhibitPlayback({
     animated &&
     !capabilities.reducedMotion &&
     quality.fpsCap > 0 &&
-    !capabilities.saveData
+    !capabilities.saveData &&
+    !documentHidden
 
-  let playback: ExhibitPlayback = 'idle'
-
-  if (!active) {
-    playback = 'idle'
-  } else if (!canAnimate) {
-    playback = 'static'
-  } else if (documentHidden) {
-    playback = 'paused'
-  } else if (userPaused) {
-    playback = 'paused'
-  } else {
-    playback = 'playing'
-  }
+  const playback: ExhibitPlaybackState['playback'] = !active
+    ? 'idle'
+    : canAnimate
+      ? 'playing'
+      : 'static'
 
   // Publish discrete changes once (the store dedupes identical writes).
   useEffect(() => {
     applyPlayback(exhibitId, playback)
   }, [applyPlayback, exhibitId, playback])
 
-  return {
-    playback,
-    userPaused,
-    setUserPaused,
-    restartToken,
-    requestRestart: () => setRestartToken((token) => token + 1),
-  }
+  return { playback }
 }

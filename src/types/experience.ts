@@ -47,8 +47,14 @@ export interface JourneyFrame {
 /** Lifecycle of an exhibit slot as published to stores (low-frequency). */
 export type ExhibitAvailability = 'placeholder' | 'ready' | 'error'
 
-/** Playback state machine per exhibit (new_plan.md §10.4). */
-export type ExhibitPlayback = 'idle' | 'playing' | 'paused' | 'static'
+/**
+ * Playback state per exhibit (new_plan.md §10.4, P11 simplification):
+ * the user controls were removed as redundant — playback is automatic.
+ * 'static' = no animation possible (reduced motion, fpsCap 0, unanimated
+ * source or feature off); 'playing' = active + animatable; 'idle' = the
+ * chapter is outside the visible window.
+ */
+export type ExhibitPlayback = 'idle' | 'playing' | 'static'
 
 /** Which component renders a chapter's visual slot (R15). */
 export type ChapterVisualKind = 'ascii' | 'spiral' | 'lanyard'
@@ -83,6 +89,9 @@ export interface ClientChapterDetailItem {
   title: string
   description: string
   status?: 'active' | 'completed' | 'experimental'
+  /** Optional link target (internal path or absolute URL). */
+  href?: string
+  external?: boolean
 }
 
 export interface ClientChapterDetail {
@@ -132,6 +141,8 @@ export interface ClientProject {
   description: string
   href: string
   external: boolean
+  /** Two-stop tile gradient [from, to] — spiral cards are never uncolored. */
+  gradient: readonly [string, string]
 }
 
 export interface ClientPublicProfile {

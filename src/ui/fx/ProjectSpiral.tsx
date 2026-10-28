@@ -5,18 +5,16 @@
  * in docs/assets/fx-attributions.md). The upstream helix math is preserved
  * verbatim; the integration is ours:
  *
- *   - the private rAF loop is replaced by the shared runtime scheduler
- *     (new_plan.md §11.1: one app-level loop; the spiral never runs while
- *     its chapter is outside the visible window),
- *   - tiles are TEXT cards (ClientProject: title/description/links) in our
- *     mono styling — images arrive later by extending the tile body,
+ *   - FULL-BLEED (P11): the spiral renders as a fixed stage layer centered
+ *     on the viewport — a section in itself, never boxed in a column;
+ *   - tiles are TEXT cards from the owner's real repositories
+ *     (github.com/adhirajmuduli), each carrying a two-stop gradient identity;
  *   - the animated layer is aria-hidden; screen readers get a plain list of
- *     the same links (upstream labeled the animated layer instead),
- *   - reduced motion renders a static fan (no loop, no scheduler work),
- *   - quality fpsCap skips ticks when behind; scroll mode is dropped (the
- *     immersive stage does not scroll),
- *   - the drag surface is tagged for the journey coordinator so spiral drags
- *     and journey drags never fight over the same pointer.
+ *     the same links;
+ *   - reduced motion renders a static fan (no loop, no scheduler work);
+ *   - the private rAF loop is replaced by the shared runtime scheduler,
+ *     gated on the chapter's visibility;
+ *   - the drag surface is tagged so spiral drags never fight journey input.
  */
 
 import {
@@ -36,7 +34,7 @@ export interface ProjectSpiralProps {
   active: boolean
   /** Quality tier cap; ticks are skipped to honor it. */
   fpsCap: number
-  /** Per-chapter accent tint for tile borders/glow. */
+  /** Per-chapter accent tint. */
   accent: string
   reducedMotion: boolean
   speed?: number
@@ -53,16 +51,14 @@ const smoothstep = (min: number, max: number, value: number) => {
 }
 
 // Helix geometry (upstream defaults preserved).
-const RADIUS = 170
-const CARD_WIDTH = 168
-const CARD_HEIGHT = 116
-const VERTICAL_SPACING = 78
+const RADIUS = 200
+const CARD_WIDTH = 200
+const CARD_HEIGHT = 128
+const VERTICAL_SPACING = 90
 const PERSPECTIVE = 1000
 const CARDS_PER_TURN = 7
-const CARD_TILT = 0
 const CENTER_SCALE = 1.15
-const EDGE_FADE = 0.3
-const EDGE_BLUR = 5
+const EDGE_FADE = 0.34
 
 export function ProjectSpiral({
   projects,
@@ -137,8 +133,8 @@ export function ProjectSpiral({
       const half = count / 2
       const width = Math.max(bounds.width, 1)
       const height = Math.max(bounds.height, 1)
-      const fit = Math.min(1, width / (CARD_WIDTH * 2.8), height / (CARD_HEIGHT * 2.35))
-      const responsiveRadius = Math.min(RADIUS, Math.max(72, width * 0.36)) * fit
+      const fit = Math.min(1, width / (CARD_WIDTH * 2.4), height / (CARD_HEIGHT * 2.1))
+      const responsiveRadius = Math.min(RADIUS, Math.max(90, width * 0.3)) * fit
       const fadeStart = clamp(1 - EDGE_FADE, 0, 0.98)
       const turnSize = Math.max(CARDS_PER_TURN, 1)
 
@@ -150,18 +146,20 @@ export function ProjectSpiral({
         const opacity = 1 - smoothstep(fadeStart, 1, edge)
         const focus = 1 - Math.min(Math.abs(offset) / Math.max(turnSize * 0.65, 1), 1)
         const scale = (1 + (CENTER_SCALE - 1) * focus) * fit
-        const angle = offset * (360 / turnSize) + CARD_TILT
+        const angle = offset * (360 / turnSize)
         const angleRadians = (angle * Math.PI) / 180
         const x = Math.sin(angleRadians) * responsiveRadius
         const z = Math.cos(angleRadians) * responsiveRadius
         const depthScale = clamp(PERSPECTIVE / Math.max(PERSPECTIVE - z, 1), 0.72, 1.45)
         const visualScale = scale * depthScale
         const depth = (z / Math.max(responsiveRadius, 1) + 1) / 2
-        const blur = EDGE_BLUR * smoothstep(0.35, 1, edge)
+        // No per-tile blur: eight animated blur layers were the most
+        // expensive paint on this chapter. The opacity ramp carries the depth
+        // read on its own.
 
         card.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${offset * VERTICAL_SPACING * fit}px, 0) scale(${visualScale})`
         card.style.opacity = opacity.toFixed(3)
-        card.style.filter = blur > 0.01 ? `blur(${blur.toFixed(2)}px)` : 'none'
+        card.style.filter = 'none'
         card.style.zIndex = String(Math.round(depth * 100000) + index)
         card.style.pointerEvents = opacity > 0.25 ? 'auto' : 'none'
       })
@@ -200,9 +198,10 @@ export function ProjectSpiral({
   return (
     <div
       ref={rootRef}
-      className={`spiral ${staticMode ? 'spiral--static' : ''} ${className}`.trim()}
+      className={`spiral-stage ${staticMode ? 'spiral-stage--static' : ''} ${className}`.trim()}
       data-spiral-surface=""
       data-spiral-state={staticMode ? 'static' : 'auto'}
+      data-visual-active={active ? 'true' : 'false'}
       style={rootStyle}
       onMouseEnter={() => {
         hoveredRef.current = true
@@ -252,7 +251,7 @@ export function ProjectSpiral({
         ))}
       </ul>
 
-      <div className="spiral__stage" aria-hidden="true">
+      <div className="spiral-stage__helix" aria-hidden="true">
         {tiles.map(({ project, key }, index) => (
           <a
             key={key}
@@ -265,6 +264,12 @@ export function ProjectSpiral({
             rel="noreferrer noopener"
             aria-hidden="true"
             tabIndex={-1}
+            style={
+              {
+                '--tile-gradient-from': project.gradient[0],
+                '--tile-gradient-to': project.gradient[1],
+              } as CSSProperties
+            }
           >
             <span className="spiral__tile-title">{project.title}</span>
             <span className="spiral__tile-description">{project.description}</span>

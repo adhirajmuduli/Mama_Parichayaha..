@@ -1,9 +1,10 @@
 import { expect, test, type TestInfo } from '@playwright/test'
 
 /**
- * Exhibit contract (new_plan.md §10, §12.7, mock era): labeled panels,
- * working controls on capable devices, reduced-motion static frames,
- * the lanyard/spiral slot wiring, and the ≤2-active-window discipline.
+ * Exhibit contract (new_plan.md §10, §12.7, P11): labeled panels, automatic
+ * playback (the redundant pause/restart controls are gone), reduced-motion
+ * static frames, the full-bleed spiral with real repository tiles, the
+ * lanyard fallbacks, and the ≤2-active-window discipline.
  */
 
 const isScripted = (testInfo: TestInfo) => testInfo.project.name !== 'no-js'
@@ -16,7 +17,7 @@ async function waitForSettled(page: import('@playwright/test').Page, chapterId: 
   })
 }
 
-test('renders labeled panels with mock sources and working controls', async ({
+test('renders labeled panels with mock sources and automatic playback', async ({
   page,
 }, testInfo) => {
   test.skip(!isScripted(testInfo), 'the exhibit engine requires JavaScript')
@@ -35,37 +36,28 @@ test('renders labeled panels with mock sources and working controls', async ({
   await expect(panel).toHaveAttribute('data-mock', 'true')
   await expect(panel).not.toHaveAttribute('data-ascii-state', 'idle')
 
-  const controls = page.getByRole('group', { name: 'Bacteriophage animation controls' })
+  // P11: no user controls anywhere — playback is automatic.
+  await expect(page.locator('[data-animation-controls]')).toHaveCount(0)
 
-  await expect(controls).toBeVisible()
-
-  const pauseButton = controls.getByRole('button', { name: 'Pause animation' })
-  await expect(pauseButton).toBeEnabled()
-
-  await expect(controls.getByRole('status')).toContainText('Animation playing.')
-
-  // Pause freezes the frame; play resumes.
-  await pauseButton.click()
-  await expect(controls.getByRole('button', { name: 'Play animation' })).toBeEnabled()
-  await expect(controls.getByRole('status')).toContainText('Animation paused.')
-
-  await controls.getByRole('button', { name: 'Play animation' }).click()
-  await expect(controls.getByRole('status')).toContainText('Animation playing.')
-
-  // Restart rewinds to the first frame without breaking the grid.
+  // The mock source animates on its own: two samples differ over time.
   const frame = panel.locator('pre')
+  const first = await frame.textContent()
 
-  await controls.getByRole('button', { name: 'Restart animation' }).click()
+  await page.waitForTimeout(600)
 
-  const lines = (await frame.textContent())?.split('\n') ?? []
+  const second = await frame.textContent()
+
+  expect(first?.length ?? 0).toBeGreaterThan(0)
+  expect(second).not.toBe(first)
+
+  // The grid stays stable across samples.
+  const lines = (second ?? '').split('\n')
 
   expect(lines.length).toBeGreaterThan(0)
   lines.forEach((line) => expect(line.length).toBeGreaterThan(0))
 })
 
-test('renders static panels with explained controls under reduced motion', async ({
-  page,
-}, testInfo) => {
+test('renders static panels under reduced motion', async ({ page }, testInfo) => {
   test.skip(!isReducedMotion(testInfo), 'reduced-motion playback is project-gated')
 
   await page.goto('/', { waitUntil: 'domcontentloaded' })
@@ -74,18 +66,18 @@ test('renders static panels with explained controls under reduced motion', async
   await page.keyboard.press('2')
   await waitForSettled(page, 'interests')
 
-  const controls = page.getByRole('group', { name: 'Bacteriophage animation controls' })
+  const panel = page.locator('#interests .ascii-panel')
 
-  await expect(controls.getByRole('button', { name: 'Play animation' })).toBeDisabled()
-  await expect(controls.getByRole('button', { name: 'Restart animation' })).toBeDisabled()
-  await expect(controls.getByRole('status')).toContainText(
-    'interests content remains fully available',
-  )
+  await expect(panel).toHaveAttribute('role', 'img')
 
-  // The static frame still renders the mock source's first frame.
-  const frame = page.locator('#interests .ascii-panel pre')
+  const frame = panel.locator('pre')
+  const first = await frame.textContent()
 
-  expect((await frame.textContent())?.length ?? 0).toBeGreaterThan(0)
+  await page.waitForTimeout(600)
+
+  // Static: the frame never advances under reduced motion.
+  expect(await frame.textContent()).toBe(first)
+  expect(first?.length ?? 0).toBeGreaterThan(0)
 })
 
 test('caps the active window at two panels', async ({ page }, testInfo) => {
@@ -94,7 +86,6 @@ test('caps the active window at two panels', async ({ page }, testInfo) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   await waitForSettled(page, 'origins')
 
-  // At rest and in flight, no more than two panels may be active.
   await page.mouse.move(640, 360)
 
   const activeCounts: number[] = []
@@ -109,12 +100,12 @@ test('caps the active window at two panels', async ({ page }, testInfo) => {
 
   await sample()
 
-  // Deterministic-cadence burst (see journey.spec.ts): one magnetic fling.
+  // Deterministic-cadence burst (see journey.spec.ts): one clamped fling.
   await page.evaluate(() => {
     const target =
       document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2) ?? document.body
 
-    for (let event = 0; event < 12; event += 1) {
+    for (let event = 0; event < 4; event += 1) {
       target.dispatchEvent(
         new WheelEvent('wheel', { deltaY: 600, deltaMode: 0, cancelable: true, bubbles: true }),
       )
@@ -122,7 +113,7 @@ test('caps the active window at two panels', async ({ page }, testInfo) => {
   })
 
   await sample()
-  await waitForSettled(page, 'research')
+  await waitForSettled(page, 'interests')
   await sample()
 
   expect(Math.max(...activeCounts)).toBeLessThanOrEqual(2)
@@ -156,7 +147,7 @@ test('falls back to the static portrait card on mobile and reduced motion', asyn
   await expect(page.locator('#origins .lanyard-fallback')).toBeVisible()
 })
 
-test('renders the research spiral with real project links', async ({ page }, testInfo) => {
+test('renders the full-bleed spiral with real repository tiles', async ({ page }, testInfo) => {
   test.skip(!isScripted(testInfo), 'the spiral requires the runtime')
   test.skip(isReducedMotion(testInfo), 'reduced motion renders the static fan; see below')
 
@@ -166,16 +157,32 @@ test('renders the research spiral with real project links', async ({ page }, tes
   await page.keyboard.press('3')
   await waitForSettled(page, 'research')
 
-  const spiral = page.locator('#research .spiral')
+  const spiralStage = page.locator('#research .spiral-stage')
 
-  await expect(spiral).toBeVisible()
+  await expect(spiralStage).toBeAttached()
 
-  const animatedTiles = spiral.locator('.spiral__tile')
+  const animatedTiles = spiralStage.locator('.spiral__tile')
 
   expect(await animatedTiles.count()).toBeGreaterThan(0)
 
+  const first = animatedTiles.first()
+
+  await expect(first).toHaveAttribute('href', /github\.com/)
+
+  const gradientVars = await first.evaluate((node) => {
+    const anchor = node as HTMLAnchorElement
+
+    return {
+      from: anchor.style.getPropertyValue('--tile-gradient-from'),
+      to: anchor.style.getPropertyValue('--tile-gradient-to'),
+    }
+  })
+
+  expect(gradientVars.from).toMatch(/^#/)
+  expect(gradientVars.to).toMatch(/^#/)
+
   // The screen-reader list mirrors every tile link.
-  const srLinks = spiral.locator('.spiral__sr-list a')
+  const srLinks = spiralStage.locator('.spiral__sr-list a')
 
   expect(await srLinks.count()).toBe(await animatedTiles.count())
 })
@@ -189,7 +196,10 @@ test('renders the static spiral fan under reduced motion', async ({ page }, test
   await page.keyboard.press('3')
   await waitForSettled(page, 'research')
 
-  await expect(page.locator('#research .spiral')).toHaveAttribute('data-spiral-state', 'static')
+  await expect(page.locator('#research .spiral-stage')).toHaveAttribute(
+    'data-spiral-state',
+    'static',
+  )
 
   const tiles = page.locator('#research .spiral__tile')
 

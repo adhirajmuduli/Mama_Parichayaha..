@@ -97,30 +97,16 @@ describe('exhibits store', () => {
     useExhibitsStore.getState().applyPlayback('dna', 'playing')
     expect(useExhibitsStore.getState().playback['dna']).toBe('playing')
 
+    useExhibitsStore.getState().applyPlayback('dna', 'static')
+    expect(useExhibitsStore.getState().playback['dna']).toBe('static')
+
     // Re-applying the same value must not churn state.
     const availabilityBefore = useExhibitsStore.getState().availability
     useExhibitsStore.getState().applyAvailability('dna', 'ready')
     expect(useExhibitsStore.getState().availability).toBe(availabilityBefore)
-  })
 
-  it('sequences commands and consumes each exactly once', () => {
-    // The command slot is single-message by design (legacy contract): a
-    // second dispatch before consumption overwrites the first.
-    useExhibitsStore.getState().dispatchCommand('dna', 'toggle')
-
-    const first = useExhibitsStore.getState().consumeCommand()
-    const replay = useExhibitsStore.getState().consumeCommand()
-
-    expect(first?.kind).toBe('toggle')
-    expect(replay).toBeNull()
-
-    useExhibitsStore.getState().dispatchCommand('dna', 'restart')
-
-    const second = useExhibitsStore.getState().consumeCommand()
-
-    expect(second?.kind).toBe('restart')
-    expect(second?.sequence).toBeGreaterThan(first?.sequence ?? 0)
-
-    expect(useExhibitsStore.getState().consumeCommand()).toBeNull()
+    const playbackBefore = useExhibitsStore.getState().playback
+    useExhibitsStore.getState().applyPlayback('dna', 'static')
+    expect(useExhibitsStore.getState().playback).toBe(playbackBefore)
   })
 })

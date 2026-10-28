@@ -9,7 +9,9 @@
  *   - zero allocations per tick (scalar frame math + cached frame strings),
  *   - frame skipping when behind (index advances with elapsed time, never
  *     "+1 per tick"),
- *   - dev-only grid drift warning (first frame defines rows/cols).
+ *   - dev-only grid drift warning (first frame defines rows/cols; the
+ *     bookkeeping resets per source — placeholder upgrades are legitimate
+ *     grid changes).
  */
 
 import { useEffect, useRef, type RefObject } from 'react'
@@ -23,30 +25,14 @@ export interface AsciiFramePlayerProps {
   fpsCap: number
   /** 'playing' runs the loop; anything else renders one static frame. */
   playing: boolean
-  /** Restart requests bump this token (elapsed resets). */
-  restartToken: number
   frameRef: RefObject<HTMLPreElement | null>
 }
 
-export function AsciiFramePlayer({
-  source,
-  fpsCap,
-  playing,
-  restartToken,
-  frameRef,
-}: AsciiFramePlayerProps) {
+export function AsciiFramePlayer({ source, fpsCap, playing, frameRef }: AsciiFramePlayerProps) {
   const elapsedRef = useRef(0)
-  const lastNowRef = useRef<number | null>(null)
   const renderedIndexRef = useRef(-1)
   const gridRef = useRef<{ rows: number; cols: number } | null>(null)
   const warnedRef = useRef(false)
-
-  // Restart requests reset the clock.
-  useEffect(() => {
-    elapsedRef.current = 0
-    renderedIndexRef.current = -1
-    lastNowRef.current = null
-  }, [restartToken])
 
   useEffect(() => {
     const frame = frameRef.current
@@ -57,6 +43,8 @@ export function AsciiFramePlayer({
     // reference resets with every source change.
     gridRef.current = null
     warnedRef.current = false
+    renderedIndexRef.current = -1
+    elapsedRef.current = 0
 
     const effectiveFps = Math.max(0, Math.min(source.fps, fpsCap))
     const frameIntervalMs = effectiveFps > 0 ? 1000 / effectiveFps : 0

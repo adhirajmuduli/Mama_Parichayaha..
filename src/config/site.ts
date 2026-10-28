@@ -1,20 +1,17 @@
 /**
  * Site identity + metadata source of truth (new_plan.md §7.1).
  *
- * `siteUrl` prefers NEXT_PUBLIC_SITE_URL and falls back to the deployed
- * origin. It must remain a valid absolute URL or construction throws — the
- * fallback path guards against malformed env values.
- *
- * `lib/siteMetadata.ts` re-exports everything from here so existing importers
- * (robots, sitemap, manifest, opengraph-image, layout) keep working until they
- * are redirected in later phases; the shim is deleted with the legacy wave.
+ * `siteUrl` comes from NEXT_PUBLIC_SITE_URL (set per environment — e.g. the
+ * Netlify build env); the local fallback keeps canonical/robots/sitemap
+ * honest in development. NO production origin literal lives in the repo:
+ * deploy-time secret scanners flag origin literals that match env values.
  */
 
 import { readPublicString } from './env'
 
 import { siteContent } from '@/content'
 
-const defaultSiteOrigin = 'https://adhirajmuduli.netlify.app'
+const localDevelopmentOrigin = 'http://localhost:3000'
 
 function resolveSiteUrl(): URL {
   const configured = readPublicString(process.env.NEXT_PUBLIC_SITE_URL)
@@ -23,12 +20,12 @@ function resolveSiteUrl(): URL {
     try {
       return new URL(configured)
     } catch {
-      // Malformed override: fail to the default origin rather than crashing
+      // Malformed override: fail to the local fallback rather than crashing
       // metadata generation for every route.
     }
   }
 
-  return new URL(defaultSiteOrigin)
+  return new URL(localDevelopmentOrigin)
 }
 
 export const siteUrl: URL = resolveSiteUrl()

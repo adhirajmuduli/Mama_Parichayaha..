@@ -21,7 +21,7 @@ Set these through Netlify's environment-variable UI for the production context. 
 
 ## Resend sender staging
 
-`onboarding@resend.dev` may be used temporarily as `CONTACT_FROM_EMAIL` for an owner-only smoke test that delivers to the Resend account email. Before opening the form to public use, verify a sender address/domain in Resend and replace it with that verified sender. The endpoint remains fail-closed when the sender value is missing.
+The Resend-provided onboarding sender may be used temporarily as `CONTACT_FROM_EMAIL` for an owner-only smoke test that delivers to the Resend account email. Before opening the form to public use, verify a sender address/domain in Resend and replace it with that verified sender. The endpoint remains fail-closed when the sender value is missing.
 
 ## Required owner actions before production activation
 

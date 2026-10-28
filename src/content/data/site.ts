@@ -16,12 +16,18 @@ const phase8Source = {
 } as const
 
 export const siteContent = {
-  portrait: '/images/portrait.svg',
+  /**
+   * Lanyard face image. Drop your photo at `public/images/portrait.jpg`
+   * (or .png — update this one line to match the extension) and it renders
+   * on the badge; the committed file is a placeholder to overwrite.
+   */
+  portrait: '/images/portrait.jpg',
   contact: {
     id: 'contact',
     eyebrow: 'Contact and public profiles',
     title: 'Get in touch',
-    description: 'Email, source code, and the public ORCID record are available below.',
+    description:
+      'Send a direct message below — it reaches the owner inbox. Source code and the public ORCID record are linked alongside.',
     privacyNotice:
       'Contact submissions are sent by email and retained in the recipient inbox until manually deleted. The site stores no message archive; temporary abuse-control hashes expire automatically.',
   },
@@ -130,12 +136,6 @@ export const siteContent = {
       'No publications, talks, or research articles are currently listed in this portfolio.',
   },
   publicProfiles: [
-    {
-      external: false,
-      href: 'mailto:adhiraj.muduli@niser.ac.in',
-      label: 'Email Adhiraj',
-      source: phase8Source,
-    },
     {
       external: true,
       href: 'https://github.com/adhirajmuduli',

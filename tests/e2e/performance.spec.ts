@@ -40,13 +40,13 @@ async function burstWheel(
   )
 }
 
-async function cycleForward(page: import('@playwright/test').Page, from: string, to: string) {
+async function hopForward(page: import('@playwright/test').Page, from: string, to: string) {
   await expect(page.locator(`#${from}`)).toHaveAttribute('data-card-state', 'settled', {
     timeout: 20_000,
   })
 
-  await page.mouse.move(640, 360)
-  await burstWheel(page, 12, 600)
+  // P11 clamp: one chapter per gesture, so cycles hop chapter-by-chapter.
+  await burstWheel(page, 4, 600)
 
   await expect(page.locator(`#${to}`)).toHaveAttribute('data-card-state', 'settled', {
     timeout: 20_000,
@@ -58,7 +58,7 @@ async function cycleBackward(page: import('@playwright/test').Page, from: string
     timeout: 20_000,
   })
 
-  await burstWheel(page, 12, -600)
+  await burstWheel(page, 4, -600)
 
   await expect(page.locator(`#${to}`)).toHaveAttribute('data-card-state', 'settled', {
     timeout: 20_000,
@@ -100,8 +100,10 @@ test('holds memory flat and never blocks the main thread across two journey cycl
   // contention was observed at 6s on a cold standalone server).
   const bootCompletedAt = await page.evaluate(() => performance.now() + 10_000)
 
-  // Two forward wheel cycles (origins → research).
-  await cycleForward(page, 'origins', 'research')
+  // Two full journey cycles, chapter by chapter (origins → interests →
+  // research → back), under the P11 one-chapter-per-gesture clamp.
+  await hopForward(page, 'origins', 'interests')
+  await hopForward(page, 'interests', 'research')
 
   const heapBefore = await page.evaluate(
     () =>
@@ -109,9 +111,11 @@ test('holds memory flat and never blocks the main thread across two journey cycl
         ?.usedJSHeapSize ?? 0,
   )
 
-  // Two more cycles back and forth to catch playback churn.
-  await cycleBackward(page, 'research', 'origins')
-  await cycleForward(page, 'origins', 'research')
+  // Back and forth across the seam to catch playback churn on both edges.
+  await cycleBackward(page, 'research', 'interests')
+  await cycleBackward(page, 'interests', 'origins')
+  await cycleBackward(page, 'origins', 'contact')
+  await hopForward(page, 'contact', 'origins')
 
   const heapAfter = await page.evaluate(
     () =>

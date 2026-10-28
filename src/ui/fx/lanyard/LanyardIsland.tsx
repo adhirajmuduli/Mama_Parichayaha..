@@ -15,9 +15,11 @@ import type { CSSProperties } from 'react'
 
 import type { ClientChapter } from '@/types/experience'
 
+const LanyardLoading = () => <div className="lanyard-loading" aria-hidden="true" />
+
 const Lanyard = dynamic(() => import('./Lanyard').then((module) => module.default), {
   ssr: false,
-  loading: () => null,
+  loading: LanyardLoading,
 })
 
 export interface LanyardIslandProps {
@@ -51,6 +53,13 @@ export function LanyardIsland({
         finish="glossy"
         orientation="portrait"
         anchor="center"
+        /* No ambient breeze: the badge hangs, settles and the island parks its
+           rAF (zero work at rest). Interaction wakes it up again. */
+        breeze={0}
+        size={0.72}
+        /* Slightly damped so the badge reaches "hanging" in a couple of
+           seconds and the island can park its render loop. */
+        damping={0.66}
         interactive
         intro
       />

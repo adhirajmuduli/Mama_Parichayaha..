@@ -76,55 +76,116 @@ html[data-save-data='true'] .fx-cursor-blob {
 }
 
 /* ---------------------------------------------------------------------------
- * Project spiral (react-bits InfiniteSpiral adaptation)
+ * Project spiral (react-bits InfiniteSpiral adaptation, P11 full-bleed)
+ *
+ * The spiral is a fixed stage layer: centered on the viewport, above the
+ * plasma, beneath the card text — a section in itself, never a boxed column.
  * ------------------------------------------------------------------------- */
 
-.spiral {
-  position: relative;
-  height: 100%;
-  min-height: 18rem;
-  width: 100%;
+.spiral-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
   overflow: hidden;
   isolation: isolate;
 }
 
-.spiral__stage {
+html[data-experience='document'] .spiral-stage {
+  position: static;
+  min-height: 24rem;
+  pointer-events: auto;
+}
+
+html[data-experience='document'] .spiral-stage__helix {
+  position: relative;
+  inset: auto;
+  min-height: 22rem;
+}
+
+.spiral-stage__helix {
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
+}
+
+/* The helix anchors AWAY from the copy: it owns the right half on wide
+   screens, the lower band on narrow ones. The cluster then reads as its own
+   space instead of sliding under the chapter text. */
+@media (min-width: 56rem) {
+  .spiral-stage:not(.spiral-stage--static) .spiral-stage__helix {
+    left: 50%;
+    right: auto;
+    width: 50%;
+  }
+}
+
+@media (max-width: 55.99rem) {
+  .spiral-stage:not(.spiral-stage--static) .spiral-stage__helix {
+    top: 66%;
+  }
 }
 
 .spiral__tile {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: var(--spiral-width);
-  height: var(--spiral-height);
+  width: var(--spiral-width, 200px);
+  height: var(--spiral-height, 128px);
   display: grid;
   align-content: center;
   gap: 0.4rem;
-  padding: 0.9rem 1rem;
-  border: 1px solid color-mix(in oklab, var(--panel-accent, var(--site-accent)) 40%, transparent);
-  border-radius: 0.8rem;
-  background: color-mix(in oklab, var(--site-panel-opaque) 62%, transparent);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  padding: 0.95rem 1.05rem;
+  border: 1px solid
+    color-mix(in oklab, var(--tile-gradient-to, var(--panel-accent, #69a8ff)) 65%, transparent);
+  border-radius: 0.9rem;
+  /* Per-repo gradient identity: vivid tint fills the tile, and a stronger
+     gradient band glows along the top edge — never uncolored (P11). */
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--tile-gradient-from, #14438a) 46%, transparent),
+    color-mix(in srgb, var(--tile-gradient-to, #69a8ff) 26%, transparent) 58%,
+    rgba(8, 6, 18, 0.72)
+  );
+  /* No backdrop-filter: eight blurred tiles moving on the compositor were the
+     single most expensive thing on the research chapter. The gradient carries
+     the identity instead. */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   text-decoration: none;
   backface-visibility: hidden;
   transform-style: preserve-3d;
-  will-change: transform, opacity, filter;
-  box-shadow: 0 14px 38px rgba(8, 6, 18, 0.2);
+  will-change: transform, opacity;
+  box-shadow:
+    0 0 0 0.05rem color-mix(in srgb, var(--tile-gradient-from, #14438a) 45%, transparent) inset,
+    0 16px 42px rgba(8, 6, 18, 0.35);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.spiral__tile::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 0.18rem;
+  background: linear-gradient(
+    90deg,
+    var(--tile-gradient-from, #14438a),
+    var(--tile-gradient-to, #69a8ff)
+  );
+  border-radius: 999px;
+  opacity: 0.85;
 }
 
 .spiral__tile-title {
   color: var(--site-foreground);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   letter-spacing: -0.01em;
   line-height: 1.25;
 }
 
 .spiral__tile-description {
-  color: var(--site-muted-strong);
+  color: color-mix(in oklab, var(--site-muted-strong) 88%, transparent);
   font-size: 0.64rem;
   line-height: 1.45;
 }
@@ -146,27 +207,32 @@ html[data-save-data='true'] .fx-cursor-blob {
 }
 
 /* Reduced motion / inactive chapter: a static, readable fan — no loop. */
-.spiral--static .spiral__stage {
+.spiral-stage--static .spiral-stage__helix {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  padding: 1rem;
+  gap: 0.9rem;
+  padding: clamp(1.5rem, 4vh, 4rem) clamp(1rem, 6vw, 8rem);
   transform-style: flat;
+  align-content: center;
 }
 
-.spiral--static .spiral__tile {
+.spiral-stage--static .spiral__tile {
   position: relative;
   left: auto;
   top: auto;
-  width: min(16rem, 42vw);
+  width: min(17rem, 44vw);
   height: auto;
-  min-height: var(--spiral-height);
+  min-height: var(--spiral-height, 128px);
   transform: none;
   opacity: 1;
   filter: none;
   pointer-events: auto;
+}
+
+html[data-experience='document'] .spiral-stage--static .spiral__tile {
+  opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -182,6 +248,7 @@ html[data-save-data='true'] .fx-cursor-blob {
 .lanyard-stage {
   position: relative;
   width: 100%;
+  max-width: 26rem;
   height: 100%;
   min-height: 22rem;
   display: grid;
@@ -191,4 +258,31 @@ html[data-save-data='true'] .fx-cursor-blob {
 .lanyard-stage canvas {
   width: 100%;
   height: 100%;
+}
+
+/* Placeholder while the three.js chunk boots (the static portrait card is
+   shown before the island mounts; this covers the gap in between). */
+.lanyard-loading {
+  width: min(11rem, 62%);
+  aspect-ratio: 1 / 1.42;
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in oklab, var(--panel-accent, #d97745) 30%, transparent);
+  background: color-mix(in oklab, var(--site-panel-opaque) 45%, transparent);
+  animation: lanyard-pulse 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes lanyard-pulse {
+  from {
+    opacity: 0.32;
+  }
+  to {
+    opacity: 0.66;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lanyard-loading {
+    animation: none;
+    opacity: 0.5;
+  }
 }

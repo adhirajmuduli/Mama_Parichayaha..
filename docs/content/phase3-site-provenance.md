@@ -8,7 +8,7 @@ Phase 3 initially verified only the GitHub profile from the configured `origin` 
 
 | Field  | Value                                           | Verification source                                                                         |
 | ------ | ----------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Email  | `adhiraj.muduli@niser.ac.in`                    | Portfolio owner approval, 2026-07-18                                                        |
+| Email  | `owner email (env: CONTACT_TO_EMAIL)`           | Portfolio owner approval, 2026-07-18                                                        |
 | GitHub | `https://github.com/adhirajmuduli`              | Portfolio owner approval, 2026-07-18; originally corroborated by configured `origin` remote |
 | ORCID  | `https://orcid.org/0009-0005-5655-8120?lang=en` | Portfolio owner approval, 2026-07-18                                                        |
 

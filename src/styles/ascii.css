@@ -14,12 +14,15 @@
   justify-items: center;
   gap: 0.6rem;
   color: var(--panel-accent, var(--site-accent));
+  /* The frame is sized against the slot: container query units let the type
+     scale with the available width so a 47-column grid never clips. */
+  container-type: inline-size;
 }
 
 .ascii-panel__frame {
   margin: 0;
   font-family: var(--font-site);
-  font-size: clamp(0.5rem, min(1.4vw, 1.9vh), 0.82rem);
+  font-size: min(1.02rem, calc((100cqi - 2.5rem) / var(--ascii-cols, 44) / 0.6));
   line-height: 1.15;
   letter-spacing: 0;
   white-space: pre;
@@ -27,8 +30,12 @@
   font-variant-ligatures: none;
   font-kerning: none;
   text-rendering: geometricPrecision;
-  contain: strict;
+  /* Layout + paint containment ONLY. Size containment (contain: strict) makes
+     the frame's intrinsic size zero, which collapsed the grid to a 42px sliver
+     and clipped every frame; the panel is sized by its own max-content grid. */
+  contain: content;
   overflow: hidden;
+  max-width: 100%;
   border: 1px solid color-mix(in oklab, var(--panel-accent, var(--site-accent)) 28%, transparent);
   border-radius: 0.75rem;
   padding: clamp(0.75rem, 1.6vw, 1.25rem);
@@ -41,15 +48,15 @@
 
 /* Wide slots render wider grids; the panel clamps, never reflows. */
 .ascii-panel[data-aspect='wide'] .ascii-panel__frame {
-  max-width: 46rem;
+  max-width: 48rem;
 }
 
 .ascii-panel[data-aspect='square'] .ascii-panel__frame {
-  max-width: 30rem;
+  max-width: 34rem;
 }
 
 .ascii-panel[data-aspect='tall'] .ascii-panel__frame {
-  max-width: 24rem;
+  max-width: 26rem;
 }
 
 .ascii-panel__caption {
@@ -79,60 +86,4 @@ html[data-experience='immersive'] .ascii-panel[data-ascii-state='idle'] {
     background: var(--site-panel-opaque);
     text-shadow: none;
   }
-}
-
-/* ---------------------------------------------------------------------------
- * Animation controls
- * ------------------------------------------------------------------------- */
-
-.ascii-controls {
-  display: grid;
-  justify-items: center;
-  gap: 0.45rem;
-}
-
-.ascii-controls__buttons {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.ascii-controls__button {
-  padding: 0.4rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--panel-accent, var(--site-accent)) 45%, transparent);
-  color: var(--site-foreground);
-  background: transparent;
-  font-size: 0.66rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    opacity 180ms ease;
-}
-
-.ascii-controls__button:hover:not(:disabled),
-.ascii-controls__button:focus-visible:not(:disabled) {
-  background: color-mix(in oklab, var(--panel-accent, var(--site-accent)) 18%, transparent);
-  border-color: var(--panel-accent, var(--site-accent));
-}
-
-.ascii-controls__button:focus-visible {
-  outline: 2px solid var(--site-focus);
-  outline-offset: 2px;
-}
-
-.ascii-controls__button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.ascii-controls__status {
-  margin: 0;
-  font-size: 0.62rem;
-  letter-spacing: 0.1em;
-  color: var(--site-muted);
-  text-align: center;
 }

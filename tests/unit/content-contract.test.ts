@@ -75,21 +75,17 @@ describe('client projection', () => {
     })
   })
 
-  it('carries at least one project for the spiral slot (R15)', () => {
+  it('carries at least one project for the spiral slot with gradient identity (R15, P11)', () => {
     const spiralChapters = content.chapters.filter((chapter) => chapter.visual.kind === 'spiral')
 
     expect(spiralChapters.length).toBeGreaterThan(0)
-    spiralChapters.forEach((chapter) => {
-      // The slot reads ClientContent.projects globally; per-chapter gating is
-      // a presentation concern. Data must simply exist.
-      expect(chapter.id).toBeTruthy()
-    })
-
     expect(content.projects.length).toBeGreaterThanOrEqual(1)
 
     content.projects.forEach((project) => {
       expect(project.href).toMatch(/^https:\/\//)
       expect(project.external).toBe(true)
+      expect(project.gradient[0]).toMatch(/^#/)
+      expect(project.gradient[1]).toMatch(/^#/)
     })
   })
 
@@ -101,7 +97,9 @@ describe('client projection', () => {
         if (action.external) {
           expect(action.href).toMatch(/^https?:\/\//)
         } else {
-          expect(action.href).toMatch(/^#[a-z][a-z0-9-]*$/i)
+          // Internal actions point either at an in-page anchor or at a route
+          // on this site (e.g. the contact page) — never at another origin.
+          expect(action.href).toMatch(/^(#[a-z][a-z0-9-]*|\/[a-z0-9][a-z0-9\-/]*)$/i)
         }
       })
     })
@@ -129,12 +127,16 @@ describe('client projection', () => {
     })
   })
 
-  it('keeps public profiles and the mailto contract intact', () => {
+  it('keeps public profiles external-only (secret-scan posture, P11)', () => {
     expect(content.profiles.length).toBeGreaterThanOrEqual(1)
 
-    const mailto = content.profiles.filter((profile) => !profile.external)
-    expect(mailto.length).toBeGreaterThanOrEqual(1)
-    expect(mailto[0]?.href).toMatch(/^mailto:/)
+    // No mailto: the contact email lives in server env (CONTACT_TO_EMAIL),
+    // never in client-projected content — deploy secret scanners flag env
+    // literals that appear in repo code.
+    content.profiles.forEach((profile) => {
+      expect(profile.external).toBe(true)
+      expect(profile.href).toMatch(/^https:\/\//)
+    })
   })
 
   it('is JSON-serializable (server → client payload)', () => {

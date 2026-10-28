@@ -13,6 +13,7 @@ const ContentActionSchema = z
     external: z.boolean(),
     href: z.union([
       z.string().regex(/^#[a-z][a-z0-9-]*$/i, 'Expected an in-page anchor.'),
+      z.string().regex(/^\/[a-z0-9][a-z0-9\-/]*$/i, 'Expected an internal path.'),
       z.string().url(),
     ]),
     label: z.string().trim().min(1).max(80),
@@ -21,6 +22,19 @@ const ContentActionSchema = z
   .strict()
   .superRefine((action, context) => {
     const isAnchor = action.href.startsWith('#')
+    const isInternal = !isAnchor && action.href.startsWith('/')
+
+    if (isInternal) {
+      if (action.external) {
+        context.addIssue({
+          code: 'custom',
+          message: 'Internal paths must not be marked as external.',
+          path: ['href'],
+        })
+      }
+
+      return
+    }
 
     if (action.external === isAnchor) {
       context.addIssue({
@@ -36,6 +50,13 @@ const ContentActionSchema = z
 const ChapterDetailItemSchema = z
   .object({
     description: z.string().trim().min(1).max(320),
+    external: z.boolean().optional(),
+    href: z
+      .union([
+        z.string().regex(/^\/[a-z0-9][a-z0-9\-/]*$/i, 'Expected an internal path.'),
+        z.string().url(),
+      ])
+      .optional(),
     source: ClaimSourceSchema,
     status: z.enum(['active', 'completed', 'experimental']).optional(),
     title: z.string().trim().min(1).max(100),

@@ -206,20 +206,32 @@ export const chapters = [
     eyebrow: 'Contact and public profiles',
     navLabel: 'Contact',
     title: 'Get in touch',
-    description: 'Email, source code, and the public ORCID record are available below.',
-    actions: [],
+    description:
+      'Send a direct message on the contact page — it reaches the owner inbox. Source code and the public ORCID record are linked alongside.',
+    actions: [
+      {
+        external: false,
+        href: '/contact',
+        label: 'Send a message',
+        source: phase8Source,
+      },
+    ],
     detail: {
       eyebrow: 'Contact information',
       title: 'Public profiles',
       items: [
         {
-          title: 'Email',
-          description: 'Contact via email for inquiries and collaboration.',
+          title: 'GitHub',
+          description: 'Source code and repositories.',
+          href: 'https://github.com/adhirajmuduli',
+          external: true,
           source: phase8Source,
         },
         {
-          title: 'GitHub',
-          description: 'Source code and repositories.',
+          title: 'ORCID',
+          description: 'Public researcher identifier and activity record.',
+          href: 'https://orcid.org/0009-0005-5655-8120?lang=en',
+          external: true,
           source: phase8Source,
         },
       ],

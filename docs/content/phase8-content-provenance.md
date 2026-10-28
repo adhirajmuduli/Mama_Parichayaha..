@@ -8,7 +8,7 @@ The portfolio owner supplied and approved the following information for public d
 
 | Field                                  | Approved value                                  | Site use                                                     |
 | -------------------------------------- | ----------------------------------------------- | ------------------------------------------------------------ |
-| Email                                  | `adhiraj.muduli@niser.ac.in`                    | `mailto:` contact link only                                  |
+| Email                                  | `owner email (env: CONTACT_TO_EMAIL)`           | `mailto:` contact link only                                  |
 | GitHub                                 | `https://github.com/adhirajmuduli`              | Public profile and source-code link                          |
 | ORCID                                  | `https://orcid.org/0009-0005-5655-8120?lang=en` | Public author identifier link                                |
 | Active work                            | Internship at NISER                             | Current-work entry labelled `Active`                         |

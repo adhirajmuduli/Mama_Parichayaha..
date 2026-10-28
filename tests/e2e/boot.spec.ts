@@ -103,18 +103,3 @@ test('boots the immersive stage without console errors', async ({ page }, testIn
   expect(pageErrors).toEqual([])
   expect(consoleErrors).toEqual([])
 })
-
-test('marks the landing chapter on the rail', async ({ page }, testInfo) => {
-  test.skip(!isScripted(testInfo), 'rail state requires the runtime')
-
-  await page.goto('/', { waitUntil: 'domcontentloaded' })
-
-  await expect(page.locator('#origins')).toHaveAttribute('data-card-state', 'settled', {
-    timeout: 15_000,
-  })
-
-  await expect(page.locator('.progress-rail__link[aria-current="step"]')).toHaveAttribute(
-    'href',
-    '#origins',
-  )
-})

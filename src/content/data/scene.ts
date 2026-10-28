@@ -1,11 +1,12 @@
 /**
- * Per-chapter presentation data (new_plan.md §7.2) — migrated from the retired
- * chapter registry's atmosphere palettes and card sides. The 3D-only fields
- * (centers, camera poses, lighting, fog, model transforms) are intentionally
- * dropped; DOM presentation keeps only what it consumes.
+ * Per-chapter presentation data (new_plan.md §7.2) — P11 plasma edition.
  *
- * Visual kinds (R15): origins carries the lanyard island, research carries the
- * project spiral; every other chapter uses the ASCII slot.
+ * `background` is now a vivid plasma trio [deep base, plasma A, plasma B]:
+ * the base keeps text contrast while the two plasma stops drive the living
+ * background blobs (see StageBackground). Accents stay the chapter identity.
+ *
+ * Visual kinds (R15): origins carries the lanyard island, research carries
+ * the full-bleed project spiral; every other chapter uses the ASCII slot.
  */
 
 export const sceneEntries = [
@@ -13,7 +14,7 @@ export const sceneEntries = [
     id: 'origins',
     cardSide: 'left',
     accent: '#D97745',
-    background: ['#05070D', '#151B33', '#D97745'],
+    background: ['#0B0705', '#8A3E14', '#D97745'],
     visual: { kind: 'lanyard' },
     panelAspect: 'square',
   },
@@ -21,7 +22,7 @@ export const sceneEntries = [
     id: 'interests',
     cardSide: 'right',
     accent: '#55C2A5',
-    background: ['#05070D', '#102A2A', '#55C2A5'],
+    background: ['#04100C', '#0F5F46', '#55C2A5'],
     visual: { kind: 'ascii' },
     panelAspect: 'square',
   },
@@ -29,7 +30,7 @@ export const sceneEntries = [
     id: 'research',
     cardSide: 'left',
     accent: '#69A8FF',
-    background: ['#05070D', '#142B3D', '#69A8FF'],
+    background: ['#04091A', '#14438A', '#69A8FF'],
     visual: { kind: 'spiral' },
     panelAspect: 'wide',
   },
@@ -37,7 +38,7 @@ export const sceneEntries = [
     id: 'computation',
     cardSide: 'right',
     accent: '#C084FC',
-    background: ['#05070D', '#231538', '#C084FC'],
+    background: ['#0A0414', '#4C1D95', '#C084FC'],
     visual: { kind: 'ascii' },
     panelAspect: 'square',
   },
@@ -45,7 +46,7 @@ export const sceneEntries = [
     id: 'future',
     cardSide: 'left',
     accent: '#F0B35B',
-    background: ['#05070D', '#2D2011', '#F0B35B'],
+    background: ['#0D0803', '#7A4A10', '#F0B35B'],
     visual: { kind: 'ascii' },
     panelAspect: 'square',
   },
@@ -53,7 +54,7 @@ export const sceneEntries = [
     id: 'publications',
     cardSide: 'right',
     accent: '#B69CFF',
-    background: ['#05070D', '#211A36', '#B69CFF'],
+    background: ['#070413', '#372778', '#B69CFF'],
     visual: { kind: 'ascii' },
     panelAspect: 'square',
   },
@@ -61,7 +62,7 @@ export const sceneEntries = [
     id: 'contact',
     cardSide: 'left',
     accent: '#73D6BD',
-    background: ['#05070D', '#102826', '#73D6BD'],
+    background: ['#031010', '#0E5348', '#73D6BD'],
     visual: { kind: 'ascii' },
     panelAspect: 'square',
   },

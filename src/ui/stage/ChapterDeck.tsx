@@ -96,7 +96,6 @@ export function ChapterDeck({ content, immersive }: ChapterDeckProps) {
           profileName={content.profile.name}
           profileDiscipline={content.profile.discipline}
           portrait={content.portrait}
-          publicProfiles={content.profiles}
           privacyNotice={content.contact.privacyNotice}
           contactExtras={chapter.id === content.contact.id}
           projects={content.projects}

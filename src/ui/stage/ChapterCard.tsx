@@ -17,7 +17,7 @@
 
 import type { CSSProperties, ReactNode } from 'react'
 
-import type { ClientChapter, ClientProject, ClientPublicProfile } from '@/types/experience'
+import type { ClientChapter, ClientProject } from '@/types/experience'
 
 import { RotatingText } from '@/ui/fx/RotatingText'
 import { VisualSlot } from './VisualSlot'
@@ -32,7 +32,6 @@ export interface ChapterCardProps {
   profileName: string
   profileDiscipline: string
   portrait: string
-  publicProfiles: ClientPublicProfile[]
   privacyNotice: string
   /** Whether this chapter hosts the contact extras (deck decides, from data). */
   contactExtras: boolean
@@ -55,7 +54,6 @@ export function ChapterCard({
   profileName,
   profileDiscipline,
   portrait,
-  publicProfiles,
   privacyNotice,
   contactExtras,
   projects,
@@ -78,7 +76,10 @@ export function ChapterCard({
       aria-hidden={immersive && cardState === 'idle' ? 'true' : undefined}
       inert={immersive && cardState === 'idle' ? true : undefined}
     >
-      <div className="stage-card__split">
+      <div
+        className="stage-card__split"
+        data-composition={chapter.visual.kind === 'spiral' ? 'solo' : undefined}
+      >
         <div
           className="stage-card__surface"
           tabIndex={-1}
@@ -108,7 +109,16 @@ export function ChapterCard({
                 {chapter.detail.items.map((item) => (
                   <li key={item.title} className="stage-card__item">
                     <p className="stage-card__item-title">
-                      {item.title}
+                      {item.href ? (
+                        <a
+                          href={item.href}
+                          {...(item.external ? { target: '_blank', rel: 'noreferrer noopener' } : {})}
+                        >
+                          {item.title}
+                        </a>
+                      ) : (
+                        item.title
+                      )}
                       {item.status ? (
                         <span className="stage-card__item-status">
                           {STATUS_LABEL[item.status] ?? item.status}
@@ -137,24 +147,9 @@ export function ChapterCard({
             </div>
           ) : null}
 
-          {contactExtras && publicProfiles.length > 0 ? (
+          {contactExtras ? (
             <div className="stage-card__detail">
-              <p className="stage-card__detail-title">Public profiles</p>
-              <ul className="stage-card__items">
-                {publicProfiles.map((profile) => (
-                  <li key={profile.href} className="stage-card__item">
-                    <a
-                      className="stage-card__item-title"
-                      href={profile.href}
-                      {...(profile.external
-                        ? { target: '_blank', rel: 'noreferrer noopener' }
-                        : {})}
-                    >
-                      {profile.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              <p className="stage-card__detail-title">Privacy and credits</p>
               <p className="stage-card__item-description">{privacyNotice}</p>
               <p className="stage-card__item-description">
                 <a className="stage-card__item-title" href="/privacy">

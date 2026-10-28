@@ -1,17 +1,16 @@
 'use client'
 
 /**
- * AsciiPanel (new_plan.md §10.3) — the exhibit slot's frame, player and
- * controls in one labeled figure.
+ * AsciiPanel (new_plan.md §10.3) — the exhibit slot's frame and player in one
+ * labeled figure.
  *
- * P5 shipped the static shell; P6 upgrades it to the full playback engine:
- * registry-resolved source, quality-capped frame cadence, gated playback,
- * user controls. The markup contract (role="img", aria-hidden <pre>,
- * caption) is unchanged so the stage-contract test and CSS stay stable.
+ * P11: the animation controls were removed as redundant (playback is
+ * automatic); the panel is purely the labeled frame + engine. The markup
+ * contract (role="img", aria-hidden <pre>, caption) is unchanged.
  *
  * While only placeholder art exists (FEATURES.exhibits=false or unanimated
- * metadata) the panel renders frame 0 statically and the controls explain
- * themselves — zero scheduler work anywhere on the page at rest.
+ * metadata) the panel renders frame 0 statically — zero scheduler work
+ * anywhere on the page at rest.
  */
 
 import { useRef, type CSSProperties } from 'react'
@@ -21,10 +20,8 @@ import { useQualityProfile } from '@/runtime/quality'
 
 import { useExhibitSource } from './registry'
 import { useExhibitPlayback } from './useExhibitPlayback'
-import { useExhibitCommands } from './useExhibitCommands'
 import { AsciiFramePlayer } from './AsciiFramePlayer'
-import { AnimationControls } from './AnimationControls'
-import { readSourceFrame } from './types'
+import { readSourceFrame, describeSourceGrid } from './types'
 import { PLACEHOLDER_DEFAULT_GRID, createPlaceholderFrame } from './sources/placeholder'
 
 export interface AsciiPanelProps {
@@ -56,18 +53,6 @@ export function AsciiPanel({
     animated: exhibit?.animated ?? false,
   })
 
-  // Single ownership of playback state: every mutation flows through these
-  // handlers (store commands translate here; controls never set state).
-  useExhibitCommands(exhibit?.id ?? 'none', {
-    onToggle: () => {
-      playbackState.setUserPaused(playbackState.playback === 'playing')
-    },
-    onRestart: () => {
-      playbackState.requestRestart()
-      playbackState.setUserPaused(false)
-    },
-  })
-
   const label = exhibit?.label ?? 'Exhibit'
   const description =
     exhibit?.description ?? `Decorative ASCII panel for this chapter (${label.toLowerCase()}).`
@@ -77,7 +62,7 @@ export function AsciiPanel({
       ? createPlaceholderFrame({
           cols: PLACEHOLDER_DEFAULT_GRID.cols,
           rows: PLACEHOLDER_DEFAULT_GRID.rows,
-          label: 'Panel',
+          label: caption ?? 'Panel',
           seed: chapterId,
         })
       : null
@@ -90,6 +75,10 @@ export function AsciiPanel({
   const initialFrame =
     source !== null ? (readSourceFrame(source, 0, 0) ?? '') : (fallbackFrame ?? '')
 
+  // Column count drives the type size: the frame is sized to the slot so the
+  // grid never reflows and never gets clipped.
+  const columns = source ? describeSourceGrid(source).cols : PLACEHOLDER_DEFAULT_GRID.cols
+
   return (
     <figure
       className="ascii-panel"
@@ -99,7 +88,7 @@ export function AsciiPanel({
       data-placeholder={resolved ? (resolved.placeholder ? 'true' : 'false') : 'true'}
       // Mock-era preview animations identify themselves for the P9b swap.
       data-mock={resolved?.source.id.startsWith('mock:') ? 'true' : 'false'}
-      style={{ '--panel-accent': accent } as CSSProperties}
+      style={{ '--panel-accent': accent, '--ascii-cols': columns } as CSSProperties}
       role="img"
       aria-label={description}
     >
@@ -112,20 +101,11 @@ export function AsciiPanel({
           source={source}
           fpsCap={quality.fpsCap}
           playing={playbackState.playback === 'playing'}
-          restartToken={playbackState.restartToken}
           frameRef={frameRef}
         />
       ) : null}
 
       <figcaption className="ascii-panel__caption">{caption ?? label}</figcaption>
-
-      {exhibit ? (
-        <AnimationControls
-          exhibit={exhibit}
-          chapterId={chapterId}
-          playback={playbackState.playback}
-        />
-      ) : null}
     </figure>
   )
 }

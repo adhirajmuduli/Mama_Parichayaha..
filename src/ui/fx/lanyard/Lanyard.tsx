@@ -201,6 +201,13 @@ const EYELET_RADIUS = 0.036
 const CLAMP_BODY = 0.15
 const FACE_WIDTH = 1024
 
+/** Render cadence of the badge (the physics integrates every frame). */
+const RENDER_INTERVAL_MS = 1000 / 30
+/** Consecutive still frames before the island parks its loop. */
+const STILL_FRAMES = 24
+/** Hard ceiling: a hanging badge is parked after this long without input. */
+const STILL_PARK_MS = 8000
+
 const FINISHES: Record<Finish, FinishLook> = {
   glossy: {
     roughness: 0.42,
@@ -977,7 +984,10 @@ const stepSimulation = (sim: Simulation, dt: number, physics: Physics, time: num
 
   let energy = body.velocity.lengthSq() + body.angular.lengthSq() * 0.3
   for (let i = 1; i < JOINTS; i++) energy += at(velocities, i).lengthSq() * 0.05
-  sim.calm = energy < 2e-4 ? sim.calm + dt : 0
+  // Calm accumulates while the badge is effectively still; the island parks
+  // its rAF once calm passes the threshold (adaptation: upstream never parks
+  // because it always keeps a breeze running).
+  sim.calm = energy < 1.5e-3 ? sim.calm + dt * 2 : 0
 }
 
 const Lanyard = ({
@@ -1042,7 +1052,9 @@ const Lanyard = ({
     let renderer: THREE.WebGLRenderer
     try {
       renderer = new THREE.WebGLRenderer({
-        antialias: true,
+        // High-density screens get their smoothness from the pixel ratio;
+        // MSAA on top of that is the most expensive setting in this scene.
+        antialias: (window.devicePixelRatio || 1) <= 1.5,
         alpha: true,
         powerPreference: 'high-performance',
       })
@@ -1163,6 +1175,9 @@ const Lanyard = ({
     let raf = 0
     let last = performance.now()
     let time = 0
+    let stillFrames = 0
+    let activeSince = performance.now()
+    let lastRenderAt = 0
     let visible = true
     let alive = true
     let placed = false
@@ -1456,14 +1471,38 @@ const Lanyard = ({
         sim.grab = null
         placeHanging(sim, layout, false)
       }
-      render()
-      const resting = sim.calm > 1.2 && !sim.grab && current.breeze === 0
+
+      // Stillness detector (our adaptation): the badge hangs, so the island
+      // must stop burning frames once it stops moving. Upstream never parks
+      // because it always keeps a breeze running.
+      const speedSq = body.velocity.lengthSq()
+      const spinSq = body.angular.lengthSq()
+      // "Still" = the badge is hanging: under ~7% of its height per second
+      // and under ~5 degrees per second. Anything faster still reads as a
+      // swing, so the island keeps rendering it.
+      const still = speedSq < 2.3e-2 && spinSq < 6.4e-3 && !sim.grab
+      const slow = speedSq < 0.5 && spinSq < 0.5
+      stillFrames = still ? stillFrames + 1 : 0
+
+      // Render at a capped rate: the badge does not need 60 fps, and the
+      // physics still integrates every frame.
+      if (now - lastRenderAt >= RENDER_INTERVAL_MS) {
+        lastRenderAt = now
+        render()
+      }
+
+      const restedLongEnough = now - activeSince > STILL_PARK_MS
+      const resting =
+        !sim.grab && current.breeze === 0 && (stillFrames >= STILL_FRAMES || (restedLongEnough && slow))
+
       if (visible && !resting) raf = requestAnimationFrame(tick)
     }
 
     const start = () => {
       if (raf || !visible || !alive) return
       sim.calm = 0
+      stillFrames = 0
+      activeSince = performance.now()
       last = performance.now()
       raf = requestAnimationFrame(tick)
     }
@@ -1572,7 +1611,7 @@ const Lanyard = ({
     const resize = () => {
       view.width = Math.max(1, container.clientWidth)
       view.height = Math.max(1, container.clientHeight)
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5))
       renderer.setSize(view.width, view.height, false)
       apply()
       render()

@@ -2,7 +2,7 @@
 
 ## Supported deployment profiles
 
-The primary hosted profile is a Next-compatible platform. The current public origin is `https://adhirajmuduli.netlify.app`; configure that exact origin in `CONTACT_ALLOWED_ORIGINS`. The reproducible secondary profile is the repository `Dockerfile`, which runs the Next standalone output as a non-root Node 22.17.0 service.
+The primary hosted profile is a Next-compatible platform. Set `CONTACT_ALLOWED_ORIGINS` to your exact production origin (the same value as `NEXT_PUBLIC_SITE_URL`). No production origin is hardcoded in the repository: deploy-time secret scanners flag origin literals that match environment values, so the canonical/robots/sitemap origin resolves from `NEXT_PUBLIC_SITE_URL`. The reproducible secondary profile is the repository `Dockerfile`, which runs the Next standalone output as a non-root Node 22.17.0 service.
 
 Build and container commands:
 

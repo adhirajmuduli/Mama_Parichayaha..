@@ -37,12 +37,17 @@ html[data-experience='immersive'] .stage-root {
 }
 
 /* Pre-hydration: the boot script may already claim immersive, but React has
-   not attached card states yet — keep the readable stacked document until
-   data-hydrated lands (one attribute flip, no hydration mismatch). */
-html[data-experience='immersive'] .stage-root:not([data-hydrated='true']) {
-  position: static;
-  min-height: 100svh;
-  overflow: visible;
+   not attached card states yet — the FIRST chapter is shown in its settled
+   composition so the visitor lands on the hero instead of a stacked document
+   that scrolls as seven separate sections. The stage stays fixed either way. */
+html[data-experience='immersive'] .stage-root:not([data-hydrated='true']) .stage-card:first-of-type {
+  visibility: visible;
+  content-visibility: visible;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-items: center;
+  padding: clamp(1rem, 3vw, 2.5rem);
 }
 
 /* ---------------------------------------------------------------------------
@@ -108,6 +113,10 @@ html[data-experience='immersive'] .stage-card[data-card-state='settled'] {
   pointer-events: auto;
 }
 
+/* P11 open-world layout: in immersive mode the card is NOT a box — open
+   text floating over the plasma. The transition lives on the SPLIT (the
+   whole composition: text + visual arrive together; previously the ascii
+   panel popped before the text card, which read as a delay). */
 .stage-card__split {
   width: 100%;
   max-width: 72rem;
@@ -116,20 +125,42 @@ html[data-experience='immersive'] .stage-card[data-card-state='settled'] {
   grid-template-columns: minmax(0, 1fr);
   gap: clamp(1rem, 3vw, 2.5rem);
   align-items: center;
+  transition:
+    opacity 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Full-bleed chapters (spiral): the visual escapes the column entirely and
+   lives as a stage-wide layer; the split carries the text alone. On wide
+   screens the copy anchors LEFT and the helix anchors RIGHT, so the two
+   never share pixels — the spiral reads as a section, not as a backdrop
+   behind the words. */
+.stage-card__split[data-composition='solo'] {
+  max-width: var(--reading-measure);
+  margin: 0 auto;
 }
 
 @media (min-width: 56rem) {
-  html[data-experience='immersive'] .stage-card__split {
+  html[data-experience='immersive'] .stage-card__split[data-composition='solo'] {
+    max-width: min(34rem, 42vw);
+    margin: 0 0 0 clamp(1rem, 7vw, 7rem);
+  }
+}
+
+@media (min-width: 56rem) {
+  html[data-experience='immersive'] .stage-card__split:not([data-composition='solo']) {
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   }
 
-  html[data-experience='immersive'] .stage-card[data-card-side='right'] .stage-card__split {
+  html[data-experience='immersive']
+    .stage-card[data-card-side='right']
+    .stage-card__split:not([data-composition='solo']) {
     grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
   }
 
   html[data-experience='immersive']
     .stage-card[data-card-side='right']
-    .stage-card__split
+    .stage-card__split:not([data-composition='solo'])
     > .stage-card__visual-slot {
     order: -1;
   }
@@ -155,58 +186,46 @@ html[data-experience='immersive'] .stage-card[data-card-state='settled'] {
   }
 }
 
-/* Card transitions: transform/opacity only. */
+/* The surface is a scrollable content measure — boxed in document mode for
+   readability, OPEN in immersive (no border, no panel, no glass): the text
+   floats on the plasma with the vignette providing contrast. */
 .stage-card__surface {
   position: relative;
   max-height: 78svh;
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: clamp(1.25rem, 2.5vw, 2rem);
-  border: 1px solid color-mix(in oklab, var(--site-foreground) 15%, transparent);
+  border: 1px solid color-mix(in oklab, var(--site-foreground) 12%, transparent);
   border-radius: 1rem;
-  background: color-mix(in oklab, var(--site-panel) 88%, transparent);
-  transition:
-    opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  background: color-mix(in oklab, var(--site-panel-opaque) 55%, transparent);
 }
 
-html[data-experience='immersive'] .stage-card[data-card-state='outgoing'] .stage-card__surface {
-  opacity: 0;
-  transform: translateY(calc(var(--card-exit-shift, -1) * 2.5rem));
+html[data-experience='immersive'] .stage-card .stage-card__surface {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: 0 clamp(1rem, 2vw, 1.5rem);
+  max-height: 82svh;
+  /* Above the full-bleed spiral layer (z-index 10) inside the deck's
+     stacking context: the copy is never painted over by helix tiles. */
+  z-index: 12;
 }
 
-html[data-experience='immersive'] .stage-card[data-card-state='incoming'] .stage-card__surface {
-  opacity: 0;
-  transform: translateY(2.5rem);
-}
-
-html[data-experience='immersive'] .stage-card[data-card-state='settled'] .stage-card__surface {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Glass: computed only while the card paints (non-idle). */
-html[data-experience='immersive'] .stage-card[data-card-state='settled'] .stage-card__surface,
-html[data-experience='immersive'] .stage-card[data-card-state='outgoing'] .stage-card__surface,
-html[data-experience='immersive'] .stage-card[data-card-state='incoming'] .stage-card__surface {
-  background: color-mix(in oklab, var(--site-panel) 72%, transparent);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-}
+/* Solo (spiral) chapters: the copy sits over open plasma with the helix
+   anchored on the opposite side, so no scrim is needed (and none is drawn —
+   a scrim edge was visible as a rectangle over the plasma). */
 
 @media (pointer: coarse) {
-  html[data-experience='immersive'] .stage-card .stage-card__surface {
+  html[data-experience='document'] .stage-card .stage-card__surface {
     background: color-mix(in oklab, var(--site-panel-opaque) 96%, transparent);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
   }
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  html[data-experience='immersive'] .stage-card .stage-card__surface {
+  html[data-experience='document'] .stage-card .stage-card__surface {
     background: var(--site-panel-opaque);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
   }
 }
 
@@ -214,8 +233,74 @@ html[data-experience='immersive'] .stage-card .stage-card__surface {
   touch-action: pan-y;
 }
 
+/* Keyboard focus lands on the card's scroll region after a chapter jump.
+   A quiet accent rule instead of the global hard box around the whole copy. */
+html[data-experience='immersive'] .stage-card__surface:focus-visible {
+  outline: 1px solid
+    color-mix(in oklab, var(--card-accent, var(--site-accent)) 45%, transparent);
+  outline-offset: 0.65rem;
+  border-radius: 0.5rem;
+}
+
+/* Composition transition: settled rests, outgoing exits along travel,
+   incoming enters from the opposite side — the whole split moves as one.
+
+   The SPLIT itself never carries a transform: a transformed ancestor becomes
+   the containing block for `position: fixed` descendants, which collapsed the
+   full-bleed spiral layer into the text column. The travel therefore runs on
+   the split's CHILDREN (copy + visual), which keeps the spiral viewport-wide. */
+html[data-experience='immersive'] .stage-card__split {
+  transition: opacity 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[data-experience='immersive'] .stage-card[data-card-state='outgoing'] .stage-card__split {
+  opacity: 0;
+}
+
+html[data-experience='immersive'] .stage-card[data-card-state='incoming'] .stage-card__split {
+  opacity: 0;
+}
+
+html[data-experience='immersive'] .stage-card[data-card-state='settled'] .stage-card__split {
+  opacity: 1;
+}
+
+html[data-experience='immersive']
+  .stage-card[data-card-state='outgoing']
+  .stage-card__surface,
+html[data-experience='immersive']
+  .stage-card[data-card-state='outgoing']
+  .stage-card__visual-slot {
+  transform: translateY(calc(var(--card-exit-shift, -1) * 2.75rem));
+}
+
+html[data-experience='immersive']
+  .stage-card[data-card-state='incoming']
+  .stage-card__surface,
+html[data-experience='immersive']
+  .stage-card[data-card-state='incoming']
+  .stage-card__visual-slot {
+  transform: translateY(2.75rem);
+}
+
+html[data-experience='immersive']
+  .stage-card[data-card-state='settled']
+  .stage-card__surface,
+html[data-experience='immersive']
+  .stage-card[data-card-state='settled']
+  .stage-card__visual-slot {
+  transform: translateY(0);
+}
+
+html[data-experience='immersive'] .stage-card__surface,
+html[data-experience='immersive'] .stage-card__visual-slot {
+  transition:
+    opacity 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .stage-card__surface {
+  .stage-card__split {
     transition: none;
   }
 }
@@ -324,162 +409,43 @@ html[data-experience='immersive'] .stage-card .stage-card__surface {
 }
 
 /* ---------------------------------------------------------------------------
- * Progress rail
+ * Progress chip (P11) � mobile-only position feedback; nothing on desktop
+ * (the journey is the interface).
  * ------------------------------------------------------------------------- */
 
-.progress-rail {
+.progress-chip {
   position: fixed;
-  top: 50%;
-  right: max(1.5rem, env(safe-area-inset-right));
-  transform: translateY(-50%);
+  top: max(1rem, env(safe-area-inset-top));
+  left: 1rem;
+  right: 1rem;
   z-index: 30;
-  /* The rail is informative chrome: never intercept card or panel input. */
+  display: none;
+  margin: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid color-mix(in oklab, var(--site-foreground) 20%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--site-background) 78%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--site-muted-strong);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  /* Informative chrome only: never intercept card or panel input. */
   pointer-events: none;
 }
 
-.progress-rail__list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 0.65rem;
-  /* Only the actual links receive input. */
-  pointer-events: auto;
-}
-
-.progress-rail__link {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.6rem;
-  min-height: 2rem;
-  padding: 0.2rem 0;
-  color: var(--site-muted-strong);
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  transition:
-    color 160ms ease,
-    transform 160ms ease;
-}
-
-.progress-rail__link:hover,
-.progress-rail__link:focus-visible,
-.progress-rail__link[aria-current='step'] {
-  color: var(--site-foreground);
-  transform: translateX(-0.2rem);
-}
-
-.progress-rail__link:focus-visible {
-  outline: 2px solid var(--site-focus);
-  outline-offset: 0.25rem;
-}
-
-.progress-rail__dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 999px;
-  border: 1px solid currentColor;
-  transition:
-    width 160ms ease,
-    height 160ms ease,
-    background-color 160ms ease,
-    box-shadow 160ms ease;
-}
-
-.progress-rail__link[aria-current='step'] .progress-rail__dot {
-  width: 0.75rem;
-  height: 0.75rem;
-  background: var(--rail-accent, var(--site-accent));
-  border-color: var(--rail-accent, var(--site-accent));
-  box-shadow: 0 0 0.9rem
-    color-mix(in oklab, var(--rail-accent, var(--site-accent)) 60%, transparent);
-}
-
-html[data-experience='document'] .progress-rail {
-  display: none;
-}
-
-@media (max-width: 55.99rem) {
-  .progress-rail {
-    top: max(1rem, env(safe-area-inset-top));
-    left: 1rem;
-    right: 1rem;
-    transform: none;
-  }
-
-  .progress-rail__list {
-    display: none;
-  }
-
-  .progress-rail__status {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.6rem 0.85rem;
-    border: 1px solid color-mix(in oklab, var(--site-foreground) 20%, transparent);
-    border-radius: 999px;
-    background: color-mix(in oklab, var(--site-background) 78%, transparent);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    color: var(--site-muted-strong);
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-}
-
-.progress-rail__status {
-  display: none;
-}
-
-.progress-rail__count {
+.progress-chip__count {
   color: var(--site-foreground);
   font-variant-numeric: tabular-nums;
 }
 
-.progress-rail__cue {
-  position: fixed;
-  right: 2rem;
-  bottom: max(1.5rem, env(safe-area-inset-bottom));
-  z-index: 30;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 0;
-  color: var(--site-muted-strong);
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  /* Decorative hint: never intercept the sheet beneath it. */
-  pointer-events: none;
-}
-
-.progress-rail__cue-arrow {
-  display: inline-grid;
-  place-items: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 1px solid color-mix(in oklab, var(--site-foreground) 35%, transparent);
-  border-radius: 999px;
-  color: var(--site-foreground);
-}
-
 @media (max-width: 55.99rem) {
-  .progress-rail__cue {
-    right: 50%;
-    bottom: max(1rem, env(safe-area-inset-bottom));
-    transform: translateX(50%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .progress-rail__link,
-  .progress-rail__dot,
-  .progress-rail__cue {
-    transition: none;
+  html[data-experience='immersive'] .progress-chip {
+    display: flex;
   }
 }
 
@@ -546,37 +512,148 @@ html[data-experience='document'] .stage-card__visual-slot {
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+  background: var(--bg-base, #05070d);
 }
 
 html[data-experience='document'] .stage-background {
   position: absolute;
 }
 
+/* P11 living plasma: two palette layers cross-fade per chapter; each layer
+   carries three big radial-gradient blobs drifting on slow compositor-only
+   transforms. The drift is the one sanctioned continuous decorative
+   animation; reduced motion freezes it. */
 .stage-background__layer {
   position: absolute;
-  inset: -10%;
+  inset: 0;
   opacity: 0;
-  transition: opacity 480ms cubic-bezier(0.22, 1, 0.36, 1);
-  background:
-    radial-gradient(
-      ellipse at 18% 30%,
-      color-mix(in srgb, var(--bg-mid) 55%, transparent),
-      transparent 52%
-    ),
-    radial-gradient(
-      ellipse at 82% 72%,
-      color-mix(in srgb, var(--bg-accent) 26%, transparent),
-      transparent 48%
-    ),
-    linear-gradient(180deg, var(--bg-base) 0%, color-mix(in oklab, var(--bg-base) 88%, black) 100%);
+  transition: opacity 640ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .stage-background__layer[data-bg-active='true'] {
   opacity: 1;
 }
 
+.stage-background__blob {
+  position: absolute;
+  width: 46vmax;
+  height: 46vmax;
+  border-radius: 9999px;
+  will-change: transform;
+}
+
+/* Only the ACTIVE palette layer animates. The outgoing layer keeps its last
+   frame but stops compositing six large gradient layers per second. */
+.stage-background__layer[data-bg-active='false'] .stage-background__blob {
+  animation-play-state: paused;
+}
+
+/* The gradients only need the plasma color — the blob's soft radial falloff
+   IS the blur; no filter touches a full-screen layer. */
+.stage-background__blob--a {
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in oklab, var(--bg-plasma-a, #8a3e14) 55%, transparent) 0%,
+    transparent 62%
+  );
+  top: -24%;
+  left: -18%;
+  animation: stage-plasma-a 46s ease-in-out infinite alternate;
+}
+
+.stage-background__blob--b {
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in oklab, var(--bg-plasma-b, #d97745) 46%, transparent) 0%,
+    transparent 58%
+  );
+  bottom: -30%;
+  right: -16%;
+  animation: stage-plasma-b 58s ease-in-out infinite alternate;
+}
+
+.stage-background__blob--c {
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(
+        in oklab,
+        var(--bg-plasma-a, #14438a) 38%,
+        var(--bg-plasma-b, #69a8ff) 12%,
+        transparent
+      )
+      0%,
+    transparent 64%
+  );
+  top: 32%;
+  right: 18%;
+  animation: stage-plasma-c 52s ease-in-out infinite alternate;
+}
+
+@keyframes stage-plasma-a {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(9vw, 12vh, 0) scale(1.14);
+  }
+}
+
+@keyframes stage-plasma-b {
+  from {
+    transform: translate3d(0, 0, 0) scale(1.08);
+  }
+  to {
+    transform: translate3d(-11vw, -9vh, 0) scale(0.94);
+  }
+}
+
+@keyframes stage-plasma-c {
+  from {
+    transform: translate3d(-6vw, 0, 0) scale(0.92) rotate(0deg);
+  }
+  to {
+    transform: translate3d(7vw, -10vh, 0) scale(1.18) rotate(24deg);
+  }
+}
+
+/* Readability floor: a near-black vignette under content. */
+.stage-background__vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at 30% 45%,
+      transparent 42%,
+      color-mix(in oklab, var(--bg-base, #05070d) 72%, transparent) 100%
+    ),
+    linear-gradient(
+      180deg,
+      transparent 60%,
+      color-mix(in oklab, var(--bg-base, #05070d) 55%, transparent) 100%
+    );
+}
+
 @media (prefers-reduced-motion: reduce) {
   .stage-background__layer {
     transition: none;
+  }
+
+  .stage-background__blob {
+    animation: none;
+    will-change: auto;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .stage-background__blob {
+    opacity: 0.55;
+  }
+}
+/* Coarse pointers pause the drift: touch devices keep the vivid plasma
+   colors but not six large composited layers animating on battery. */
+@media (pointer: coarse) {
+  .stage-background__blob {
+    animation: none;
+    will-change: auto;
   }
 }

@@ -90,9 +90,12 @@ export function RotatingText({
             <motion.span
               key={current}
               className={`fx-rotating__word ${wordClassName}`.trim()}
-              initial={{ opacity: 0, y: '0.45em', filter: 'blur(4px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: '-0.45em', filter: 'blur(4px)' }}
+              /* No blur filter: at this type size a blurred word reads as a
+                 row of blocks, and the filter cost a compositor layer on
+                 every swap. */
+              initial={{ opacity: 0, y: '0.45em' }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: '-0.45em' }}
               transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
             >
               {characters.map((character, characterIndex) => (
