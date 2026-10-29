@@ -6,23 +6,25 @@ visualization.
 
 The experience is built as a semantic DOM stage: seven chapters form a cyclic
 journey controlled by wheel, touch, and keyboard input. Each chapter now has
-its own recurring, procedural ASCII artwork, rendered in a distinct color
-palette. Research project links remain in the chapter copy. The page remains a
-readable document without JavaScript; the immersive presentation is a
-progressive enhancement.
+its own recurring, procedural monospace glyph artwork, rendered in a distinct
+color palette with Unicode block shading. Research project links remain in
+the chapter copy. The page remains a readable document without JavaScript;
+the immersive presentation is a progressive enhancement.
 
 ## Current exhibit status
 
 Seven authored artworks are available under `src/arts/`: Emergent Cell,
 Molecular Systems Observatory, Protein Foldscape, Inference Field, Systems
 Attractor Chamber, Evidence Constellation, and Signal Exchange. They use
-fixed-grid ASCII glyphs, deterministic continuous motion, and scene-specific
-multicolor palettes. A semantic text frame is server-rendered; after
-hydration, the same grid is drawn in color on a canvas. See
+fixed-grid monospace glyphs, including Unicode block shading, deterministic
+continuous motion, and scene-specific multicolor palettes. A semantic text
+frame is server-rendered; after hydration, the same grid is drawn in color on
+a canvas. See
 [`docs/architecture/ascii-contract.md`](docs/architecture/ascii-contract.md)
 for the source contract and
 [`docs/adr/0010-ascii-exhibit-medium.md`](docs/adr/0010-ascii-exhibit-medium.md)
-for the decision to use ASCII rather than a site-wide 3D model pipeline.
+for the decision to use a fixed-grid glyph medium rather than a site-wide 3D
+model pipeline.
 
 The existing optional lanyard and project-spiral components are not part of
 the current chapter art presentation. Three.js is not used to render these
@@ -35,7 +37,7 @@ artworks.
 - `motion` for UI motion
 - Zustand for discrete runtime state
 - Zod for server-side authored-content validation
-- Seven procedurally animated multicolor ASCII exhibit sources
+- Seven procedurally animated multicolor glyph-art exhibit sources
 - Server-rendered text fallback with hydrated colored-glyph canvas
 
 ## Run locally

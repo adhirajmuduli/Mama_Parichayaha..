@@ -43,19 +43,14 @@ describe('immersive stage', () => {
 
     expect(document.querySelectorAll('.stage-card').length).toBe(content.chapters.length)
 
-    // Full-bleed chapters carry the solo composition; every non-spiral
-    // chapter keeps its in-column slot.
+    // Every current chapter owns an in-column artwork slot.
     content.chapters.forEach((chapter) => {
       const split = document.querySelector(`#${chapter.id} .stage-card__split`)
       const composition = split?.getAttribute('data-composition')
 
-      if (chapter.visual.kind === 'spiral') {
-        expect(composition).toBe('solo')
-        expect(document.querySelector(`#${chapter.id} .stage-card__visual-slot`)).toBeNull()
-      } else {
-        expect(composition).toBeNull()
-        expect(document.querySelector(`#${chapter.id} .stage-card__visual-slot`)).not.toBeNull()
-      }
+      expect(chapter.visual.kind).toBe('ascii')
+      expect(composition).toBeNull()
+      expect(document.querySelector(`#${chapter.id} .stage-card__visual-slot`)).not.toBeNull()
     })
   })
 
@@ -92,7 +87,7 @@ describe('immersive stage', () => {
     expect(privacyLink?.getAttribute('href')).toBe('/privacy')
   })
 
-  it('renders ascii panels with labeled figures and honest source markers', async () => {
+  it('renders all seven labeled artworks with honest source markers', async () => {
     renderStage()
 
     const panels = document.querySelectorAll('.ascii-panel')
@@ -112,15 +107,11 @@ describe('immersive stage', () => {
         return chapter?.exhibit?.animated
       })
 
-      expect(resolved.length).toBe(
-        content.chapters.filter(
-          (chapter) => chapter.exhibit?.animated && chapter.visual.kind === 'ascii',
-        ).length,
-      )
+      expect(resolved.length).toBe(content.chapters.length)
 
       resolved.forEach((panel) => {
         expect(panel.getAttribute('data-placeholder')).toBe('false')
-        expect(panel.getAttribute('data-mock')).toBe('true')
+        expect(panel.getAttribute('data-mock')).toBe('false')
       })
     })
 
@@ -131,37 +122,18 @@ describe('immersive stage', () => {
       return !chapter?.exhibit
     })
 
-    expect(decorativePanels.length).toBeGreaterThan(0)
-    decorativePanels.forEach((panel) => {
-      expect(panel.getAttribute('data-placeholder')).toBe('true')
-      expect(panel.getAttribute('data-mock')).toBe('false')
-    })
+    expect(decorativePanels).toHaveLength(0)
   })
 
-  it('renders the full-bleed spiral stage with real repository tiles', () => {
+  it('keeps project links visible in the Research copy surface', () => {
     renderStage()
 
-    const spiralStage = document.querySelector('#research .spiral-stage')
+    const projectLinks = document.querySelectorAll('#research .stage-card__projects a')
+    expect(projectLinks.length).toBe(content.projects.length)
 
-    expect(spiralStage).not.toBeNull()
-
-    const tiles = spiralStage?.querySelectorAll('.spiral__tile')
-
-    expect(tiles?.length).toBe(content.projects.length)
-
-    tiles?.forEach((tile) => {
-      const anchor = tile as HTMLAnchorElement
-
-      expect(anchor.getAttribute('href')).toMatch(/^https:\/\/github\.com\//)
-
-      // P11: tiles are never uncolored — every tile carries its gradient.
-      expect(anchor.style.getPropertyValue('--tile-gradient-from')).toMatch(/^#/)
-      expect(anchor.style.getPropertyValue('--tile-gradient-to')).toMatch(/^#/)
+    projectLinks.forEach((link) => {
+      expect(link.getAttribute('href')).toMatch(/^https:\/\/github\.com\//)
     })
-
-    const srLinks = spiralStage?.querySelectorAll('.spiral__sr-list a')
-
-    expect(srLinks?.length).toBe(content.projects.length)
   })
 
   it('renders the plasma background with two palette layers', () => {

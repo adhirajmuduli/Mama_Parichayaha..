@@ -7,6 +7,7 @@ import {
   finishArtwork,
   line,
   put,
+  shadedEllipse,
   writeText,
 } from './shared'
 
@@ -19,6 +20,8 @@ function render(index: number, elapsedMs: number) {
   const phase = (time * 0.45) % 1
   writeText(buffer, 2, 1, '02 / MOLECULAR SYSTEMS OBSERVATORY', 2)
 
+  shadedEllipse(buffer, 12, 11, 8, 4, 4, time * 0.12)
+  shadedEllipse(buffer, 60, 11, 6, 3, 2, -time * 0.1)
   for (let x = 4; x < 68; x += 1) {
     const ripple = Math.sin(x * 0.22 + time * 0.35) * 0.65
     put(buffer, x, 9 + ripple, x % 4 === 0 ? 'o' : '-', 1)
@@ -35,6 +38,7 @@ function render(index: number, elapsedMs: number) {
   line(buffer, receptorX + 2, 5, receptorX + 4, 4, '\\', 4)
   line(buffer, receptorX - 1, 8, receptorX - 1, 14, '|', 4)
   line(buffer, receptorX + 1, 8, receptorX + 1, 14, '|', 4)
+  shadedEllipse(buffer, receptorX, 7, 3, 2, 3, time * 0.2)
   writeText(buffer, receptorX - 5, 6, 'R', 5)
 
   const ligandX = 7 + phase * 25
@@ -61,6 +65,7 @@ function render(index: number, elapsedMs: number) {
     line(buffer, x, y, nextX, nextY, node % 2 ? ':' : '.', 1)
     const bright = (time * 0.7 + node * 0.19) % 1
     ellipse(buffer, x, y, 1.5 + bright, 0.8 + bright * 0.3, '.', 4, time + node)
+    shadedEllipse(buffer, x, y, 1.8 + bright, 1 + bright * 0.3, 2, time + node)
     put(buffer, x, y, bright > 0.75 ? '@' : 'o', bright > 0.75 ? 5 : 2)
   }
 

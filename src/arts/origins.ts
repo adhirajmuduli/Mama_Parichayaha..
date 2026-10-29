@@ -6,6 +6,7 @@ import {
   finishArtwork,
   line,
   put,
+  shadedEllipse,
   writeText,
 } from './shared'
 
@@ -18,6 +19,7 @@ function render(index: number, elapsedMs: number) {
   const pulse = (time % 8) / 8
   writeText(buffer, 2, 1, '01 / ORIGINS   -   CELLULAR LANDSCAPE', 1)
 
+  shadedEllipse(buffer, 34, 13, 23, 7, 1, time * 0.2)
   ellipse(buffer, 34, 13, 27, 9, '.', 1, Math.sin(time * 0.18) * 0.08)
   ellipse(buffer, 34, 13, 25, 7, '-', 2, Math.sin(time * 0.18) * 0.08)
 
@@ -28,13 +30,13 @@ function render(index: number, elapsedMs: number) {
     if (col % 2 === 0) put(buffer, col, 8 + wave, '.', 3)
   }
 
+  shadedEllipse(buffer, 31, 13, 9, 4, 4, time * 0.12)
   ellipse(buffer, 31, 13, 9, 4, '~', 4, time * 0.09)
   ellipse(buffer, 31, 13, 6, 2, '.', 5, -time * 0.08)
-  writeText(buffer, 27, 13, 'NUCLEUS', 5)
-
-  for (let organelle = 0; organelle < 3; organelle += 1) {
-    const x = 14 + organelle * 16
+  for (let organelle = 0; organelle < 2; organelle += 1) {
+    const x = organelle === 0 ? 16 : 45
     const y = 12 + Math.sin(time * 0.4 + organelle) * 2
+    shadedEllipse(buffer, x, y, 4, 1.5, 2, time * 0.18 + organelle)
     ellipse(buffer, x, y, 4, 1.5, '(', 3, time * 0.18 + organelle)
     line(buffer, x - 2, y, x + 2, y, '~', 4)
   }

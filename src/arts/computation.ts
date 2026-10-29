@@ -34,7 +34,7 @@ function render(index: number, elapsedMs: number) {
   for (let row = 0; row < 12; row += 1) {
     for (let col = 0; col < 14; col += 1) {
       const score = (Math.sin(row * 0.72 + col * 0.51 + time * 0.8) + 1) / 2
-      const glyph = score > 0.82 ? '@' : score > 0.65 ? '#' : score > 0.43 ? '+' : '.'
+      const glyph = score > 0.82 ? '█' : score > 0.65 ? '▓' : score > 0.43 ? '▒' : '░'
       const color = score > 0.78 ? 4 : score > 0.52 ? 1 : 2
       put(buffer, 27 + col, 7 + row, glyph, color)
     }

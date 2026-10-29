@@ -19,7 +19,7 @@ const artworks: readonly AsciiExhibitSource[] = [
   contactArtwork,
 ]
 
-describe('authored colored ASCII artworks', () => {
+describe('authored colored block artworks', () => {
   artworks.forEach((artwork) => {
     it(`${artwork.id} is deterministic, colorful, detailed, and continuously animated`, () => {
       const grid = artwork.grid
@@ -33,7 +33,8 @@ describe('authored colored ASCII artworks', () => {
       expect(repeated).toEqual(first)
       expect(later).toBeDefined()
       expect(first?.text).not.toBe(later?.text)
-      expect(first?.text).toMatch(/^[\x20-\x7e\n]*$/)
+      expect(first?.text).toMatch(/^[\x20-\x7e\u2580-\u259f\n]*$/)
+      expect(first?.text).toMatch(/[\u2580-\u259f]/)
 
       const lines = first?.text.split('\n') ?? []
       expect(lines).toHaveLength(grid.rows)

@@ -5,18 +5,17 @@ Assessment date: 2026-10-28
 This is a recovery baseline for the portfolio after recent in-progress work.
 It records what was inspected and exercised in this workspace; it is not a
 claim that every deployment or machine has the same state. This recovery pass
-updated project documentation, corrected a unit-test timeout, and applied
-formatting-only cleanup; it made no semantic changes to application runtime
-code.
+has since added the seven authored chapter artworks and their colored-canvas
+player, in addition to the earlier unit-test timeout correction.
 
 ## Executive summary
 
 The checked-out product is Adhiraj Muduli's biological-sciences portfolio.
 Its current implementation is a Next.js app with a server-rendered, semantic
 seven-chapter portfolio and a client-enhanced immersive journey. The current
-architecture is DOM-first, with ASCII exhibits and one optional, lazy Three.js
-lanyard island. This is materially different from the older README's
-site-wide-WebGL description.
+architecture is DOM-first, with seven procedural multicolor ASCII scenes. The
+older optional lanyard and project spiral remain in the codebase but are no
+longer wired into the chapter visuals.
 
 The home route is not wholly down in this workspace: the production server returned
 HTTP 200, hydrated into immersive mode, rendered the Origins chapter, and
@@ -26,15 +25,15 @@ tests passed after correcting a transition test's timeout. The production
 build completed successfully, including lint/type checking and static page
 generation.
 
-The main desktop journey, exhibit, accessibility, contact, hygiene, and SEO
-checks passed in focused runs. The separate desktop performance gate remains
-red: its full chapter cycle completes, but the browser reports post-boot
-long tasks. Disabling optional lanyard, exhibit, and cursor effects reduced
-the number but did not eliminate them. A manual browser sample had no long
-tasks while idle and observed two while entering Research; the exact source
-of the automated-test stalls is not established. The full device/reduced-motion
-matrix has not been run. The app is buildable and its core routes and journey
-work, but a fully green release state is not established.
+All seven current artworks now use fixed-grid procedural glyph scenes with
+distinct per-chapter palettes and a colored canvas after hydration; the
+server-rendered ASCII text remains available as a fallback. Unit tests cover
+their determinism, motion, color variation, density, and grid contract.
+Desktop, mobile, and reduced-motion exhibit tests passed. Full quality passed
+through the unit suite but stopped at Knip because exported art-grid constants
+were unused; those exports have since been removed, so the aggregate check
+needs a fresh run. The performance test result predates the new visual
+implementation; rerun it before calling the visual version stable.
 
 ## Product and architecture baseline
 
@@ -49,14 +48,14 @@ work, but a fully green release state is not established.
 - **Rendering:** the stage is semantic DOM, not a persistent scene canvas.
   The HTML defaults to a readable document; a pre-paint boot script enables
   immersive mode, and hydration establishes the interactive chapter window.
-- **Exhibits:** the authored exhibit medium is deterministic ASCII in a
-  fixed grid, with an SSR placeholder and asynchronous adapters. Five
-  chapters currently resolve to mock-era animated preview sources. Those are
-  not owner-supplied final art.
-- **Visual exceptions:** the research chapter has a DOM project spiral.
-  Origins may mount a capability-gated, lazy Three.js lanyard island; a
-  static portrait is its fallback. Three.js is not intended as the app-wide
-  renderer.
+- **Exhibits:** seven chapter-specific procedural ASCII artworks use a
+  fixed grid, source-specific color palettes, continuous deterministic
+  motion, and a hydrated glyph canvas. The text frame remains the SSR/no-JS
+  fallback.
+- **Visual continuity:** each chapter has a deliberately different palette
+  and scene composition. Research project links are retained in its semantic
+  copy surface; no publication claims or experimental results are invented
+  in the art.
 - **Supporting product surfaces:** contact, credits, privacy, discovery
   metadata, and API routes are present. Contact delivery depends on
   server-side configuration; secret values were not inspected as part of this
@@ -84,6 +83,7 @@ and rendering decisions; older 3D-era ADRs are explicitly superseded.
 | Home route             | Portfolio dev server served `/` with HTTP 200. Browser showed SSR content, then immersive hydration with Origins settled and no page or console errors in the observed pass.                                    |
 | Journey interaction    | Keyboard and wheel navigation moved through the chapter sequence, including cyclic seam travel. The URL hash and settled chapter updated.                                                                       |
 | Focused desktop E2E    | Boot, journey, exhibit, accessibility, contact, hygiene, and SEO checks passed in focused runs; 5 cases were skipped by project/test conditions.                                                                |
+| Chapter artwork E2E    | Desktop: 5 passed / 2 skipped, including all seven colored canvases; mobile: 3 passed / 4 skipped; reduced motion: 3 passed / 4 skipped.                                                                        |
 | No-JS approach         | The semantic markup and explicit no-JS Playwright project are present. This assessment did not rerun that browser project.                                                                                      |
 
 These are component- and workspace-level observations, not proof that all
@@ -172,10 +172,10 @@ they are stale evidence and are not treated as a current E2E result.
 3. **Complete the E2E matrix.** The focused desktop checks are useful but do
    not substitute for desktop/mobile, reduced-motion, no-JS, contact,
    accessibility, and SEO coverage across all projects.
-4. **Finish exhibit integration.** The current five animations are explicitly
-   mock-era previews. Replace them only when owner-provided animations are
-   available and validate them against the ASCII contract; do not mistake
-   current mock presence for final scientific artwork.
+4. **Review the rendered artwork.** The seven scenes are original procedural
+   compositions, not representations of measured datasets or specific
+   experimental structures. Refine them against the owner’s visual feedback
+   and keep that scientific boundary explicit.
 5. **Review current uncommitted work before extending it.** At assessment
    time, the worktree already contained broad uncommitted documentation
    archival/rewrites and a smaller group of UI/test edits, including mobile
@@ -199,16 +199,17 @@ they are stale evidence and are not treated as a current E2E result.
 
 ## Verification commands and results
 
-| Command                                | Result                                     |
-| -------------------------------------- | ------------------------------------------ |
-| `npm run typecheck`                    | Passed                                     |
-| `npm run lint`                         | Passed                                     |
-| `npm run boundaries`                   | Passed                                     |
-| `npm run content:check`                | Passed, 13 tests                           |
-| `npm run frame-alloc`                  | Passed                                     |
-| `npm run unit`                         | Passed, 131 tests across 14 files          |
-| `npm run build`                        | Passed; all 11 routes generated            |
-| `node scripts/check-bundle-budget.mjs` | Passed                                     |
-| Standalone HTTP route smoke            | Passed, five routes returned HTTP 200      |
-| Focused desktop Playwright             | Core journeys and supporting checks passed |
-| Desktop performance Playwright         | Failed: post-boot long-task threshold      |
+| Command                                | Result                                                     |
+| -------------------------------------- | ---------------------------------------------------------- |
+| `npm run typecheck`                    | Passed                                                     |
+| `npm run lint`                         | Passed                                                     |
+| `npm run boundaries`                   | Passed                                                     |
+| `npm run content:check`                | Passed, 13 tests                                           |
+| `npm run frame-alloc`                  | Passed                                                     |
+| `npm run unit`                         | Passed, 139 tests across 15 files                          |
+| `npm run build`                        | Passed; all 11 routes generated                            |
+| `node scripts/check-bundle-budget.mjs` | Passed                                                     |
+| Standalone HTTP route smoke            | Passed, five routes returned HTTP 200                      |
+| Focused desktop Playwright             | Core journeys and supporting checks passed                 |
+| Artwork Playwright                     | Desktop 5 passed; mobile 3 passed; reduced motion 3 passed |
+| Desktop performance Playwright         | Re-run required after art renderer change                  |

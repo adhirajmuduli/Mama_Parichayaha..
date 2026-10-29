@@ -6,6 +6,7 @@ import {
   finishArtwork,
   line,
   put,
+  shadedEllipse,
   writeText,
 } from './shared'
 
@@ -65,6 +66,7 @@ function render(index: number, elapsedMs: number) {
 
   nodes.forEach(([x, y], node) => {
     const wave = 0.5 + 0.5 * Math.sin(time * (0.7 + node * 0.04) + node)
+    shadedEllipse(buffer, x, y, 2 + wave, 1 + wave * 0.4, node % 2 ? 1 : 2, time * 0.1 + node)
     ellipse(buffer, x, y, 2 + wave, 1 + wave * 0.4, '.', node % 2 ? 2 : 1, time * 0.1)
     put(
       buffer,

@@ -7,6 +7,7 @@ import {
   finishArtwork,
   line,
   put,
+  shadedEllipse,
   writeText,
 } from './shared'
 
@@ -19,6 +20,7 @@ function render(index: number, elapsedMs: number) {
   const phase = time * 0.32
   writeText(buffer, 2, 1, '03 / PROTEIN FOLDSCAPE   -   ENSEMBLE, NOT ONE POSE', 1)
 
+  shadedEllipse(buffer, 26, 12, 19, 6, 1, phase)
   const points: Array<[number, number]> = []
   for (let step = 0; step < 45; step += 1) {
     const t = step / 44
@@ -26,6 +28,7 @@ function render(index: number, elapsedMs: number) {
     const fold = Math.sin(t * Math.PI * 3.2 + phase) * (4 + Math.sin(phase * 0.6) * 1.4)
     const y = 12 + fold + Math.sin(t * Math.PI * 7 - phase * 0.7) * 1.2
     points.push([x, y])
+    if (step % 4 === 0) shadedEllipse(buffer, x, y, 2.4, 1.1, 2, phase + step * 0.1)
     put(buffer, x, y, step % 5 === 0 ? 'o' : step % 2 === 0 ? '.' : ':', step % 7 === 0 ? 3 : 1)
   }
 
@@ -58,7 +61,6 @@ function render(index: number, elapsedMs: number) {
 
   ellipse(buffer, 51, 11, 6 + Math.sin(phase) * 0.8, 3.3, ':', 4, phase)
   ellipse(buffer, 51, 11, 3.6, 1.7, '.', 2, -phase)
-  writeText(buffer, 47, 11, 'BASIN', 5)
   put(buffer, 51 + Math.sin(time * 0.5) * 3, 11 + Math.cos(time * 0.7), '@', 3)
 
   box(buffer, 59, 5, 10, 15, 1)

@@ -13,8 +13,9 @@ export interface ArtworkBuffer {
   readonly colors: Uint8Array
 }
 
-export const ART_ROWS = 25
-export const ART_COLS = 72
+const ART_ROWS = 25
+const ART_COLS = 72
+const SHADE_RAMP = ' ░▒▓█'
 
 export function createArtworkBuffer(palette: readonly string[]): ArtworkBuffer {
   return {
@@ -108,6 +109,48 @@ export function ellipse(
       glyph,
       color,
     )
+  }
+}
+
+export function shadedEllipse(
+  buffer: ArtworkBuffer,
+  centerX: number,
+  centerY: number,
+  radiusX: number,
+  radiusY: number,
+  baseColor: number,
+  phase = 0,
+): void {
+  const left = Math.max(0, Math.floor(centerX - radiusX))
+  const right = Math.min(buffer.cols - 1, Math.ceil(centerX + radiusX))
+  const top = Math.max(0, Math.floor(centerY - radiusY))
+  const bottom = Math.min(buffer.rows - 1, Math.ceil(centerY + radiusY))
+  const lightX = Math.cos(phase + 0.6) * 0.5
+  const lightY = -0.58
+  const lightZ = Math.sqrt(Math.max(0.1, 1 - lightX * lightX - lightY * lightY))
+
+  for (let row = top; row <= bottom; row += 1) {
+    for (let col = left; col <= right; col += 1) {
+      const nx = (col - centerX) / radiusX
+      const ny = (row - centerY) / radiusY
+      const distance = nx * nx + ny * ny
+      if (distance > 1) continue
+
+      const nz = Math.sqrt(1 - distance)
+      const diffuse = Math.max(0, nx * lightX + ny * lightY + nz * lightZ)
+      const highlight = Math.pow(Math.max(0, nz + nx * lightX - ny * lightY), 10) * 0.35
+      const grain =
+        (Math.sin(col * 1.71 + row * 0.83 + phase) +
+          Math.sin(col * 0.43 - row * 1.31 - phase * 0.7)) *
+        0.045
+      const intensity = Math.min(1, Math.max(0, 0.08 + diffuse * 0.72 + highlight + grain))
+      const rampIndex = Math.round(intensity * (SHADE_RAMP.length - 1))
+      const colorBand = Math.min(buffer.palette.length - baseColor - 1, Math.floor(intensity * 3))
+      const cell = row * buffer.cols + col
+
+      buffer.chars[cell] = SHADE_RAMP[rampIndex] ?? '░'
+      buffer.colors[cell] = Math.max(0, baseColor + colorBand)
+    }
   }
 }
 

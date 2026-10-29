@@ -35,7 +35,13 @@ function render(index: number, elapsedMs: number) {
         Math.round((card.h - 5) * (0.5 + 0.38 * Math.sin(row * 0.9 + time * 0.65 + cardIndex)))
       const x = card.x + 2 + row
       line(buffer, x, signal, x + 1, signal - 1, '/', card.color)
-      put(buffer, x, signal, row === (index + drift + cardIndex) % (card.h - 4) ? '*' : '.', 1)
+      put(
+        buffer,
+        x,
+        signal,
+        row === (index + drift + cardIndex) % (card.h - 4) ? '█' : row % 2 ? '▒' : '░',
+        1,
+      )
     }
     for (let row = 0; row < 3; row += 1) {
       const barWidth = 4 + ((row * 3 + cardIndex + drift) % (card.w - 6))
@@ -45,7 +51,7 @@ function render(index: number, elapsedMs: number) {
         card.y + card.h - 2 - row,
         card.x + 1 + barWidth,
         card.y + card.h - 2 - row,
-        '=',
+        row === 0 ? '▓' : '▒',
         card.color,
       )
     }

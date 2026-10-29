@@ -1,7 +1,8 @@
 # System map
 
 The portfolio is a DOM-first immersive stage. One continuous "journey" value
-drives seven chapter-specific, recurring multicolor ASCII artworks. Each
+drives seven chapter-specific, recurring multicolor Unicode block artworks
+on fixed-width glyph grids. Each
 chapter uses its own palette and procedural glyph composition. Research
 project links remain available in the chapter copy. The older project spiral
 and lanyard components remain in the codebase but are not part of the current
@@ -25,16 +26,16 @@ content/projection.ts   ──▶     ├─ runtime/journeyRuntime (spring + se
 
 ## Layers (import direction points down)
 
-| Layer      | Module             | May import                                  | Notes                                      |
-| ---------- | ------------------ | ------------------------------------------- | ------------------------------------------ |
-| L0 config  | `config/`          | —                                           | flags, env, site identity                  |
-| L1 content | `content/`         | zod (schemas only)                          | `projection.ts` is the only client surface |
-| L2 journey | `journey/`         | `types/`                                    | pure math; count-parameterized (N=3..12)   |
-| L3 types   | `types/`           | —                                           | shared vocabulary (JourneyFrame etc.)      |
-| L4 runtime | `runtime/`         | journey, types, config                      | scheduler, spring, stores, input, quality  |
-| L5 ui      | `ui/`, `exhibits/` | runtime, journey, types, content/projection | DOM stage; colored ASCII player; fx         |
-| L6 arts    | `arts/`            | exhibit source contract                    | lazy, fixed-grid procedural art            |
-| L7 legacy  | `ui/fx/lanyard/`   | three                                        | retained optional component; not chapter-wired |
+| Layer      | Module             | May import                                  | Notes                                          |
+| ---------- | ------------------ | ------------------------------------------- | ---------------------------------------------- |
+| L0 config  | `config/`          | —                                           | flags, env, site identity                      |
+| L1 content | `content/`         | zod (schemas only)                          | `projection.ts` is the only client surface     |
+| L2 journey | `journey/`         | `types/`                                    | pure math; count-parameterized (N=3..12)       |
+| L3 types   | `types/`           | —                                           | shared vocabulary (JourneyFrame etc.)          |
+| L4 runtime | `runtime/`         | journey, types, config                      | scheduler, spring, stores, input, quality      |
+| L5 ui      | `ui/`, `exhibits/` | runtime, journey, types, content/projection | DOM stage; colored ASCII player; fx            |
+| L6 arts    | `arts/`            | exhibit source contract                     | lazy, fixed-grid procedural art                |
+| L7 legacy  | `ui/fx/lanyard/`   | three                                       | retained optional component; not chapter-wired |
 
 Enforced by `scripts/quality/check-boundaries.mjs` (also bans
 `@react-three/*` + `postprocessing` everywhere).
@@ -70,9 +71,9 @@ and publishes atomically.
 
 ## Visual slots
 
-| kind    | renders              | active when                    | fallback                        |
-| ------- | -------------------- | ------------------------------ | ------------------------------- |
-| ascii   | AsciiPanel + player  | chapter is visible              | deterministic text placeholder  |
+| kind  | renders             | active when        | fallback                       |
+| ----- | ------------------- | ------------------ | ------------------------------ |
+| ascii | AsciiPanel + player | chapter is visible | deterministic text placeholder |
 
 All seven chapter entries currently use the ASCII slot. Research project
 links are rendered in its semantic copy surface rather than the retired

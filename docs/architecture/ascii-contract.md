@@ -10,7 +10,10 @@ export interface AsciiExhibitSource {
   palette?: readonly string[] // source-specific glyph colors
   frames?: readonly string[] // precomputed set (optional)
   render?: (index: number, elapsedMs: number) => string // generative (optional)
-  renderColored?: (index: number, elapsedMs: number) => {
+  renderColored?: (
+    index: number,
+    elapsedMs: number,
+  ) => {
     text: string
     colorIndices: ArrayLike<number>
   } // colored generative grid (optional)
@@ -21,8 +24,9 @@ export interface AsciiExhibitSource {
 
 One of `frames`, `render`, or `renderColored` is required. Colored sources
 provide one palette index per fixed-grid cell. The server and no-JavaScript
-experience use the ASCII `text`; after hydration the player draws those glyphs
-in the source palette on a canvas. Register adapters in
+experience use the fixed-grid `text` frame, including Unicode block elements;
+after hydration the player draws those glyphs in the source palette on a
+canvas. Register adapters in
 `src/exhibits/sources/index.ts` under the authored `sourceKey`
 (`content/data/exhibits.ts`), and set `animated: true` there.
 
@@ -36,9 +40,10 @@ in the source palette on a canvas. Register adapters in
    declared column count.
 3. **Budget**: ≤ 80 cols × 40 rows; fps 1..30 (the quality tier caps further:
    low 12 / medium 18 / high 24).
-4. **Printable ASCII** only. The panel renders with ligatures/kerning
-   disabled and `white-space: pre`; color is metadata, not terminal escape
-   sequences or Unicode decoration.
+4. **Single-cell glyphs** only. Use printable ASCII and Unicode block
+   elements (U+2580-U+259F); every glyph must occupy one fixed-grid cell. The
+   panel renders with ligatures/kerning disabled and `white-space: pre`;
+   color is metadata, not terminal escape sequences.
 5. **Pure**: no side effects; may be dynamically imported.
 
 ## Reference implementations
@@ -59,6 +64,11 @@ in the source palette on a canvas. Register adapters in
 - `src/arts/shared.ts` — fixed-grid raster primitives and the common source
   adapter. Each chapter selects its own palette.
 
+The visual direction takes general inspiration from the scene density and
+continuous motion demonstrated by [ascii.rest](https://ascii.rest/#scenes).
+These portfolio compositions and their source code are original; no reference
+scene, video, or pre-rendered frames are included.
+
 ## Runtime behavior (what your source plugs into)
 
 - The player (`AsciiFramePlayer`) subscribes to the shared scheduler; frame
@@ -78,7 +88,7 @@ in the source palette on a canvas. Register adapters in
 ## Contract tests
 
 `tests/unit/artworks.test.ts` pins the authored artwork grid, determinism,
-color richness, printable output, and animation. `tests/unit/mock-sources.test.ts`
+color richness, block-element output, and animation. `tests/unit/mock-sources.test.ts`
 retains compatibility coverage for the retired interim previews.
 (exact-grid on 40 consecutive frames, determinism, printable output, motion
 over time, ink density).
