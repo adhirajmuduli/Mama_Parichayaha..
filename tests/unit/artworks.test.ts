@@ -35,6 +35,7 @@ describe('authored colored block artworks', () => {
       expect(first?.text).not.toBe(later?.text)
       expect(first?.text).toMatch(/^[\x20-\x7e\u2580-\u259f\n]*$/)
       expect(first?.text).toMatch(/[\u2580-\u259f]/)
+      expect(first?.text.match(/[\u2580-\u259f]/g)?.length ?? 0).toBeGreaterThan(grid.rows)
 
       const lines = first?.text.split('\n') ?? []
       expect(lines).toHaveLength(grid.rows)

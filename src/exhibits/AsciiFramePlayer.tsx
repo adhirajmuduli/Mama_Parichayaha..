@@ -56,7 +56,14 @@ function drawColoredFrame(
 
   context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
   context.clearRect(0, 0, width, height)
-  context.font = style.font
+  // The canvas `font` shorthand must parse or it silently keeps the 10px
+  // sans-serif default — and for this stack the computed shorthand serializes
+  // to "" (var()-resolved family list), which drew every colored frame at the
+  // wrong metrics. Rebuild the font from the computed longhands instead.
+  const resolvedLineHeight = Number.isFinite(lineHeight)
+    ? `${lineHeight}px`
+    : `${(fontSize * 1.15).toFixed(2)}px`
+  context.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} / ${resolvedLineHeight} ${style.fontFamily}`
   context.textBaseline = 'top'
   context.textAlign = 'left'
   const cellWidth = context.measureText('M').width

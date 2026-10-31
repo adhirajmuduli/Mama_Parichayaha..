@@ -262,7 +262,18 @@ html[data-experience='immersive'] .stage-card .stage-card__surface {
   }
 
   html[data-experience='immersive'] .stage-card .stage-card__surface {
-    max-height: 44svh;
+    /* The 72-col art panels only need ~30svh, so the copy gets the larger
+       half; the surface is still a bounded, internally-scrolling region. */
+    max-height: 50svh;
+  }
+
+  /* When the copy overflows its band, fade the cut so truncation reads as a
+     scroll affordance instead of a rendering glitch — and lift the fade once
+     the reader reaches the end (ChapterCard tracks both states), so a
+     call-to-action at the bottom is never permanently half-hidden. */
+  html[data-experience='immersive'] .stage-card .stage-card__surface[data-scrollable='true']:not([data-at-end='true']) {
+    -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 3.25rem), transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 3.25rem), transparent 100%);
   }
 
   .stage-card__visual-slot {

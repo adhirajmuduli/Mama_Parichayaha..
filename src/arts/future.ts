@@ -18,6 +18,7 @@ function render(index: number, elapsedMs: number) {
   const time = elapsedMs / 1000
   const pulse = (time * 0.18) % 1
   writeText(buffer, 2, 1, '05 / SYSTEMS ATTRACTOR CHAMBER', 1)
+  shadedEllipse(buffer, 37, 13, 30, 8, 0, time * 0.08)
 
   const nodes = [
     [13, 9],

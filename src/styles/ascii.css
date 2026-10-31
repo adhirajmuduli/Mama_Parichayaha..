@@ -23,7 +23,12 @@
   position: relative;
   margin: 0;
   font-family: var(--font-site);
-  font-size: min(1.02rem, calc((100cqi - 2.5rem) / var(--ascii-cols, 44) / 0.6));
+  /* Every character must advance 0.6em: 'JetBrains Mono Symbols'
+     (globals.css) supplies the box/block glyphs at the same 600/1000 advance
+     as the latin face, so the grid, the frame width and the canvas overlay
+     all agree. The subtraction covers the padding pair plus the 1px border
+     pair; 0.6 is the font's exact advance, not an estimate. */
+  font-size: min(1.02rem, calc((100cqi - 2.75rem) / var(--ascii-cols, 44) / 0.6));
   line-height: 1.15;
   letter-spacing: 0;
   white-space: pre;

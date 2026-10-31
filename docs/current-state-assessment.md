@@ -8,14 +8,25 @@ claim that every deployment or machine has the same state. This recovery pass
 has since added the seven authored chapter artworks and their colored-canvas
 player, in addition to the earlier unit-test timeout correction.
 
+## Visual follow-up — 2026-10-29
+
+The authored scenes now use animated Unicode block shading (U+2580-U+259F)
+alongside monospace line glyphs, with denser atmospheric fields in the Future
+and Contact scenes. `npm run quality` passes, including all 139 unit tests and
+the production bundle budget. A direct Chromium traversal verified that all
+seven production chapters render a 72-by-25 frame, Unicode block glyphs, and
+nontransparent canvas pixels. The Playwright artwork/performance run did not
+complete cleanly in this environment: tests timed out while waiting for
+chapter transitions to settle, so the browser E2E matrix is not marked passed.
+
 ## Executive summary
 
 The checked-out product is Adhiraj Muduli's biological-sciences portfolio.
 Its current implementation is a Next.js app with a server-rendered, semantic
 seven-chapter portfolio and a client-enhanced immersive journey. The current
-architecture is DOM-first, with seven procedural multicolor ASCII scenes. The
-older optional lanyard and project spiral remain in the codebase but are no
-longer wired into the chapter visuals.
+architecture is DOM-first, with seven procedural multicolor monospace glyph
+scenes and Unicode block shading. The older optional lanyard and project
+spiral remain in the codebase but are no longer wired into the chapter visuals.
 
 The home route is not wholly down in this workspace: the production server returned
 HTTP 200, hydrated into immersive mode, rendered the Origins chapter, and
@@ -25,15 +36,12 @@ tests passed after correcting a transition test's timeout. The production
 build completed successfully, including lint/type checking and static page
 generation.
 
-All seven current artworks now use fixed-grid procedural glyph scenes with
+All seven current artworks use fixed-grid procedural glyph scenes with
 distinct per-chapter palettes and a colored canvas after hydration; the
-server-rendered ASCII text remains available as a fallback. Unit tests cover
-their determinism, motion, color variation, density, and grid contract.
-Desktop, mobile, and reduced-motion exhibit tests passed. Full quality passed
-through the unit suite but stopped at Knip because exported art-grid constants
-were unused; those exports have since been removed, so the aggregate check
-needs a fresh run. The performance test result predates the new visual
-implementation; rerun it before calling the visual version stable.
+server-rendered text frame remains available as a fallback. Unit tests cover
+their determinism, motion, color variation, block-glyph density, and grid
+contract. The 2026-10-29 quality run passed; see the visual follow-up for the
+browser verification limits.
 
 ## Product and architecture baseline
 
@@ -48,10 +56,10 @@ implementation; rerun it before calling the visual version stable.
 - **Rendering:** the stage is semantic DOM, not a persistent scene canvas.
   The HTML defaults to a readable document; a pre-paint boot script enables
   immersive mode, and hydration establishes the interactive chapter window.
-- **Exhibits:** seven chapter-specific procedural ASCII artworks use a
-  fixed grid, source-specific color palettes, continuous deterministic
-  motion, and a hydrated glyph canvas. The text frame remains the SSR/no-JS
-  fallback.
+- **Exhibits:** seven chapter-specific procedural monospace glyph artworks
+  use a fixed grid, Unicode block shading, source-specific color palettes,
+  continuous deterministic motion, and a hydrated glyph canvas. The text
+  frame remains the SSR/no-JS fallback.
 - **Visual continuity:** each chapter has a deliberately different palette
   and scene composition. Research project links are retained in its semantic
   copy surface; no publication claims or experimental results are invented

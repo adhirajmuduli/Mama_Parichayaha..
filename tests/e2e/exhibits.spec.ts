@@ -216,3 +216,37 @@ test('renders a static protein artwork under reduced motion', async ({ page }, t
   expect(await panel.locator('pre').textContent()).toBe(first)
   expect(first?.length ?? 0).toBeGreaterThan(0)
 })
+
+test('keeps every exhibit glyph on the uniform mono advance', async ({ page }, testInfo) => {
+  test.skip(!isDesktop(testInfo), 'font metrics are asserted on the desktop project')
+
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await waitForSettled(page, 'origins')
+
+  await page.keyboard.press('2')
+  await waitForSettled(page, 'interests')
+
+  // The panel's font-size formula, the frame width and the canvas overlay all
+  // assume ONE advance (600/1000 = 0.6em) for every character. A single glyph
+  // falling back to a non-mono face (the bug that clipped every colored frame)
+  // inflates the rendered text width and is caught here.
+  const metrics = await page.locator('#interests .ascii-panel').evaluate((panel) => {
+    const frame = panel.querySelector('.ascii-panel__frame')
+    if (!frame) return null
+
+    const style = getComputedStyle(frame)
+    const fontSize = Number.parseFloat(style.fontSize)
+    const cols = Number(panel.style.getPropertyValue('--ascii-cols'))
+    const paddingX = Number.parseFloat(style.paddingLeft) + Number.parseFloat(style.paddingRight)
+    const rendered = frame.scrollWidth - paddingX
+
+    return { fontSize, cols, rendered, expected: cols * fontSize * 0.6 }
+  })
+
+  expect(metrics).not.toBeNull()
+  if (!metrics) return
+
+  expect(metrics.cols).toBeGreaterThan(0)
+  expect(metrics.rendered).toBeGreaterThan(0)
+  expect(Math.abs(metrics.rendered - metrics.expected)).toBeLessThan(metrics.expected * 0.02)
+})

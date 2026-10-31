@@ -1,7 +1,12 @@
 :root {
   /* Self-hosted JetBrains Mono (next/font/local) with the system stack as
-     the pre-load fallback; the ASCII grids rely on these metrics (R13). */
-  --font-site: var(--font-site-local), 'Consolas', 'Monaco', 'Courier New', monospace;
+     the pre-load fallback; the ASCII grids rely on these metrics (R13).
+     'JetBrains Mono Symbols' (globals.css) carries the box/block glyphs the
+     latin subset lacks at the SAME 0.6em advance — the exhibit grids and the
+     canvas overlay assume one uniform advance for every character. */
+  --font-site:
+    var(--font-site-local), 'JetBrains Mono Symbols', 'Consolas', 'Monaco',
+    'Courier New', monospace;
   --type-display: clamp(2.5rem, 6vw, 5rem);
   --type-heading: clamp(2rem, 4vw, 3.5rem);
   --type-body: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);

@@ -45,6 +45,7 @@ function render(index: number, elapsedMs: number) {
   ] as const
   writeText(buffer, 2, 1, '07 / SIGNAL EXCHANGE', 1)
   writeText(buffer, 2, 23, 'A message moves through a network and finds a clear route.', 5)
+  shadedEllipse(buffer, 37, 13, 30, 8, 0, time * 0.1)
 
   edges.forEach(([fromIndex, toIndex], edge) => {
     const from = nodes[fromIndex]

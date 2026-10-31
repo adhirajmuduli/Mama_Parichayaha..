@@ -15,7 +15,7 @@
  *     interests) fold in as plain JSX — no separate supplement component.
  */
 
-import type { CSSProperties, ReactNode } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 
 import type { ClientChapter, ClientProject } from '@/types/experience'
 
@@ -46,6 +46,68 @@ const STATUS_LABEL: Record<string, string> = {
   experimental: 'exploratory',
 }
 
+/**
+ * Tracks whether a bounded scroll region actually overflows, and whether the
+ * reader has reached its end. Two attributes on the element let CSS express
+ * the truncation honestly: a scrollable copy fades at its cut (an affordance,
+ * not a glitch) and the fade lifts once the reader reaches the end — so a
+ * call-to-action at the bottom is never permanently half-hidden.
+ *
+ * The measurement is event-driven (resize observer + font readiness + passive
+ * scroll), never per frame; a short copy never renders the affordance.
+ */
+function useOverflowState(surfaceRef: React.RefObject<HTMLDivElement | null>, visible: boolean) {
+  const [state, setState] = useState({ scrollable: false, atEnd: true })
+
+  useEffect(() => {
+    const surface = surfaceRef.current
+
+    if (!surface || !visible) {
+      setState({ scrollable: false, atEnd: true })
+      return
+    }
+
+    let frame = 0
+    let lastScrollable: boolean | null = null
+    let lastAtEnd: boolean | null = null
+
+    const measure = () => {
+      frame = 0
+      const scrollable = surface.scrollHeight > surface.clientHeight + 1
+      const atEnd = !scrollable || surface.scrollTop + surface.clientHeight >= surface.scrollHeight - 1
+
+      if (scrollable !== lastScrollable || atEnd !== lastAtEnd) {
+        lastScrollable = scrollable
+        lastAtEnd = atEnd
+        setState({ scrollable, atEnd })
+      }
+    }
+
+    const schedule = () => {
+      if (frame === 0) frame = requestAnimationFrame(measure)
+    }
+
+    measure()
+
+    const observer = new ResizeObserver(schedule)
+    observer.observe(surface)
+    surface.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    // Font swap changes text metrics without resizing the capped box; the
+    // loading promise is the only reliable signal for that transition.
+    void document.fonts?.ready.then(schedule).catch(() => {})
+
+    return () => {
+      if (frame !== 0) cancelAnimationFrame(frame)
+      observer.disconnect()
+      surface.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
+    }
+  }, [surfaceRef, visible])
+
+  return state
+}
+
 export function ChapterCard({
   chapter,
   cardState,
@@ -61,6 +123,8 @@ export function ChapterCard({
 }: ChapterCardProps) {
   const visible = cardState !== 'idle'
   const Heading = isLanding ? 'h1' : 'h2'
+  const surfaceRef = useRef<HTMLDivElement | null>(null)
+  const overflow = useOverflowState(surfaceRef, visible)
 
   return (
     <section
@@ -81,9 +145,12 @@ export function ChapterCard({
         data-composition={chapter.visual.kind === 'spiral' ? 'solo' : undefined}
       >
         <div
+          ref={surfaceRef}
           className="stage-card__surface"
           tabIndex={-1}
           data-scroll-region={immersive && visible ? '' : undefined}
+          data-scrollable={overflow.scrollable ? 'true' : undefined}
+          data-at-end={overflow.atEnd ? 'true' : undefined}
           style={{ '--card-accent': chapter.accent } as CSSProperties}
         >
           <p className="stage-card__eyebrow">{chapter.eyebrow}</p>

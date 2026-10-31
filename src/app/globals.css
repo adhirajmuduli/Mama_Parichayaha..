@@ -7,6 +7,25 @@
 @import '../styles/fx.css';
 @import '../ui/surfaces/surfaces.css';
 
+/*
+ * Supplementary face for the exhibit glyphs the latin subset does not carry
+ * (box drawing U+2500-257F, block elements U+2580-259F, the dot separators).
+ * Without it those characters fall back to a NON-monospace face whose wider
+ * advance (~0.84-0.93em vs 0.6em) breaks the ascii panel's font-size formula
+ * and the canvas overlay's cell alignment — every art frame clipped. The
+ * subset is ~4 KB, covers exactly the ranges the art draws, keeps the same
+ * variable weight axis (100-800) and the same 600/1000 advance, and is only
+ * fetched when one of its code points is actually rendered (unicode-range).
+ */
+@font-face {
+  font-family: 'JetBrains Mono Symbols';
+  src: url('./fonts/jetbrains-mono-symbols.woff2') format('woff2-variations');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+2500-25FF, U+00B7, U+2022, U+02D9;
+}
+
 /* Explicit content sources: automatic detection would scan every text file in
    the repository (including planning documents at the repo root, whose prose
    contains class-like tokens that Tailwind would faithfully emit as CSS). */

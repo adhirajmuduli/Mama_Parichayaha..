@@ -15,7 +15,7 @@ export interface ArtworkBuffer {
 
 const ART_ROWS = 25
 const ART_COLS = 72
-const SHADE_RAMP = ' ░▒▓█'
+const SHADE_RAMP = '░▒▓█'
 
 export function createArtworkBuffer(palette: readonly string[]): ArtworkBuffer {
   return {
