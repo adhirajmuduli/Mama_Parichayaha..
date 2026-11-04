@@ -39,10 +39,13 @@ per-chapter 3D performance cost alive for a medium that is no longer used.
    `exhibits/sources/placeholder.ts` (seeded, SSR-stable). The frame is
    labelled `data-placeholder="true"` and the mock-era sources are labelled
    `data-mock="true"` so the difference is inspectable, not implied.
-5. **GLB binaries are archive-only.** The former model files stay in the
-   repository under `assets/models/source/` for provenance. Nothing in
-   `public/` and nothing in the runtime references them; they are not
-   deployed.
+5. **GLB binaries are not runtime assets.** Nothing in `public/` and nothing
+   in the runtime references them — enforced by the hygiene e2e. The archived
+   source binaries that were first parked under `assets/models/source/` for
+   provenance were removed from the repository entirely in the 2026-11-03
+   consumer audit (commit `666085a`); provenance lives in the git history and
+   the retired provenance records (`docs/history/`, the phase-3 provenance
+   doc).
 6. **One sanctioned 3D island remains.** The react-bits Lanyard in the origins
    slot is the only WebGL surface in the product (see ADR 0011). It is lazily
    imported, capability-gated and self-parking; `three` is imported nowhere

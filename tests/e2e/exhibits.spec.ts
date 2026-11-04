@@ -135,50 +135,66 @@ test('renders the cellular artwork in the origins chapter', async ({ page }, tes
   await expect(panel.locator('canvas')).toBeVisible()
 })
 
-test('renders a distinct colored artwork in every chapter', async ({ page }, testInfo) => {
-  test.skip(!isDesktop(testInfo), 'the full artwork journey is checked on desktop')
+test.describe('renders a distinct colored artwork in every chapter', () => {
+  // The census reads pixels back with getImageData while the player repaints
+  // the same canvas at its authored cadence. Under continuous animation the
+  // readback contends with the repaint pipeline on software-rasterized
+  // machines and can stall indefinitely (observed: a locator.evaluate hang
+  // on the origins canvas). The census verifies PALETTE richness, not
+  // animation (covered by the playback and single-artwork tests), so it runs
+  // with the player static: one deterministic paint, zero contention.
+  test.use({ reducedMotion: 'reduce' })
 
-  const chapterIds = [
-    'origins',
-    'interests',
-    'research',
-    'computation',
-    'future',
-    'publications',
-    'contact',
-  ]
+  test('renders a distinct colored artwork in every chapter', async ({ page }, testInfo) => {
+    test.skip(!isDesktop(testInfo), 'the full artwork journey is checked on desktop')
+    // Heaviest spec in the suite: 7 settle polls + 7 pixel censuses across a
+    // page whose DOM carries seven 1,800-cell art frames. The identical
+    // traversal without the runner's per-action trace snapshots completes in
+    // ~15s; under trace instrumentation on a loaded machine each action is
+    // an order of magnitude dearer, so the shared 180s budget is exceeded
+    // long before the last chapter. The budget is environment cost — the
+    // assertions are unchanged.
+    test.setTimeout(420_000)
 
-  await page.goto('/', { waitUntil: 'domcontentloaded' })
-  await waitForSettled(page, 'origins')
+    const chapterIds = [
+      'origins',
+      'interests',
+      'research',
+      'computation',
+      'future',
+      'publications',
+      'contact',
+    ] as const
 
-  for (let index = 0; index < chapterIds.length; index += 1) {
-    const chapterId = chapterIds[index]
-    if (!chapterId) continue
+    await page.goto('/', { waitUntil: 'domcontentloaded' })
+    await waitForSettled(page, 'origins')
 
-    if (index > 0) await page.keyboard.press('ArrowDown')
-    await waitForSettled(page, chapterId)
+    for (const [index, chapterId] of chapterIds.entries()) {
+      if (index > 0) await page.keyboard.press('ArrowDown')
+      await waitForSettled(page, chapterId)
 
-    const panel = page.locator(`#${chapterId} .ascii-panel`)
-    await expect(panel).toHaveAttribute('data-placeholder', 'false')
-    await expect(panel.locator('pre')).toHaveAttribute('data-art-colored', 'true')
+      const panel = page.locator(`#${chapterId} .ascii-panel`)
+      await expect(panel).toHaveAttribute('data-placeholder', 'false')
+      await expect(panel.locator('pre')).toHaveAttribute('data-art-colored', 'true')
 
-    const colors = await panel.locator('canvas').evaluate((canvas) => {
-      const element = canvas as HTMLCanvasElement
-      const context = element.getContext('2d')
-      if (!context || element.width === 0 || element.height === 0) return 0
+      const colors = await panel.locator('canvas').evaluate((canvas) => {
+        const element = canvas as HTMLCanvasElement
+        const context = element.getContext('2d')
+        if (!context || element.width === 0 || element.height === 0) return 0
 
-      const pixels = context.getImageData(0, 0, element.width, element.height).data
-      const observed = new Set<string>()
-      for (let offset = 0; offset < pixels.length; offset += 4) {
-        if (pixels[offset + 3] !== 0) {
-          observed.add(`${pixels[offset]},${pixels[offset + 1]},${pixels[offset + 2]}`)
+        const pixels = context.getImageData(0, 0, element.width, element.height).data
+        const observed = new Set<string>()
+        for (let offset = 0; offset < pixels.length; offset += 4) {
+          if (pixels[offset + 3] !== 0) {
+            observed.add(`${pixels[offset]},${pixels[offset + 1]},${pixels[offset + 2]}`)
+          }
         }
-      }
-      return observed.size
-    })
+        return observed.size
+      })
 
-    expect(colors).toBeGreaterThan(3)
-  }
+      expect(colors).toBeGreaterThan(3)
+    }
+  })
 })
 
 test('renders the protein foldscape and preserves project links', async ({ page }, testInfo) => {

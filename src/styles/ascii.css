@@ -22,7 +22,14 @@
 .ascii-panel__frame {
   position: relative;
   margin: 0;
-  font-family: var(--font-site);
+  /* The exhibit glyphs must lead the stack: next/font's variable expands to a
+     fallback list that ends in the generic `monospace`, which satisfies every
+     codepoint and would make a face appended after it unreachable. The
+     symbols face contains ONLY the box/block/dot glyphs (globals.css), so
+     latin characters skip it (no glyph) and resolve through var(--font-site)
+     — one uniform 0.6em advance for the whole grid, in the pre, the canvas
+     overlay and the frame-width formula below. */
+  font-family: 'JetBrains Mono Symbols', var(--font-site);
   /* Every character must advance 0.6em: 'JetBrains Mono Symbols'
      (globals.css) supplies the box/block glyphs at the same 600/1000 advance
      as the latin face, so the grid, the frame width and the canvas overlay

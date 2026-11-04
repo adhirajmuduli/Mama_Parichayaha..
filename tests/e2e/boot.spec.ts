@@ -58,9 +58,12 @@ test('serves the complete semantic document without JavaScript', async ({ page }
   }
 
   // Contact extras: real profile links plus the privacy/credits routes.
+  // The labels come from the chapter detail items in content data (terse
+  // "GitHub"/"ORCID" since the arts-era copy pass), matched exactly.
   const contact = page.getByRole('region', { name: 'Get in touch' })
 
-  await expect(contact.getByRole('link', { name: 'GitHub profile' })).toBeVisible()
+  await expect(contact.getByRole('link', { name: 'GitHub', exact: true })).toBeVisible()
+  await expect(contact.getByRole('link', { name: 'ORCID', exact: true })).toBeVisible()
   await expect(contact.getByRole('link', { name: 'Privacy details' })).toHaveAttribute(
     'href',
     '/privacy',

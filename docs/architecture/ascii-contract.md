@@ -44,6 +44,14 @@ canvas. Register adapters in
    elements (U+2580-U+259F); every glyph must occupy one fixed-grid cell. The
    panel renders with ligatures/kerning disabled and `white-space: pre`;
    color is metadata, not terminal escape sequences.
+   **Uniform advance is load-bearing**: every glyph must resolve to a face
+   with the same 600/1000 (0.6em) advance. The latin-subset woff2 plus the
+   `JetBrains Mono Symbols` supplementary face (globals.css; box drawing
+   U+2500-25FF, U+00B7, U+2022, U+02D9 — ~4 KB, unicode-range scoped) cover
+   the allowed set exactly. A glyph outside those ranges falls back to a
+   non-mono face (0.84–0.93em), inflates the frame width and clips the art —
+   the e2e glyph-metric test fails in that case, which is the signal to
+   either use an allowed glyph or extend the subset deliberately.
 5. **Pure**: no side effects; may be dynamically imported.
 
 ## Reference implementations

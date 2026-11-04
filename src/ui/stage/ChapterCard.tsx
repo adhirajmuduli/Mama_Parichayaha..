@@ -74,7 +74,8 @@ function useOverflowState(surfaceRef: React.RefObject<HTMLDivElement | null>, vi
     const measure = () => {
       frame = 0
       const scrollable = surface.scrollHeight > surface.clientHeight + 1
-      const atEnd = !scrollable || surface.scrollTop + surface.clientHeight >= surface.scrollHeight - 1
+      const atEnd =
+        !scrollable || surface.scrollTop + surface.clientHeight >= surface.scrollHeight - 1
 
       if (scrollable !== lastScrollable || atEnd !== lastAtEnd) {
         lastScrollable = scrollable
@@ -88,6 +89,16 @@ function useOverflowState(surfaceRef: React.RefObject<HTMLDivElement | null>, vi
     }
 
     measure()
+
+    // ResizeObserver is an enhancement: layout hosts without it (jsdom, old
+    // WebViews) still measure on resize, font readiness and scroll.
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', schedule)
+      return () => {
+        if (frame !== 0) cancelAnimationFrame(frame)
+        window.removeEventListener('resize', schedule)
+      }
+    }
 
     const observer = new ResizeObserver(schedule)
     observer.observe(surface)

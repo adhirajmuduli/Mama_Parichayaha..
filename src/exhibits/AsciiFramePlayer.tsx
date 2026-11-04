@@ -112,6 +112,7 @@ export function AsciiFramePlayer({
 }: AsciiFramePlayerProps) {
   const elapsedRef = useRef(0)
   const renderedIndexRef = useRef(-1)
+  const lastRenderMsRef = useRef(0)
   const gridRef = useRef<{ rows: number; cols: number } | null>(null)
   const warnedRef = useRef(false)
 
@@ -183,12 +184,22 @@ export function AsciiFramePlayer({
     }
 
     writeFrame(Math.floor(elapsedRef.current / frameIntervalMs))
+    lastRenderMsRef.current = elapsedRef.current
 
     const unsubscribe = subscribeTick((deltaMs) => {
       elapsedRef.current += deltaMs
 
-      // Frame skip: advance by elapsed time; slow ticks drop frames rather
-      // than slowing the authored cadence.
+      // The render is gated to the AUTHORED cadence, not the scheduler's:
+      // a generative source re-renders continuously (its output depends on
+      // elapsed time), so without this gate a 12fps artwork rebuilds its
+      // 72x25 buffer, swaps the 1,800-cell text node and repaints the whole
+      // canvas overlay on EVERY rAF tick (60fps) — a sustained long-task
+      // storm (measured: 1,350 tasks up to 3.8s across two journey cycles).
+      // One render per authored frame keeps the motion the source designed;
+      // frame skipping when behind still applies.
+      if (elapsedRef.current - lastRenderMsRef.current < frameIntervalMs) return
+
+      lastRenderMsRef.current = elapsedRef.current
       writeFrame(Math.floor(elapsedRef.current / frameIntervalMs))
     })
 
