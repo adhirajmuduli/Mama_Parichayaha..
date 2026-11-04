@@ -8,6 +8,10 @@ test-results/
 blob-report/
 .lighthouseci/
 .vercel/
+# Transient deploy-CLI caches (netlify deploy previews). They bundle local
+# env values into deploy blobs; never commit or scan them. The secrets
+# scanner fails the build on any env value found in them.
+.netlify/
 
 *.tsbuildinfo
 *.log

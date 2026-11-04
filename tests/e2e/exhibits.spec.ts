@@ -143,7 +143,8 @@ test.describe('renders a distinct colored artwork in every chapter', () => {
   // on the origins canvas). The census verifies PALETTE richness, not
   // animation (covered by the playback and single-artwork tests), so it runs
   // with the player static: one deterministic paint, zero contention.
-  test.use({ reducedMotion: 'reduce' })
+  // (contextOptions form — same declaration the reduced-motion project uses.)
+  test.use({ contextOptions: { reducedMotion: 'reduce' } })
 
   test('renders a distinct colored artwork in every chapter', async ({ page }, testInfo) => {
     test.skip(!isDesktop(testInfo), 'the full artwork journey is checked on desktop')

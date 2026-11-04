@@ -56,3 +56,22 @@ test('loads the immersive stage from first-party origins only', async ({ page },
 
   expect([...thirdPartyOrigins]).toEqual([])
 })
+
+test('ships zero diagnostics surface in production builds', async ({ page }, testInfo) => {
+  test.skip(!isScripted(testInfo), 'no-js renders no overlay by construction')
+
+  // The diagnostics overlay, its registry and window.__JOURNEY__ are dev-only
+  // (FEATURES.diagnostics). The invariant is structural: a production build
+  // must not mount the overlay or expose the global, so diagnostics can never
+  // leak into a shipped page (new_plan.md §7.4: "zero production cost").
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await page.waitForSelector('#origins[data-card-state="settled"]', { timeout: 20_000 })
+  await page.waitForTimeout(1_000)
+
+  await expect(page.locator('[data-diagnostics]')).toHaveCount(0)
+
+  const exposed = await page.evaluate(
+    () => (window as unknown as Record<string, unknown>).__JOURNEY__ ?? null,
+  )
+  expect(exposed).toBeNull()
+})

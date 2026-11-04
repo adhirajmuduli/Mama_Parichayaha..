@@ -490,8 +490,9 @@ html[data-experience='immersive'] .stage-card__visual-slot {
   border: 1px solid color-mix(in oklab, var(--site-foreground) 20%, transparent);
   border-radius: 999px;
   background: color-mix(in oklab, var(--site-background) 78%, transparent);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  /* No backdrop-filter: the chip floats over the animated plasma, and a
+     blur here would be recomposited every frame. The opaque-enough
+     background already provides the contrast. */
   color: var(--site-muted-strong);
   font-size: 0.68rem;
   letter-spacing: 0.12em;

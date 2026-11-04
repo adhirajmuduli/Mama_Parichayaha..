@@ -277,7 +277,9 @@ html {
     border-radius: 999px;
     color: var(--site-muted-strong);
     background: color-mix(in srgb, #05070d 78%, transparent);
-    backdrop-filter: blur(10px);
+    /* No backdrop-filter here: this pill sits above the continuously
+       animated plasma layers, so a blur would be recomposited on every
+       frame. The 78% opaque background already carries the contrast. */
     font-size: 0.68rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;

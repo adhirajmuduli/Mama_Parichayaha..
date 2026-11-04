@@ -25,7 +25,16 @@ Set `ENABLE_HSTS=true` only after the final HTTPS domain and subdomain policy ar
 
 Every response receives CSP, framing, MIME-sniffing, referrer, permission, cross-origin, DNS-prefetch, and cross-domain-policy protections. Next static chunks are immutable for one year. API responses are `no-store`.
 
-The deployment serves no 3D model binaries: the exhibits are ASCII text and the archived GLB sources live outside `public/` (`assets/models/source/`), so there is no unhashed, long-lived asset path to cache — and no `/models/*` rule exists in `next.config.js` any more. If a model-serving pipeline is ever reintroduced, it must re-add an explicit bounded cache rule (one day in the browser, seven days on the CDN) rather than marking unhashed filenames immutable.
+The deployment serves no 3D model binaries: the exhibits are ASCII text and the retired GLB sources were removed from the repository entirely (consumer audit, 2026-11-03; provenance lives in git history). There is no unhashed, long-lived asset path to cache — and no `/models/*` rule exists in `next.config.js` any more. If a model-serving pipeline is ever reintroduced, it must re-add an explicit bounded cache rule (one day in the browser, seven days on the CDN) rather than marking unhashed filenames immutable.
+
+## Secrets and transient local artifacts
+
+Deploy-time secret scanners scan the working tree, including build output. Rules that keep them green:
+
+- No environment value may appear in any tracked file. Verified by audit: `git grep` for every non-empty local `.env` value returns zero hits; `.env*` files are gitignored (only `.env.example`, with empty values, is tracked). The same rule is enforced mechanically by `npm run env-leaks` (part of `npm run quality`): it fails if any local env value appears in a tracked or about-to-be-committed file, reporting variable names and paths only, never values.
+- `NEXT_PUBLIC_*` values are inlined into the client bundle by design (e.g. the Turnstile site key); server-only values never are. Do not add server-only values to `NEXT_PUBLIC_*` names.
+- Transient CLI caches (`.netlify/`, `coverage/`, `.lighthouseci/`, `test-results/`, `artifacts/`) are gitignored and must be deleted after local runs — the Netlify CLI's `.netlify/deploy/v1/blobs/**` cache embeds local env values and is what a scanner flags. Never commit or scan them.
+- If a value was ever pushed anywhere public, rotate it at the provider regardless of the local cleanup.
 
 The CSP permits only same-origin application resources plus the Cloudflare Turnstile frame/script/connect origins. Any new external resource must be added deliberately to both CSP and the privacy disclosure.
 

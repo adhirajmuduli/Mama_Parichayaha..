@@ -27,9 +27,10 @@
     "bundle:analyze": "node scripts/build-bundle.mjs",
     "knip": "node scripts/run-knip.mjs",
     "security": "npm audit --omit=dev --audit-level=high",
-    "quality": "npm run format:check && npm run lint && npm run typecheck && npm run boundaries && npm run content:check && npm run frame-alloc && npm run links:check && npm run unit && npm run knip && npm run bundle",
+    "quality": "npm run format:check && npm run lint && npm run typecheck && npm run boundaries && npm run content:check && npm run frame-alloc && npm run links:check && npm run env-leaks && npm run unit && npm run knip && npm run bundle",
     "lighthouse:ci": "npx --yes @lhci/cli@0.15.1 autorun",
-    "licenses:inventory": "node scripts/license-inventory.mjs"
+    "licenses:inventory": "node scripts/license-inventory.mjs",
+    "env-leaks": "node scripts/quality/check-env-leaks.mjs"
   },
   "dependencies": {
     "motion": "12.42.0",
