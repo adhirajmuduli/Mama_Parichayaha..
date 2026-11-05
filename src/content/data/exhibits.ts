@@ -12,7 +12,7 @@ export const exhibits = [
     sourceKey: 'origins',
     label: 'Emergent cell',
     description:
-      'A recurring cellular landscape with a rippling membrane, organelles, a gated transport channel, and a moving fluorescent tracer.',
+      'A living cell: bilayer membrane, porous nucleus with nucleolus, cristae-folded mitochondria, ER, cytoskeleton, vesicles, and a fluorescent tracer crossing a gated channel.',
     fps: 12,
     animated: true,
   },
@@ -22,7 +22,7 @@ export const exhibits = [
     sourceKey: 'interests',
     label: 'Molecular systems observatory',
     description:
-      'A ligand approaches a membrane receptor as a branching, pulsing signal cascade travels through a molecular systems landscape.',
+      'A 7-helix membrane receptor in a bilayer: a ligand docks in its pocket, a G-protein detaches inside, and a signal cascade propagates with a live activation meter.',
     fps: 12,
     animated: true,
   },
@@ -32,7 +32,7 @@ export const exhibits = [
     sourceKey: 'research',
     label: 'Protein foldscape',
     description:
-      'A changing conformational ensemble links a flexible backbone, transient contacts, and an abstract energy basin; it does not depict a single experimentally determined structure.',
+      'A polypeptide refolding between alpha-helix and beta-strand, with H-bond dashes, a glowing active site, and a periodically binding substrate. Abstract, not a determined structure.',
     fps: 12,
     animated: true,
   },
@@ -42,7 +42,7 @@ export const exhibits = [
     sourceKey: 'computation',
     label: 'Inference field',
     description:
-      'An abstract recurring visualization moves from sequence-like input through a shifting confidence field toward a reconstructed model; it represents a workflow, not a scientific result.',
+      'A 3-layer network forward pass: signal pulses travel weighted edges, activations wave through nodes, the loss sparkline descends, and a softmax readout names the winner.',
     fps: 12,
     animated: true,
   },
@@ -52,7 +52,7 @@ export const exhibits = [
     sourceKey: 'future',
     label: 'Systems attractor chamber',
     description:
-      'A changing regulatory network routes recurrent signals between coupled nodes, showing an abstract systems-biology landscape rather than a specific measured pathway.',
+      'Dynamical systems: contour rings of an attractor basin, three trajectories spiraling in, a ball settling at the floor, and potential energy decaying to the minimum.',
     fps: 12,
     animated: true,
   },
@@ -62,7 +62,7 @@ export const exhibits = [
     sourceKey: 'publications',
     label: 'Evidence constellation',
     description:
-      'An abstract archive of figure-like panels and evidence signals; intentionally no paper titles, citations, or publication claims are represented.',
+      'A constellation of paper nodes sized by impact, linked by citation edges; pulses travel the strong edges and the current work is ringed. No real titles or counts.',
     fps: 12,
     animated: true,
   },
@@ -72,7 +72,7 @@ export const exhibits = [
     sourceKey: 'contact',
     label: 'Signal exchange',
     description:
-      'A recurring signal routes through a connected field toward an open endpoint, accompanying the portfolio’s actual contact paths without simulating a sent message.',
+      'A sender and an open endpoint joined by a clear route: packets travel forward, replies back, and a readout cycles SYN, ACK, OPEN. No message is simulated.',
     fps: 12,
     animated: true,
   },

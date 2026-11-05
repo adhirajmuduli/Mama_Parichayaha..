@@ -1,5 +1,6 @@
 import {
   artworkSource,
+  box,
   clearArtwork,
   createArtworkBuffer,
   ellipse,
@@ -10,82 +11,99 @@ import {
   writeText,
 } from './shared'
 
-const palette = ['#071B1C', '#43D9C1', '#79B8FF', '#F3BC69', '#ED86AA', '#D6FFF4']
+// bg, channel, sender, packets, handshake, endpoint
+const palette = ['#071B1C', '#0E3A38', '#43D9C1', '#79B8FF', '#F3BC69', '#D6FFF4']
 const buffer = createArtworkBuffer(palette)
+
+const SENDER = { x: 16, y: 16 }
+const ENDPOINT = { x: 82, y: 16 }
+const CHANNEL_Y = 16
 
 function render(index: number, elapsedMs: number) {
   clearArtwork(buffer)
   const time = elapsedMs / 1000
-  const nodes = [
-    [8, 8],
-    [18, 5],
-    [24, 14],
-    [15, 20],
-    [35, 7],
-    [38, 17],
-    [52, 5],
-    [56, 14],
-    [50, 21],
-    [66, 10],
-  ] as const
-  const edges = [
-    [0, 1],
-    [0, 3],
-    [1, 2],
-    [2, 3],
-    [1, 4],
-    [2, 5],
-    [4, 5],
-    [4, 6],
-    [5, 7],
-    [6, 7],
-    [7, 8],
-    [7, 9],
-    [8, 9],
-  ] as const
-  writeText(buffer, 2, 1, '07 / SIGNAL EXCHANGE', 1)
-  writeText(buffer, 2, 23, 'A message moves through a network and finds a clear route.', 5)
-  shadedEllipse(buffer, 37, 13, 30, 8, 0, time * 0.1)
 
-  edges.forEach(([fromIndex, toIndex], edge) => {
-    const from = nodes[fromIndex]
-    const to = nodes[toIndex]
-    if (!from || !to) return
-    line(buffer, from[0], from[1], to[0], to[1], edge % 3 === 0 ? '~' : '.', edge % 2 ? 1 : 2)
+  writeText(buffer, 2, 1, '07 / CONTACT  -  SIGNAL EXCHANGE', 2)
 
-    for (let particle = 0; particle < 3; particle += 1) {
-      const progress = (time * 0.13 + particle / 3 + edge * 0.071) % 1
-      put(
-        buffer,
-        from[0] + (to[0] - from[0]) * progress,
-        from[1] + (to[1] - from[1]) * progress,
-        progress > 0.9 ? '*' : 'o',
-        progress > 0.9 ? 3 : 2,
-      )
-    }
-  })
-
-  nodes.forEach(([x, y], node) => {
-    const active = (index + Math.floor(time * 1.2)) % nodes.length === node
-    shadedEllipse(buffer, x, y, active ? 2.5 : 1.4, active ? 1.6 : 0.8, active ? 2 : 1, time + node)
-    ellipse(buffer, x, y, active ? 2.5 : 1.4, active ? 1.6 : 0.8, '.', active ? 3 : 1, time)
-    put(buffer, x, y, active ? '@' : '+', active ? 4 : 5)
-  })
-
-  const endpoint = nodes[9]
-  if (endpoint) {
-    ellipse(buffer, endpoint[0], endpoint[1], 4 + Math.sin(time) * 0.6, 2.4, ':', 3, time * 0.7)
-    writeText(buffer, 58, 14, 'OPEN', 5)
+  // Sender: a small station with an antenna.
+  shadedEllipse(buffer, SENDER.x, SENDER.y, 4, 2.4, 2, time * 0.5)
+  ellipse(buffer, SENDER.x, SENDER.y, 5, 3, 'o', 2, 0)
+  put(buffer, SENDER.x, SENDER.y, '@', 5)
+  line(buffer, SENDER.x, SENDER.y - 3, SENDER.x, SENDER.y - 6, '|', 2)
+  for (let wave = 0; wave < 3; wave += 1) {
+    const radius = 2 + ((time * 3 + wave) % 3)
+    put(buffer, SENDER.x - radius, SENDER.y - 6 - radius * 0.5, '(', 2)
+    put(buffer, SENDER.x + radius, SENDER.y - 6 - radius * 0.5, ')', 2)
   }
-  writeText(buffer, 3, 4, 'ORIGIN', 5)
-  writeText(buffer, 58, 5, 'REPLY', 5)
+  writeText(buffer, SENDER.x - 4, SENDER.y + 5, 'SENDER', 2)
+
+  // Open endpoint: a receiving dish with an open gate.
+  ellipse(buffer, ENDPOINT.x, ENDPOINT.y, 5, 3, 'o', 2, 0)
+  shadedEllipse(buffer, ENDPOINT.x, ENDPOINT.y, 3, 1.8, 2, -time * 0.4)
+  line(buffer, ENDPOINT.x, ENDPOINT.y - 3, ENDPOINT.x, ENDPOINT.y - 6, '|', 2)
+  put(buffer, ENDPOINT.x + 4, ENDPOINT.y - 2, '>', 4)
+  put(buffer, ENDPOINT.x + 5, ENDPOINT.y - 1, '>', 4)
+  put(buffer, ENDPOINT.x + 6, ENDPOINT.y, '>', 4)
+  writeText(buffer, ENDPOINT.x - 6, ENDPOINT.y + 5, 'OPEN ENDPOINT', 2)
+
+  // Channel between them: a bordered conduit.
+  line(buffer, SENDER.x + 7, CHANNEL_Y - 3, ENDPOINT.x - 7, CHANNEL_Y - 3, '=', 1)
+  line(buffer, SENDER.x + 7, CHANNEL_Y + 3, ENDPOINT.x - 7, CHANNEL_Y + 3, '=', 1)
+  for (let x = SENDER.x + 7; x <= ENDPOINT.x - 7; x += 4) {
+    put(buffer, x, CHANNEL_Y - 3, '+', 1)
+    put(buffer, x, CHANNEL_Y + 3, '+', 1)
+  }
+  writeText(buffer, 40, CHANNEL_Y - 5, 'CLEAR ROUTE', 1)
+
+  // Packets travel the channel left to right; handshake replies right to left.
+  const forward = (time * 0.5) % 1
+  const reply = (time * 0.5 + 0.5) % 1
+  for (let p = 0; p < 3; p += 1) {
+    const progress = (forward + p * 0.33) % 1
+    const x = SENDER.x + 8 + progress * (ENDPOINT.x - SENDER.x - 16)
+    put(buffer, x, CHANNEL_Y, '◆', 3)
+    put(buffer, x - 1, CHANNEL_Y, '.', 3)
+  }
+  for (let p = 0; p < 2; p += 1) {
+    const progress = (reply + p * 0.5) % 1
+    const x = ENDPOINT.x - 8 - progress * (ENDPOINT.x - SENDER.x - 16)
+    put(buffer, x, CHANNEL_Y + 1, '◇', 4)
+  }
+
+  // Readout: handshake state machine cycling SYN -> ACK -> OPEN.
+  const phase = Math.floor(time / 2) % 3
+  const states = ['SYN', 'ACK', 'OPEN']
+  box(buffer, 38, 24, 22, 6, 5)
+  writeText(buffer, 40, 25, 'HANDSHAKE', 5)
+  writeText(
+    buffer,
+    40,
+    27,
+    states.map((s, i) => (i <= phase ? s : '...')).join(' > '),
+    i0Color(phase),
+  )
+  writeText(buffer, 40, 28, phase === 2 ? 'ROUTE OPEN - NO MESSAGE STORED' : 'establishing...', 1)
+
+  // Ambient particles.
+  for (let dot = 0; dot < 14; dot += 1) {
+    const x = 4 + ((dot * 31 + index) % 88)
+    const y = 4 + ((dot * 13 + Math.floor(time * 2)) % 8)
+    if (y > 22) continue
+    if (buffer.chars[y * buffer.cols + x] === ' ') put(buffer, x, y, '.', 1)
+  }
+
+  writeText(buffer, 2, 32, 'SIGNAL  /  HANDSHAKE  /  OPEN ROUTE', 2)
   return finishArtwork(buffer)
+}
+
+function i0Color(phase: number): number {
+  return phase === 2 ? 3 : 4
 }
 
 export const contactArtwork = artworkSource(
   'contact',
   'Signal exchange',
-  'A recurring signal routes through a connected field toward an open endpoint, accompanying the portfolio’s actual contact paths without simulating a sent message.',
+  'A sender station and an open endpoint joined by a clear route: packet diamonds travel forward, handshake replies travel back, and a state readout cycles SYN > ACK > OPEN with a no-storage note.',
   palette,
   render,
 )

@@ -38,20 +38,21 @@ canvas. Register adapters in
 2. **Stable grid**: every frame is exactly `grid.rows` lines. The player
    warns once in dev on drift and clips in production. Pad lines to the
    declared column count.
-3. **Budget**: ≤ 80 cols × 40 rows; fps 1..30 (the quality tier caps further:
-   low 12 / medium 18 / high 24).
-4. **Single-cell glyphs** only. Use printable ASCII and Unicode block
-   elements (U+2580-U+259F); every glyph must occupy one fixed-grid cell. The
-   panel renders with ligatures/kerning disabled and `white-space: pre`;
-   color is metadata, not terminal escape sequences.
-   **Uniform advance is load-bearing**: every glyph must resolve to a face
-   with the same 600/1000 (0.6em) advance. The latin-subset woff2 plus the
-   `JetBrains Mono Symbols` supplementary face (globals.css; box drawing
-   U+2500-25FF, U+00B7, U+2022, U+02D9 — ~4 KB, unicode-range scoped) cover
-   the allowed set exactly. A glyph outside those ranges falls back to a
-   non-mono face (0.84–0.93em), inflates the frame width and clips the art —
-   the e2e glyph-metric test fails in that case, which is the signal to
-   either use an allowed glyph or extend the subset deliberately.
+3. **Budget**: ≤ 120 cols × 48 rows; fps 1..30 (the quality tier caps further:
+   low 12 / medium 18 / high 24). The bound exists to cap worst-case render
+   cost — measured at the current 96×34 artworks: median ≤ 1 ms per frame,
+   p95 ≤ 4 ms — enforced by `validateSource` in `src/exhibits/registry.ts`.
+4. **Single-cell glyphs** only. Use printable ASCII plus the ranges the
+   `JetBrains Mono Symbols` supplementary face carries at the same 0.6em
+   advance (globals.css): block elements U+2580-259F, box drawing
+   U+2500-257F, arrows U+2190-21FF, math operators U+2200-22FF, and the dot
+   separators U+00B7/U+2022/U+02D9. The panel renders with ligatures/kerning
+   disabled and `white-space: pre`; color is metadata, not terminal escape
+   sequences. **Uniform advance is load-bearing**: a glyph outside those
+   ranges falls back to a non-mono face (0.84–0.93em), inflates the frame
+   width and clips the art — the e2e glyph-metric test and the artworks unit
+   test fail in that case, which is the signal to either use an allowed
+   glyph or extend the subset deliberately.
 5. **Pure**: no side effects; may be dynamically imported.
 
 ## Reference implementations

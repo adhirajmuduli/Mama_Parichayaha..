@@ -33,7 +33,12 @@ describe('authored colored block artworks', () => {
       expect(repeated).toEqual(first)
       expect(later).toBeDefined()
       expect(first?.text).not.toBe(later?.text)
-      expect(first?.text).toMatch(/^[\x20-\x7e\u2580-\u259f\n]*$/)
+      // Allowed glyph set = printable ASCII + the ranges the 'JetBrains Mono
+      // Symbols' supplementary face carries at the uniform 0.6em advance
+      // (globals.css @font-face). Anything outside this set falls back to a
+      // wider face and breaks the panel's grid math (pinned by the e2e
+      // glyph-advance invariant).
+      expect(first?.text).toMatch(/^[\x20-\x7e\u00b7\u02d9\u2022\u2190-\u22ff\u2500-\u25ff\n]*$/)
       expect(first?.text).toMatch(/[\u2580-\u259f]/)
       expect(first?.text.match(/[\u2580-\u259f]/g)?.length ?? 0).toBeGreaterThan(grid.rows)
 

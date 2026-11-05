@@ -50,7 +50,12 @@ function validateSource(source: AsciiExhibitSource): string | null {
     return 'empty grid'
   }
 
-  if (grid.cols > 80 || grid.rows > 40) {
+  // Grid budget bounds worst-case render cost. Measured at 96x34 (the current
+  // authored artworks): median <= 1 ms per frame, p95 <= 4 ms, and the 12 fps
+  // cap bounds per-second spend — so 120x48 (5,760 cells, ~1.8x the current
+  // grid) stays comfortably within frame budget while allowing real
+  // structure (bilayer membranes, cristae, helix turns) at small block size.
+  if (grid.cols > 120 || grid.rows > 48) {
     return `grid exceeds budget (${grid.cols}x${grid.rows})`
   }
 

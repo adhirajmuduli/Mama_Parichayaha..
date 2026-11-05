@@ -13,8 +13,12 @@ export interface ArtworkBuffer {
   readonly colors: Uint8Array
 }
 
-const ART_ROWS = 25
-const ART_COLS = 72
+// Exhibit grid. 96x34 keeps the rendered pixel aspect (~1.47:1) close to the
+// panel's, while nearly tripling the cell count over the 72x25 mock era —
+// enough resolution for real structure (bilayer membranes, cristae, helix
+// turns) at a font size that still fits the narrowest slot.
+const ART_ROWS = 34
+const ART_COLS = 96
 const SHADE_RAMP = '░▒▓█'
 
 export function createArtworkBuffer(palette: readonly string[]): ArtworkBuffer {

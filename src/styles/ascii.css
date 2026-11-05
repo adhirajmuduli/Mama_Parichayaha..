@@ -15,7 +15,8 @@
   gap: 0.6rem;
   color: var(--panel-accent, var(--site-accent));
   /* The frame is sized against the slot: container query units let the type
-     scale with the available width so a 47-column grid never clips. */
+       scale with the available width so any authored grid (currently 96 cols)
+       never clips. */
   container-type: inline-size;
 }
 
